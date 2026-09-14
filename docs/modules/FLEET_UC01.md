@@ -22,11 +22,11 @@
 | `MaintenanceService` | Create/update/close + vehicle status sync |
 | `MaintenanceController` | `/maintenance` UI routes |
 
-## Views
+## Views (frontend owned on this branch)
 
-- `views/fleet/list.jsp` — records list  
-- `views/fleet/form.jsp` — create / edit  
-- `views/fleet/detail.jsp` — history + close  
+- `views/fleet/list.jsp` — card stack of records  
+- `views/fleet/form.jsp` — create / edit with conflict warning  
+- `views/fleet/detail.jsp` — hero detail, close & reinstate available
 
 ## Demo flow
 
