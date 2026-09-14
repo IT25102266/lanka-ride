@@ -2,7 +2,7 @@
 
 **Project:** Web-Based Vehicle Rental System  
 **Group:** 2026-Y2-S1-MLB-B13G2-05  
-**Status:** **~75% runnable** + ROFI-inspired UI redesign (role-split homes, home search)  
+**Status:** **75% milestone complete** — all six modules + redesigned UI on `release/75-percent`  
 **Repo (current origin):** `https://github.com/IT25102266/lanka-ride.git`
 
 This plan maps **one major function → one member → one feature branch**, with milestones at **0% / 25% / 50% / 75% / 100%**. You develop on this laptop; each member’s commits live on their branch; you switch GitHub accounts only when **pushing**.
@@ -126,8 +126,8 @@ Do **not** use `--global` for member commits. Fill emails/usernames when credent
 | **100%** | All 6 UCs demoable, integration tests, design patterns, UI polish, final report | ~Week 12–14 |
 
 ```
-Overall:  [███████████████░░░░░]  ~75%
-Member:   see Section 7 tracker
+Overall:  [███████████████░░░░░]  75% COMPLETE
+Member:   see Section 7 tracker + feature branches pushed
 ```
 
 ---
@@ -304,7 +304,7 @@ Do **not** develop all six in parallel from empty repo. Sequence:
 | Kavindi | `feat/kavindi-payment` | ● | ● | ● | ● | ○ |
 | Wickramasinghe | `feat/wickramasinghe-dashboard` | ● | ● | ● | ● | ○ |
 | Pahasara | `feat/pahasara-support` | ● | ● | ● | ● | ○ |
-| **Overall product** | `main` | ● | ● | ● | **● ~75%** | ○ |
+| **Overall product** | `release/75-percent` | ● | ● | ● | **● 75% DONE** | ○ |
 
 \* De Silva auto unavailable/available + booking conflict warning shipped early to satisfy overall 50% integration.  
 † Branch transfer log still open for 100%; search/filters + availability already at 75%.
@@ -313,12 +313,15 @@ Legend: ● reached · ○ not yet
 
 ### 75% milestone notes (implemented)
 
+**Release:** `release/75-percent` — integrated product line (all member feature branches).
+
 - **Payment:** mock gateway pay deposit+rental after approval; HTML invoice; refunds; late/damage charges on return; payment ledger.
 - **Return:** pickup + return mileage/fuel checklist tied to fee posting.
 - **Reports:** daily / monthly / annual revenue & bookings; branch comparison; utilization; vehicle location board (`/reports`).
 - **Support:** tickets (open → in progress → resolved → closed); notification email log; forgot/reset password; admin add branch/user.
-- **UI redesign:** full-bleed home + search widget; customer `/app` vs staff `/dashboard`; role-based login redirect; forest/gold theme.
+- **UI redesign:** full-bleed home + search widget; customer `/app` vs staff `/dashboard`; role-based login redirect; forest/gold theme; card UIs per module.
 - **Demo users:** `admin`/`admin123`, `fleet`/`fleet123`, `supervisor`/`super123`, `finance`/`finance123`, `operations`/`ops123`, `customer`/`customer123`.
+- **Module docs:** `docs/modules/*_UC0x.md` on each feature branch.
 
 ### 50% milestone notes (earlier)
 
