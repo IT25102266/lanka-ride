@@ -1,46 +1,15 @@
-# Member credentials (LOCAL ONLY — do not commit)
+# Member credentials — EXAMPLE (safe to commit)
 
-Copy this file to `MEMBER_CREDENTIALS.local.md` and fill in.
-`MEMBER_CREDENTIALS.local.md` is gitignored.
+Copy to `MEMBER_CREDENTIALS.local.md` (gitignored) if you want local notes.
+**Never** commit real passwords or tokens.
 
-## sakala — IT25102266 / feat/sakalasuriya-vehicle
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method: (gh login / PAT / SSH)
-- PAT or notes: (never commit)
+| Key | GitHub username | Auth method | Notes |
+|-----|-----------------|-------------|-------|
+| sakala | IT25102266 | gh keyring / `gh auth switch` | |
+| desilva | IT25102264 | gh keyring / `gh auth switch` | |
+| samara | it24101349 | gh keyring / `gh auth switch` | |
+| kavindi | IT25102265 | gh keyring / `gh auth switch` | |
+| wickra | IT241021008 | gh keyring / `gh auth switch` | |
+| pahasara | it24102871 | gh keyring / `gh auth switch` | |
 
-## desilva — IT25102264 / feat/desilva-fleet
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method:
-- PAT or notes:
-
-## samara — IT24101349 / feat/samaranayake-booking
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method:
-- PAT or notes:
-
-## kavindi — IT25102265 / feat/kavindi-payment
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method:
-- PAT or notes:
-
-## wickra — IT24101008 / feat/wickramasinghe-dashboard
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method:
-- PAT or notes:
-
-## pahasara — IT24102871 / feat/pahasara-support
-- GitHub username:
-- Commit name:
-- Commit email:
-- Auth method:
-- PAT or notes:
+See [`MEMBER_GIT_IDENTITIES.md`](./MEMBER_GIT_IDENTITIES.md) for commit name/email and branches.
