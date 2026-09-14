@@ -2,7 +2,7 @@
 
 **Purpose:** Before every `git add` / `git commit` for a member’s work, switch to **that member’s** Git identity so GitHub Contributors shows them — not the laptop owner (`udithsandaruwan2`).
 
-**Status:** Placeholders only. Fill when you provide credentials later.  
+**Status:** `sakala` commit identity saved; others still TBD.  
 **Related plan:** [`DEVELOPMENT_PLAN.md`](./DEVELOPMENT_PLAN.md)
 
 ---
@@ -57,19 +57,38 @@ git log -1 --format='%h %an <%ae> | %s'
 
 ---
 
-## Member registry (fill later)
+## Member registry
 
 | Key | Member | Student ID | Branch | GitHub username | Commit `user.name` | Commit `user.email` | Creds filled? |
 |-----|--------|------------|--------|-----------------|--------------------|---------------------|---------------|
-| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasuriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` *(confirm)* | `TBD` | ☐ |
+| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasuriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` | `it25102266@my.sliit.lk` | ☑ name/email |
 | `desilva` | DE SILVA D.L.K.C | IT25102264 | `feat/desilva-fleet` | `TBD` | `TBD` | `TBD` | ☐ |
 | `samara` | SAMARANAYAKE P.I.S | IT24101349 | `feat/samaranayake-booking` | `TBD` | `TBD` | `TBD` | ☐ |
 | `kavindi` | KAVINDI P.D.N | IT25102265 | `feat/kavindi-payment` | `TBD` | `TBD` | `TBD` | ☐ |
 | `wickra` | WICKRAMASINGHE R.D.W.K.G.S | IT24101008 | `feat/wickramasinghe-dashboard` | `TBD` | `TBD` | `TBD` | ☐ |
 | `pahasara` | PAHASARA Y.A.P | IT24102871 | `feat/pahasara-support` | `TBD` | `TBD` | `TBD` | ☐ |
 
+### Ready-to-use: `sakala` (Ashini)
+
+```bash
+git add .
+git -c user.name="Ashini Sakalasooriya" -c user.email="it25102266@my.sliit.lk" \
+  commit -m "YOUR MESSAGE"
+git log -1 --format='%an <%ae> | %s'   # must show Ashini, not Udith
+```
+
+Or set once for this repo while working as her:
+
+```bash
+git config --local user.name  "Ashini Sakalasooriya"
+git config --local user.email "it25102266@my.sliit.lk"
+```
+
+Push as: `gh auth switch` → **IT25102266**.
+
 **Email tip:** Prefer each account’s GitHub **noreply** address (Settings → Emails), e.g.  
-`ID+USERNAME@users.noreply.github.com` — must be the one GitHub attributes to that profile.
+`ID+USERNAME@users.noreply.github.com` — must be the one GitHub attributes to that profile.  
+Ashini’s SLIIT email is saved as provided; keep it **verified** on the `IT25102266` GitHub account.
 
 **Laptop owner (do not use for member feature commits):**
 

@@ -1,3 +1,15 @@
+# Member GitHub secrets (passwords / PATs) — never commit
+docs/MEMBER_CREDENTIALS.local.md
+
+# Maven / IDE
+target/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
 # Compiled class file
 *.class
 
@@ -10,8 +22,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
-*.jar
+# Package Files (built artifacts only — not Maven wrapper)
 *.war
 *.nar
 *.ear

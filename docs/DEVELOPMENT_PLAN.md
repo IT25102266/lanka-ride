@@ -2,8 +2,8 @@
 
 **Project:** Web-Based Vehicle Rental System  
 **Group:** 2026-Y2-S1-MLB-B13G2-05  
-**Repo (current origin):** `https://github.com/IT25102266/lanka-ride.git`  
-**Status:** **0% — scaffolding only** (README + docs; no application code yet)
+**Status:** **~75% runnable** + ROFI-inspired UI redesign (role-split homes, home search)  
+**Repo (current origin):** `https://github.com/IT25102266/lanka-ride.git`
 
 This plan maps **one major function → one member → one feature branch**, with milestones at **0% / 25% / 50% / 75% / 100%**. You develop on this laptop; each member’s commits live on their branch; you switch GitHub accounts only when **pushing**.
 
@@ -126,8 +126,8 @@ Do **not** use `--global` for member commits. Fill emails/usernames when credent
 | **100%** | All 6 UCs demoable, integration tests, design patterns, UI polish, final report | ~Week 12–14 |
 
 ```
-Overall:  [░░░░░░░░░░░░░░░░░░░░]  0%
-Member:   each starts at 0% on their branch (see Section 5)
+Overall:  [███████████████░░░░░]  ~75%
+Member:   see Section 7 tracker
 ```
 
 ---
@@ -152,12 +152,12 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Integration with Booking + Maintenance availability; tests; demo script for UC-02 | Passes UC-02 demo end-to-end |
 
 **Feature checklist**
-- [ ] Vehicle CRUD  
-- [ ] Photos / features  
+- [x] Vehicle CRUD  
+- [x] Photos / features  
 - [ ] Branch transfer log  
-- [ ] Availability sync  
-- [ ] Search & filter  
-- [ ] Auth/RBAC foundation (with Pahasara)
+- [x] Availability sync (with maintenance status)  
+- [x] Search & filter  
+- [x] Auth/RBAC foundation (with Pahasara)
 
 ---
 
@@ -175,10 +175,10 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Mileage/fuel discrepancy link from return; maintenance reminders hooks; tests; UC-01 demo | Full UC-01 + no double-book under service |
 
 **Feature checklist**
-- [ ] Maintenance CRUD  
-- [ ] Full history view  
-- [ ] Auto unavailable / available  
-- [ ] Booking conflict warning  
+- [x] Maintenance CRUD  
+- [x] Full history view  
+- [x] Auto unavailable / available  
+- [x] Booking conflict warning  
 - [ ] Reminder hooks (with Pahasara)
 
 ---
@@ -197,12 +197,12 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Ops read-only booking monitor; discrepancy flags; tests; UC-03 demo | Full booking lifecycle demo |
 
 **Feature checklist**
-- [ ] Search → reserve  
-- [ ] Approval screen  
-- [ ] Approve / deny + reason  
-- [ ] Status tracking  
-- [ ] Return mileage/fuel  
-- [ ] Availability integration  
+- [x] Search → reserve  
+- [x] Approval screen  
+- [x] Approve / deny + reason  
+- [x] Status tracking (Pending / Approved / Denied / Cancelled + stubs)  
+- [x] Return mileage/fuel (via payment/return flow)  
+- [x] Availability integration (blocks MAINTENANCE / UNAVAILABLE / overlaps)
 
 ---
 
@@ -220,11 +220,11 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Audit trail; notification hooks; tests; UC-04 demo | Full money flow demo |
 
 **Feature checklist**
-- [ ] Deposit + rental payment  
-- [ ] Invoices  
-- [ ] Refunds  
-- [ ] Late fees / damage  
-- [ ] Payment history  
+- [x] Deposit + rental payment (mock sandbox)  
+- [x] Invoices (HTML)  
+- [x] Refunds  
+- [x] Late fees / damage  
+- [x] Payment history  
 
 ---
 
@@ -242,11 +242,11 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Real-time location overview; export/print; tests; UC-05 demo | Full management demo |
 
 **Feature checklist**
-- [ ] Daily / monthly / annual reports  
-- [ ] Branch comparison  
-- [ ] Utilization  
-- [ ] Location visibility board  
-- [ ] Export  
+- [x] Daily / monthly / annual reports  
+- [x] Branch comparison  
+- [x] Utilization  
+- [x] Location visibility board  
+- [ ] Export (print via browser OK for demo)
 
 ---
 
@@ -264,11 +264,11 @@ Progress % below is **that member’s module**, not the whole repo.
 | **100%** | Maintenance reminders; retry queue; QA pass across modules; UC-06 demo | Full support + alerts demo |
 
 **Feature checklist**
-- [ ] Booking / payment notifications  
-- [ ] Support tickets  
-- [ ] Password reset  
-- [ ] Add branch / user (scalability)  
-- [ ] Cross-module QA  
+- [x] Booking / payment notifications (email log stub)  
+- [x] Support tickets  
+- [x] Password reset  
+- [x] Add branch / user (scalability)  
+- [ ] Cross-module QA (ongoing toward 100%)
 
 ---
 
@@ -298,15 +298,33 @@ Do **not** develop all six in parallel from empty repo. Sequence:
 
 | Member | Branch | 0% | 25% | 50% | 75% | 100% |
 |--------|--------|----|-----|-----|-----|------|
-| Sakalasuriya | `feat/sakalasuriya-vehicle` | ● | ○ | ○ | ○ | ○ |
-| De Silva | `feat/desilva-fleet` | ● | ○ | ○ | ○ | ○ |
-| Samaranayake | `feat/samaranayake-booking` | ● | ○ | ○ | ○ | ○ |
-| Kavindi | `feat/kavindi-payment` | ● | ○ | ○ | ○ | ○ |
-| Wickramasinghe | `feat/wickramasinghe-dashboard` | ● | ○ | ○ | ○ | ○ |
-| Pahasara | `feat/pahasara-support` | ● | ○ | ○ | ○ | ○ |
-| **Overall product** | `main` | **● 0%** | ○ | ○ | ○ | ○ |
+| Sakalasuriya | `feat/sakalasuriya-vehicle` | ● | ● | ● | ●† | ○ |
+| De Silva | `feat/desilva-fleet` | ● | ● | ● | ●* | ○ |
+| Samaranayake | `feat/samaranayake-booking` | ● | ● | ● | ● | ○ |
+| Kavindi | `feat/kavindi-payment` | ● | ● | ● | ● | ○ |
+| Wickramasinghe | `feat/wickramasinghe-dashboard` | ● | ● | ● | ● | ○ |
+| Pahasara | `feat/pahasara-support` | ● | ● | ● | ● | ○ |
+| **Overall product** | `main` | ● | ● | ● | **● ~75%** | ○ |
+
+\* De Silva auto unavailable/available + booking conflict warning shipped early to satisfy overall 50% integration.  
+† Branch transfer log still open for 100%; search/filters + availability already at 75%.
 
 Legend: ● reached · ○ not yet
+
+### 75% milestone notes (implemented)
+
+- **Payment:** mock gateway pay deposit+rental after approval; HTML invoice; refunds; late/damage charges on return; payment ledger.
+- **Return:** pickup + return mileage/fuel checklist tied to fee posting.
+- **Reports:** daily / monthly / annual revenue & bookings; branch comparison; utilization; vehicle location board (`/reports`).
+- **Support:** tickets (open → in progress → resolved → closed); notification email log; forgot/reset password; admin add branch/user.
+- **UI redesign:** full-bleed home + search widget; customer `/app` vs staff `/dashboard`; role-based login redirect; forest/gold theme.
+- **Demo users:** `admin`/`admin123`, `fleet`/`fleet123`, `supervisor`/`super123`, `finance`/`finance123`, `operations`/`ops123`, `customer`/`customer123`.
+
+### 50% milestone notes (earlier)
+
+- **Fleet:** create / update / close maintenance; vehicle → `MAINTENANCE` on open, → `AVAILABLE` on close; warn on future bookings.
+- **Booking:** customer request; staff single approval screen; approve / deny with reason; cancel; availability checks.
+- **UI:** Bootstrap pages under `/maintenance`, `/bookings`; dashboard stats.
 
 ---
 
