@@ -6,8 +6,13 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
-        <h1 class="page-title">Support</h1>
-        <p class="page-lead">${staff ? 'Customer tickets across the platform.' : 'Your enquiries and staff replies.'}</p>
+        <h1 class="page-title">Support centre</h1>
+        <p class="page-lead">
+            <c:choose>
+                <c:when test="${staff}">Triage customer tickets and post staff replies.</c:when>
+                <c:otherwise>Raise an enquiry — we reply on the same ticket thread.</c:otherwise>
+            </c:choose>
+        </p>
     </div>
     <a class="btn btn-primary" href="<c:url value='/support/new'/>"><i class="bi bi-plus-lg"></i> New ticket</a>
 </div>
@@ -28,13 +33,13 @@
                 <article class="item-card">
                     <div>
                         <div class="item-kicker">Ticket #${t.id}
-                            <c:if test="${staff}"> · ${t.customer.username}</c:if>
+                            <c:if test="${staff}"> · ${t.customer.fullName} (@${t.customer.username})</c:if>
                         </div>
                         <h3 class="item-title">${t.subject}</h3>
                         <div class="item-meta">
                             <span><i class="bi bi-clock"></i> ${t.createdAt}</span>
                             <c:if test="${not empty t.message}">
-                                <span>${fn:substring(t.message, 0, 80)}<c:if test="${fn:length(t.message) > 80}">…</c:if></span>
+                                <span>${fn:substring(t.message, 0, 90)}<c:if test="${fn:length(t.message) > 90}">…</c:if></span>
                             </c:if>
                         </div>
                     </div>
@@ -43,7 +48,9 @@
                             <span class="status-pill status-${ts}">${t.status}</span>
                         </div>
                         <div class="item-actions">
-                            <a class="btn btn-sm btn-outline-primary" href="<c:url value='/support/${t.id}'/>">Open</a>
+                            <a class="btn btn-sm btn-outline-primary" href="<c:url value='/support/${t.id}'/>">
+                                ${staff ? 'Respond' : 'View'}
+                            </a>
                         </div>
                     </div>
                 </article>
