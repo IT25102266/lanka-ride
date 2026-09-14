@@ -17,7 +17,7 @@
         <div>
             <p class="muted small mb-1 text-uppercase" style="letter-spacing:.08em;">Booking #${booking.id}</p>
             <h1>${booking.vehicle.brand} ${booking.vehicle.model}</h1>
-            <p class="muted mb-0">${booking.pickupDate} → ${booking.returnDate} · ${booking.pickupBranch.name}</p>
+            <p class="muted mb-0">${booking.pickupDate} → ${booking.returnDate} · ${booking.pickupBranch.name} · approval &amp; payment</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <span class="status-pill status-${st}">${booking.status}</span>

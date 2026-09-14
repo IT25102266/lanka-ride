@@ -22,10 +22,10 @@
 | `BookingService` | Create, approve, deny, cancel, availability checks |
 | `BookingController` | `/bookings` UI routes |
 
-## Views
+## Views (frontend owned on this branch)
 
-- `views/booking/list.jsp` — customer & staff lists  
-- `views/booking/form.jsp` — new request  
+- `views/booking/list.jsp` — customer & staff card stacks  
+- `views/booking/form.jsp` — new booking request  
 - `views/booking/detail.jsp` — approval screen + pay CTA  
 
 ## Demo flow
