@@ -11,7 +11,7 @@
         <p class="page-lead">
             <c:choose>
                 <c:when test="${staff}">Review reservation requests and open approval screens.</c:when>
-                <c:otherwise>Your reservation requests and payment status.</c:otherwise>
+                <c:otherwise>Your reservation requests — pay when approved, then pick up at the branch.</c:otherwise>
             </c:choose>
         </p>
     </div>
