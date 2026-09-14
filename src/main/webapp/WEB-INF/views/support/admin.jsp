@@ -5,22 +5,23 @@
 
 <div class="mb-4">
     <h1 class="page-title">System admin</h1>
-    <p class="page-lead">Add branches and staff accounts. Public register stays customer-only.</p>
+    <p class="page-lead">Scale the platform — add branches and staff accounts. Public register remains customer-only.</p>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-6">
         <div class="detail-block h-100">
             <h2>Add branch</h2>
+            <p class="small text-muted mb-3">New depot locations appear in search and booking forms.</p>
             <form method="post" action="<c:url value='/admin/branches'/>">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <input class="form-control" name="name" required/>
+                    <input class="form-control" name="name" required placeholder="e.g. Negombo"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Address</label>
-                    <input class="form-control" name="address" required/>
+                    <input class="form-control" name="address" required placeholder="Street / area"/>
                 </div>
                 <button class="btn btn-primary" type="submit">Add branch</button>
             </form>
@@ -39,6 +40,7 @@
     <div class="col-lg-6">
         <div class="detail-block h-100">
             <h2>Add user</h2>
+            <p class="small text-muted mb-3">Create staff roles — never use public register for admin accounts.</p>
             <form method="post" action="<c:url value='/admin/users'/>">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
