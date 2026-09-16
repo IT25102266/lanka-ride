@@ -61,7 +61,7 @@ git log -1 --format='%h %an <%ae> | %s'
 
 | Key | Member | Student ID | Branch | GitHub username | Commit `user.name` | Commit `user.email` | Creds filled? |
 |-----|--------|------------|--------|-----------------|--------------------|---------------------|---------------|
-| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasuriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` | `it25102266@my.sliit.lk` | ☑ name/email |
+| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasooriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` | `it25102266@my.sliit.lk` | ☑ name/email |
 | `desilva` | DE SILVA D.L.K.C | IT25102264 | `feat/desilva-fleet` | `TBD` | `TBD` | `TBD` | ☐ |
 | `samara` | SAMARANAYAKE P.I.S | IT24101349 | `feat/samaranayake-booking` | `TBD` | `TBD` | `TBD` | ☐ |
 | `kavindi` | KAVINDI P.D.N | IT25102265 | `feat/kavindi-payment` | `TBD` | `TBD` | `TBD` | ☐ |

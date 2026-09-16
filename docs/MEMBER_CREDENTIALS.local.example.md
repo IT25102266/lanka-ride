@@ -3,7 +3,7 @@
 Copy this file to `MEMBER_CREDENTIALS.local.md` and fill in.
 `MEMBER_CREDENTIALS.local.md` is gitignored.
 
-## sakala — IT25102266 / feat/sakalasuriya-vehicle
+## sakala — IT25102266 / feat/sakalasooriya-vehicle
 - GitHub username:
 - Commit name:
 - Commit email:
