@@ -5,7 +5,12 @@
 
 <div class="auth-wrap">
     <div class="auth-panel">
+        <div class="brand-mark mb-3 d-inline-flex">Lanka Ride</div>
         <h1>Reset password</h1>
+        <p class="page-lead mb-3">Paste the token from the notification log, then choose a new password.</p>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger py-2"><c:out value="${error}"/></div>
+        </c:if>
         <form method="post" action="<c:url value='/reset-password'/>">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="mb-3">
@@ -22,6 +27,10 @@
             </div>
             <button class="btn btn-primary w-100" type="submit">Update password</button>
         </form>
+        <p class="small text-muted mt-3 mb-0">
+            <a href="<c:url value='/forgot-password'/>">Request a new token</a>
+            · <a href="<c:url value='/login'/>">Login</a>
+        </p>
     </div>
 </div>
 

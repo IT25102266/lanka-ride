@@ -1,125 +1,120 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="pageTitle" value="Reports" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">Reports</h1>
-        <p class="text-muted mb-0">${label}</p>
+        <h1 class="page-title">Reports</h1>
+        <p class="page-lead">${label}</p>
     </div>
+    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.print()">
+        <i class="bi bi-printer"></i> Print / export
+    </button>
 </div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label">Period</label>
-                <select class="form-select" name="period">
-                    <option value="daily" ${period == 'daily' ? 'selected' : ''}>Daily</option>
-                    <option value="monthly" ${period == 'monthly' ? 'selected' : ''}>Monthly</option>
-                    <option value="annual" ${period == 'annual' ? 'selected' : ''}>Annual</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Reference date</label>
-                <input class="form-control" type="date" name="date" value="${refDate}"/>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Branch filter</label>
-                <select class="form-select" name="branchId">
-                    <option value="">All branches</option>
-                    <c:forEach items="${branches}" var="b">
-                        <option value="${b.id}" ${branchId == b.id ? 'selected' : ''}>${b.name}</option>
-                    </c:forEach>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary" type="submit">Apply</button>
-            </div>
-        </form>
+<form method="get" class="filter-bar mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">Period</label>
+            <select class="form-select form-select-sm" name="period">
+                <option value="daily" ${period == 'daily' ? 'selected' : ''}>Daily</option>
+                <option value="monthly" ${period == 'monthly' ? 'selected' : ''}>Monthly</option>
+                <option value="annual" ${period == 'annual' ? 'selected' : ''}>Annual</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Reference date</label>
+            <input class="form-control form-control-sm" type="date" name="date" value="${refDate}"/>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Branch filter</label>
+            <select class="form-select form-select-sm" name="branchId">
+                <option value="">All branches</option>
+                <c:forEach items="${branches}" var="b">
+                    <option value="${b.id}" ${branchId == b.id ? 'selected' : ''}>${b.name}</option>
+                </c:forEach>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary btn-sm" type="submit">Apply filters</button>
+        </div>
     </div>
-</div>
+</form>
 
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card shadow-sm h-100"><div class="card-body">
-            <div class="text-muted small">Collected</div>
-            <div class="fs-4 text-primary fw-semibold">LKR ${collected}</div>
-        </div></div>
+        <div class="stat-mini">
+            <div class="label">Collected</div>
+            <div class="value" style="font-size:1.55rem;">LKR ${collected}</div>
+        </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm h-100"><div class="card-body">
-            <div class="text-muted small">Refunds</div>
-            <div class="fs-4 fw-semibold">LKR ${refunds}</div>
-        </div></div>
+        <div class="stat-mini">
+            <div class="label">Refunds</div>
+            <div class="value" style="font-size:1.55rem;">LKR ${refunds}</div>
+        </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm h-100"><div class="card-body">
-            <div class="text-muted small">Net</div>
-            <div class="fs-4 fw-semibold">LKR ${net}</div>
-        </div></div>
+        <div class="stat-mini">
+            <div class="label">Net</div>
+            <div class="value" style="font-size:1.55rem;">LKR ${net}</div>
+        </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm h-100"><div class="card-body">
-            <div class="text-muted small">Bookings / completed</div>
-            <div class="fs-4 fw-semibold">${bookingsInPeriod} / ${completedInPeriod}</div>
-        </div></div>
+        <div class="stat-mini">
+            <div class="label">Bookings / completed</div>
+            <div class="value" style="font-size:1.55rem;">${bookingsInPeriod} / ${completedInPeriod}</div>
+        </div>
     </div>
 </div>
 
-<h2 class="h5 mb-3">Branch comparison</h2>
-<div class="card shadow-sm mb-4">
-    <div class="table-responsive">
-        <table class="table mb-0">
-            <thead class="table-light">
-            <tr>
-                <th>Branch</th>
-                <th>Revenue</th>
-                <th>Active fleet</th>
-                <th>Bookings in period</th>
-                <th>Utilization %</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${branchRows}" var="row">
-                <tr>
-                    <td>${row.branch.name}</td>
-                    <td>LKR ${row.revenue}</td>
-                    <td>${row.fleetSize}</td>
-                    <td>${row.bookings}</td>
-                    <td>${row.utilization}%</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
+<h2 class="h4 mb-3">Branch comparison</h2>
+<div class="item-stack mb-4">
+    <c:forEach items="${branchRows}" var="row">
+        <article class="item-card">
+            <div>
+                <div class="item-kicker">Branch</div>
+                <h3 class="item-title">${row.branch.name}</h3>
+                <div class="item-meta">
+                    <span><i class="bi bi-cash"></i> Revenue LKR ${row.revenue}</span>
+                    <span><i class="bi bi-car-front"></i> Fleet ${row.fleetSize}</span>
+                    <span><i class="bi bi-calendar3"></i> Bookings ${row.bookings}</span>
+                </div>
+            </div>
+            <div>
+                <div class="item-badges">
+                    <span class="status-pill status-ongoing">${row.utilization}% util</span>
+                </div>
+            </div>
+        </article>
+    </c:forEach>
+    <c:if test="${empty branchRows}">
+        <div class="panel"><div class="empty-state">No branch data for this period.</div></div>
+    </c:if>
 </div>
 
-<h2 class="h5 mb-3">Vehicle locations</h2>
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-sm mb-0">
-            <thead class="table-light">
-            <tr><th>Reg</th><th>Vehicle</th><th>Home branch</th><th>Current location</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${locations}" var="loc">
-                <tr>
-                    <td>${loc.vehicle.registrationNumber}</td>
-                    <td>${loc.vehicle.brand} ${loc.vehicle.model}</td>
-                    <td>${loc.vehicle.branch.name}</td>
-                    <td>${loc.vehicle.currentLocation}</td>
-                    <td>${loc.vehicle.status}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="mt-3">
-    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">Print / export</button>
+<h2 class="h4 mb-3">Vehicle locations</h2>
+<div class="item-stack">
+    <c:forEach items="${locations}" var="loc">
+        <c:set var="vs" value="${fn:toLowerCase(loc.vehicle.status.name())}"/>
+        <article class="item-card">
+            <div>
+                <div class="item-kicker">${loc.vehicle.registrationNumber} · ${loc.vehicle.branch.name}</div>
+                <h3 class="item-title">${loc.vehicle.brand} ${loc.vehicle.model}</h3>
+                <div class="item-meta">
+                    <span><i class="bi bi-geo-alt"></i> ${loc.vehicle.currentLocation}</span>
+                </div>
+            </div>
+            <div class="item-badges">
+                <span class="status-pill status-${vs}">${loc.vehicle.status}</span>
+            </div>
+        </article>
+    </c:forEach>
+    <c:if test="${empty locations}">
+        <div class="panel"><div class="empty-state">No vehicles to show.</div></div>
+    </c:if>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

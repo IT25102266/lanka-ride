@@ -7,7 +7,7 @@
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
         <h1 class="page-title">My trips</h1>
-        <p class="page-lead">Welcome back, ${username}. Track bookings, pay, and open invoices here.</p>
+        <p class="page-lead">Welcome back, ${username}. Your trips hub — track bookings, pay invoices, and get support.</p>
     </div>
     <a class="btn btn-primary" href="<c:url value='/'/>"><i class="bi bi-search"></i> Find a ride</a>
 </div>

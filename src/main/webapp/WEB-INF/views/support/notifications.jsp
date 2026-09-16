@@ -3,14 +3,16 @@
 <c:set var="pageTitle" value="Notifications" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="mb-4">
-    <h1 class="page-title">Notification log</h1>
-    <p class="page-lead">Sandbox email messages recorded for the demo.</p>
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <h1 class="page-title">Notification log</h1>
+        <p class="page-lead">Sandbox email / SMS-style messages recorded for the demo (booking, payment, reset).</p>
+    </div>
 </div>
 
 <c:choose>
     <c:when test="${empty notifications}">
-        <div class="panel"><div class="empty-state">No notifications yet.</div></div>
+        <div class="panel"><div class="empty-state">No notifications yet — they appear after booking or payment events.</div></div>
     </c:when>
     <c:otherwise>
         <div class="item-stack">
@@ -21,7 +23,7 @@
                         <span class="small text-muted">${n.createdAt}</span>
                     </div>
                     <h3 class="h6 mb-1">${n.subject}</h3>
-                    <div class="small text-muted mb-2">To ${n.recipient}</div>
+                    <div class="small text-muted mb-2"><i class="bi bi-envelope"></i> ${n.recipient}</div>
                     <p class="small mb-0">${n.body}</p>
                 </article>
             </c:forEach>

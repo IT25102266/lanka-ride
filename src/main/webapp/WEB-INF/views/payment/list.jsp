@@ -6,14 +6,16 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
-        <h1 class="page-title">Payments</h1>
-        <p class="page-lead">Sandbox transaction ledger across bookings.</p>
+        <h1 class="page-title">Payments ledger</h1>
+        <p class="page-lead">Sandbox gateway history — deposits, rentals, late fees, damage, and refunds.</p>
     </div>
 </div>
 
 <c:choose>
     <c:when test="${empty payments}">
-        <div class="panel"><div class="empty-state">No payments yet.</div></div>
+        <div class="panel">
+            <div class="empty-state">No payments yet. They appear after a customer pays an approved booking.</div>
+        </div>
     </c:when>
     <c:otherwise>
         <div class="item-stack">
@@ -35,7 +37,7 @@
                             </span>
                         </div>
                         <div class="item-actions">
-                            <a class="btn btn-sm btn-outline-primary" href="<c:url value='/payments/booking/${p.booking.id}'/>">Invoice</a>
+                            <a class="btn btn-sm btn-outline-primary" href="<c:url value='/payments/booking/${p.booking.id}'/>">Open invoice</a>
                         </div>
                     </div>
                 </article>
