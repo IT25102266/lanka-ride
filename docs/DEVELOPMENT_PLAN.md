@@ -59,7 +59,7 @@ See **Section 8 — What you need to give me**.
 
 ```
 main                          ← integration / demos / final merge
-├── feat/sakalasuriya-vehicle
+├── feat/sakalasooriya-vehicle
 ├── feat/desilva-fleet
 ├── feat/samaranayake-booking
 ├── feat/kavindi-payment
@@ -70,7 +70,7 @@ main                          ← integration / demos / final merge
 ### Rules
 1. **Never push `main` as another person’s work.** Member evidence = commits on **their** branch (and PRs into `main` if required).
 2. Work order on this laptop: check out their branch → develop → commit **as that member’s git identity** → you switch GitHub login → `git push`.
-3. Shared foundation (project skeleton, DB schema core, auth) lands first on `feat/sakalasuriya-vehicle` (or a short `chore/foundation` merged to `main`), then others branch from updated `main`.
+3. Shared foundation (project skeleton, DB schema core, auth) lands first on `feat/sakalasooriya-vehicle` (or a short `chore/foundation` merged to `main`), then others branch from updated `main`.
 4. Integration merges into `main` at **50%**, **75%**, and **100%** checkpoints.
 
 ### Commit identity (per member, on this machine)
@@ -140,7 +140,7 @@ Progress % below is **that member’s module**, not the whole repo.
 
 ### 5.1 SAKALASOORIYA — Vehicle Management (+ auth foundation)
 
-**Branch:** `feat/sakalasuriya-vehicle`  
+**Branch:** `feat/sakalasooriya-vehicle`  
 **UC-02 / PBIs:** PBI-01–05 (auth shared with Pahasara in Sprint 1)
 
 | % | Deliverables | Done when |
@@ -298,7 +298,7 @@ Do **not** develop all six in parallel from empty repo. Sequence:
 
 | Member | Branch | 0% | 25% | 50% | 75% | 100% |
 |--------|--------|----|-----|-----|-----|------|
-| Sakalasuriya | `feat/sakalasuriya-vehicle` | ● | ● | ● | ●† | ○ |
+| Sakalasooriya | `feat/sakalasooriya-vehicle` | ● | ● | ● | ●† | ○ |
 | De Silva | `feat/desilva-fleet` | ● | ● | ● | ●* | ○ |
 | Samaranayake | `feat/samaranayake-booking` | ● | ● | ● | ● | ○ |
 | Kavindi | `feat/kavindi-payment` | ● | ● | ● | ● | ○ |

@@ -81,7 +81,6 @@ git push -u origin HEAD
 - Wickramasinghe GitHub login is `IT241021008` (as on `gh auth`); student ID / email use `IT24101008` / `it24101008@…`. Confirm the SLIIT email is verified on that GitHub account.
 - Emails normalized to lowercase `…@my.sliit.lk`.
 - Commit `user.name` values are readable forms of the official names; change locally if a member prefers a different display name.
-
 ---
 
 ## Ready-to-use one-shots

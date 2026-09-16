@@ -12,4 +12,5 @@ Copy to `MEMBER_CREDENTIALS.local.md` (gitignored) if you want local notes.
 | wickra | IT241021008 | gh keyring / `gh auth switch` | |
 | pahasara | it24102871 | gh keyring / `gh auth switch` | |
 
+
 See [`MEMBER_GIT_IDENTITIES.md`](./MEMBER_GIT_IDENTITIES.md) for commit name/email and branches.
