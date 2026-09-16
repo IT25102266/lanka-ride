@@ -70,7 +70,7 @@ git push -u origin HEAD
 
 | Key | Member | Student ID | Branch | GitHub username | Commit `user.name` | Commit `user.email` | Creds filled? |
 |-----|--------|------------|--------|-----------------|--------------------|---------------------|---------------|
-| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasuriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` | `it25102266@my.sliit.lk` | ☑ |
+| `sakala` | SAKALASOORIYA S.A.A.A | IT25102266 | `feat/sakalasooriya-vehicle` | `IT25102266` | `Ashini Sakalasooriya` | `it25102266@my.sliit.lk` | ☑ |
 | `desilva` | DE SILVA D.L.K.C | IT25102264 | `feat/desilva-fleet` | `IT25102264` | `D.L.K.C. De Silva` | `it25102264@my.sliit.lk` | ☑ |
 | `samara` | SAMARANAYAKE P.I.S | IT24101349 | `feat/samaranayake-booking` | `it24101349` | `P.I.S. Samaranayake` | `it24101349@my.sliit.lk` | ☑ |
 | `kavindi` | KAVINDI P.D.N | IT25102265 | `feat/kavindi-payment` | `IT25102265` | `P.D.N. Kavindi` | `it25102265@my.sliit.lk` | ☑ |
@@ -86,7 +86,7 @@ git push -u origin HEAD
 
 ## Ready-to-use one-shots
 
-### `sakala` → `feat/sakalasuriya-vehicle` · push as `IT25102266`
+### `sakala` → `feat/sakalasooriya-vehicle` · push as `IT25102266`
 
 ```bash
 git config --local user.name  "Ashini Sakalasooriya"

@@ -64,7 +64,7 @@ Public **Register** creates **CUSTOMER** only. Staff accounts come from seed or 
 
 | Module | Owner | Branch |
 |--------|-------|--------|
-| Vehicle + auth foundation | Sakalasuriya | `feat/sakalasuriya-vehicle` |
+| Vehicle + auth foundation | Sakalasooriya | `feat/sakalasooriya-vehicle` |
 | Fleet maintenance | De Silva | `feat/desilva-fleet` |
 | Booking | Samaranayake | `feat/samaranayake-booking` |
 | Payment | Kavindi | `feat/kavindi-payment` |
