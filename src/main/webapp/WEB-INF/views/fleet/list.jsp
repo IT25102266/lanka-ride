@@ -9,7 +9,13 @@
         <h1 class="page-title">Fleet maintenance</h1>
         <p class="page-lead">Service and repair records that affect vehicle availability.</p>
     </div>
-    <a class="btn btn-primary" href="<c:url value='/maintenance/new'/>">Add record</a>
+    <div class="d-flex gap-2">
+        <form method="post" action="<c:url value='/maintenance/reminders'/>">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button class="btn btn-outline-primary" type="submit">Send due reminders</button>
+        </form>
+        <a class="btn btn-primary" href="<c:url value='/maintenance/new'/>">Add record</a>
+    </div>
 </div>
 
 <c:choose>

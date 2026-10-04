@@ -1,15 +1,20 @@
 package com.lankaride.fleet;
 
+import com.lankaride.auth.UserAccount;
+import com.lankaride.auth.UserAccountRepository;
 import com.lankaride.booking.Booking;
 import com.lankaride.booking.BookingRepository;
 import com.lankaride.common.BookingStatus;
 import com.lankaride.common.MaintenanceStatus;
+import com.lankaride.common.RoleName;
 import com.lankaride.common.VehicleStatus;
+import com.lankaride.support.NotificationService;
 import com.lankaride.vehicle.Vehicle;
 import com.lankaride.vehicle.VehicleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,13 +27,19 @@ public class MaintenanceService {
     private final MaintenanceRecordRepository maintenanceRecordRepository;
     private final VehicleRepository vehicleRepository;
     private final BookingRepository bookingRepository;
+    private final UserAccountRepository userAccountRepository;
+    private final NotificationService notificationService;
 
     public MaintenanceService(MaintenanceRecordRepository maintenanceRecordRepository,
                               VehicleRepository vehicleRepository,
-                              BookingRepository bookingRepository) {
+                              BookingRepository bookingRepository,
+                              UserAccountRepository userAccountRepository,
+                              NotificationService notificationService) {
         this.maintenanceRecordRepository = maintenanceRecordRepository;
         this.vehicleRepository = vehicleRepository;
         this.bookingRepository = bookingRepository;
+        this.userAccountRepository = userAccountRepository;
+        this.notificationService = notificationService;
     }
 
     public List<MaintenanceRecord> listAll() {
@@ -113,5 +124,62 @@ public class MaintenanceService {
             vehicleRepository.save(vehicle);
         }
         return saved;
+    }
+
+    @Transactional
+    public MaintenanceRecord openInspectionFromReturn(Booking booking, String discrepancyNote) {
+        Vehicle vehicle = vehicleRepository.findById(booking.getVehicle().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
+        MaintenanceRecord record = new MaintenanceRecord();
+        record.setVehicle(vehicle);
+        record.setServiceType("Return inspection");
+        record.setServiceDate(LocalDate.now());
+        record.setEstimatedCompletionDate(LocalDate.now().plusDays(1));
+        record.setDescription("Opened from booking #" + booking.getId() + ". " + discrepancyNote);
+        record.setMechanicsAssigned("Return desk");
+        record.setStatus(MaintenanceStatus.OPEN);
+        record.setSourceBookingId(booking.getId());
+        MaintenanceRecord saved = maintenanceRecordRepository.save(record);
+        vehicle.setStatus(VehicleStatus.MAINTENANCE);
+        vehicleRepository.save(vehicle);
+        return saved;
+    }
+
+    @Transactional
+    public int sendDueReminders() {
+        LocalDate today = LocalDate.now();
+        int sent = 0;
+        for (MaintenanceRecord record : maintenanceRecordRepository.findAllByOrderByServiceDateDesc()) {
+            if (record.getStatus() == MaintenanceStatus.CLOSED) {
+                continue;
+            }
+            LocalDate due = record.getEstimatedCompletionDate() == null
+                    ? record.getServiceDate()
+                    : record.getEstimatedCompletionDate();
+            if (due != null && due.isAfter(today.plusDays(1))) {
+                continue;
+            }
+            if (record.getReminderSentAt() != null
+                    && record.getReminderSentAt().toLocalDate().equals(today)) {
+                continue;
+            }
+            String subject = "Maintenance reminder #" + record.getId() + " — " + record.getServiceType();
+            String body = record.getVehicle().getRegistrationNumber()
+                    + " (" + record.getVehicle().getBrand() + " " + record.getVehicle().getModel() + ") "
+                    + "is " + record.getStatus()
+                    + (due == null ? "" : ", due " + due)
+                    + ". " + (record.getDescription() == null ? "" : record.getDescription());
+            for (UserAccount user : userAccountRepository.findAll()) {
+                boolean fleet = user.getRoles().stream()
+                        .anyMatch(role -> role.getName() == RoleName.FLEET_COORDINATOR);
+                if (fleet && user.getEmail() != null) {
+                    notificationService.email(user.getEmail(), subject, body);
+                }
+            }
+            record.setReminderSentAt(LocalDateTime.now());
+            maintenanceRecordRepository.save(record);
+            sent++;
+        }
+        return sent;
     }
 }
