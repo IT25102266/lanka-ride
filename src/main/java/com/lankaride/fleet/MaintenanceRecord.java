@@ -5,7 +5,6 @@ import com.lankaride.vehicle.Vehicle;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Fleet maintenance record (De Silva / UC-01).
@@ -46,10 +45,6 @@ public class MaintenanceRecord {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private MaintenanceStatus status = MaintenanceStatus.OPEN;
-
-    private Long sourceBookingId;
-
-    private LocalDateTime reminderSentAt;
 
     public Long getId() {
         return id;
@@ -137,21 +132,5 @@ public class MaintenanceRecord {
 
     public void setStatus(MaintenanceStatus status) {
         this.status = status;
-    }
-
-    public Long getSourceBookingId() {
-        return sourceBookingId;
-    }
-
-    public void setSourceBookingId(Long sourceBookingId) {
-        this.sourceBookingId = sourceBookingId;
-    }
-
-    public LocalDateTime getReminderSentAt() {
-        return reminderSentAt;
-    }
-
-    public void setReminderSentAt(LocalDateTime reminderSentAt) {
-        this.reminderSentAt = reminderSentAt;
     }
 }
