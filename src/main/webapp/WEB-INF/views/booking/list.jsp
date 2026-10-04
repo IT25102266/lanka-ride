@@ -17,6 +17,7 @@
     </div>
     <div class="d-flex flex-wrap gap-2">
         <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
+            <a class="btn btn-outline-dark btn-sm" href="<c:url value='/bookings/monitor'/>">Operations monitor</a>
             <a class="btn btn-outline-primary btn-sm ${pendingOnly ? 'active' : ''}" href="<c:url value='/bookings/pending'/>">Pending</a>
             <a class="btn btn-outline-secondary btn-sm ${empty pendingOnly ? 'active' : ''}" href="<c:url value='/bookings'/>">All</a>
         </sec:authorize>

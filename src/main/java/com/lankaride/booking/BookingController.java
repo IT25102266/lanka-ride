@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/bookings")
@@ -33,6 +34,15 @@ public class BookingController {
             model.addAttribute("bookings", bookingService.listForCustomer(auth.getName()));
         }
         return "booking/list";
+    }
+
+    @GetMapping("/monitor")
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATIONS_MANAGER','BOOKING_SUPERVISOR')")
+    public String monitor(Model model) {
+        List<Booking> bookings = bookingService.listAll();
+        model.addAttribute("bookings", bookings);
+        model.addAttribute("flagged", bookings.stream().filter(Booking::isDiscrepancyFlag).count());
+        return "booking/monitor";
     }
 
     @GetMapping("/pending")

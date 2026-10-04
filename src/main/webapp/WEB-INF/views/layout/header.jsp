@@ -46,6 +46,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<c:url value='/bookings'/>">Bookings</a>
                     </li>
+                    <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<c:url value='/bookings/monitor'/>">Monitor</a>
+                        </li>
+                    </sec:authorize>
                 </sec:authorize>
                 <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
                     <li class="nav-item">
