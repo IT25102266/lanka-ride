@@ -4,7 +4,7 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="mb-3">
-    <a class="small text-decoration-none" href="<c:url value='/support'/>">&larr; Back to support centre</a>
+    <a class="back-link" href="<c:url value='/support'/>">&larr; Back to support centre</a>
 </div>
 
 <div class="row justify-content-center">

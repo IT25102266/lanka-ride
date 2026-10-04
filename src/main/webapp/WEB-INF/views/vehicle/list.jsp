@@ -6,7 +6,7 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
     <div>
-        <h1 class="h2 mb-1">Find your perfect ride</h1>
+        <h1 class="page-title">Find your perfect ride</h1>
         <p class="text-muted mb-0">
             <c:choose>
                 <c:when test="${not empty pickupDate && not empty returnDate}">
@@ -71,14 +71,14 @@
             <label class="form-label small" for="maxPrice">Max LKR</label>
             <input class="form-control form-control-sm" id="maxPrice" name="maxPrice" type="number" step="0.01" value="${maxPrice}"/>
         </div>
-        <div class="col-md-3">
-            <div class="form-check mt-3">
+        <div class="col-md-3 d-flex align-items-center" style="min-height:2.15rem;">
+            <div class="form-check mb-0">
                 <input class="form-check-input" type="checkbox" id="availableOnly" name="availableOnly" value="true"
                        <c:if test="${availableOnly}">checked</c:if>/>
                 <label class="form-check-label small" for="availableOnly">Available only</label>
             </div>
         </div>
-        <div class="col-md-5 d-flex gap-2 justify-content-md-end">
+        <div class="col-md-5 d-flex gap-2 justify-content-md-end align-items-center">
             <button type="submit" class="btn btn-primary btn-sm">Search</button>
             <a class="btn btn-outline-secondary btn-sm" href="<c:url value='/vehicles'/>">Reset</a>
         </div>
@@ -96,10 +96,16 @@
             <a class="vehicle-card" href="${detailUrl}">
                 <c:choose>
                     <c:when test="${not empty v.photoUrl}">
-                        <img src="${v.photoUrl}" alt="${v.brand} ${v.model}"/>
+                        <img src="${v.photoUrl}" alt="${v.brand} ${v.model}"
+                             onerror="this.hidden=true; this.nextElementSibling.hidden=false;"/>
+                        <div class="photo-fallback" hidden>
+                            <i class="bi bi-car-front"></i>
+                        </div>
                     </c:when>
                     <c:otherwise>
-                        <div style="height:160px;background:#dfe8e2;"></div>
+                        <div class="photo-fallback">
+                            <i class="bi bi-car-front"></i>
+                        </div>
                     </c:otherwise>
                 </c:choose>
                 <div class="body">

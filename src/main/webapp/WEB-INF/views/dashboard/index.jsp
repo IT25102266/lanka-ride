@@ -56,7 +56,7 @@
 <div class="row g-3 mb-4">
     <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/bookings/pending'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/bookings/pending'/>">
                 <div class="item-kicker">Bookings</div>
                 <h3 class="item-title">Pending approvals</h3>
                 <div class="item-meta"><span>${pendingBookings} waiting for a decision</span></div>
@@ -65,7 +65,7 @@
     </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/vehicles/new'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/vehicles/new'/>">
                 <div class="item-kicker">Fleet</div>
                 <h3 class="item-title">Add vehicle</h3>
                 <div class="item-meta"><span>Create a new fleet record</span></div>
@@ -74,7 +74,7 @@
     </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/maintenance'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/maintenance'/>">
                 <div class="item-kicker">Fleet</div>
                 <h3 class="item-title">Maintenance</h3>
                 <div class="item-meta"><span>Service records and availability</span></div>
@@ -83,7 +83,7 @@
     </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/payments'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/payments'/>">
                 <div class="item-kicker">Finance</div>
                 <h3 class="item-title">Payments ledger</h3>
                 <div class="item-meta"><span>Transactions, refunds, invoices</span></div>
@@ -92,7 +92,7 @@
     </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/reports'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/reports'/>">
                 <div class="item-kicker">Reports</div>
                 <h3 class="item-title">Branch &amp; period reports</h3>
                 <div class="item-meta"><span>Daily / monthly / annual + utilization</span></div>
@@ -101,7 +101,7 @@
     </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/support'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/support'/>">
                 <div class="item-kicker">Support</div>
                 <h3 class="item-title">Support tickets</h3>
                 <div class="item-meta"><span>Respond to customer issues</span></div>
@@ -110,7 +110,7 @@
     </sec:authorize>
     <sec:authorize access="hasRole('ADMIN')">
         <div class="col-md-6 col-lg-4">
-            <a class="item-card text-decoration-none h-100" href="<c:url value='/admin'/>" style="display:block;">
+            <a class="item-card h-100" href="<c:url value='/admin'/>">
                 <div class="item-kicker">Admin</div>
                 <h3 class="item-title">System admin</h3>
                 <div class="item-meta"><span>Add branches and staff users</span></div>

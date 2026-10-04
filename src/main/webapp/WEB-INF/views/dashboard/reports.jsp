@@ -57,25 +57,25 @@
     <div class="col-md-3">
         <div class="stat-mini">
             <div class="label">Collected</div>
-            <div class="value" style="font-size:1.55rem;">LKR ${collected}</div>
+            <div class="value">LKR ${collected}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-mini">
             <div class="label">Refunds</div>
-            <div class="value" style="font-size:1.55rem;">LKR ${refunds}</div>
+            <div class="value">LKR ${refunds}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-mini">
             <div class="label">Net</div>
-            <div class="value" style="font-size:1.55rem;">LKR ${net}</div>
+            <div class="value">LKR ${net}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-mini">
             <div class="label">Bookings / completed</div>
-            <div class="value" style="font-size:1.55rem;">${bookingsInPeriod} / ${completedInPeriod}</div>
+            <div class="value">${bookingsInPeriod} / ${completedInPeriod}</div>
         </div>
     </div>
 </div>

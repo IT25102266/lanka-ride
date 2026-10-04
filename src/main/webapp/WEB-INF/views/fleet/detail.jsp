@@ -5,7 +5,7 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="mb-3">
-    <a class="small text-decoration-none" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
+    <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
 </div>
 
 <c:set var="rs" value="${fn:toLowerCase(fn:replace(record.status.name(), '_', '-'))}"/>
