@@ -133,4 +133,32 @@ public class ReportService {
         report.put("branchId", branchId);
         return report;
     }
+
+    public String toCsv(Map<String, Object> report) {
+        StringBuilder csv = new StringBuilder();
+        csv.append("section,name,value\n");
+        csv.append("summary,label,").append(csvCell(report.get("label"))).append('\n');
+        csv.append("summary,collected,").append(csvCell(report.get("collected"))).append('\n');
+        csv.append("summary,refunds,").append(csvCell(report.get("refunds"))).append('\n');
+        csv.append("summary,net,").append(csvCell(report.get("net"))).append('\n');
+        csv.append("summary,bookings,").append(csvCell(report.get("bookingsInPeriod"))).append('\n');
+        csv.append("summary,completed,").append(csvCell(report.get("completedInPeriod"))).append('\n');
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> branchRows = (List<Map<String, Object>>) report.get("branchRows");
+        if (branchRows != null) {
+            for (Map<String, Object> row : branchRows) {
+                Branch branch = (Branch) row.get("branch");
+                csv.append("branch,").append(csvCell(branch.getName())).append(',')
+                        .append(csvCell(row.get("revenue"))).append('\n');
+                csv.append("utilization,").append(csvCell(branch.getName())).append(',')
+                        .append(csvCell(row.get("utilization"))).append('\n');
+            }
+        }
+        return csv.toString();
+    }
+
+    private String csvCell(Object value) {
+        String text = value == null ? "" : String.valueOf(value);
+        return "\"" + text.replace("\"", "\"\"") + "\"";
+    }
 }

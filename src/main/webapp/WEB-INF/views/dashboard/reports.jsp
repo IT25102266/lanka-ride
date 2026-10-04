@@ -9,9 +9,19 @@
         <h1 class="page-title">Reports</h1>
         <p class="page-lead">${label}</p>
     </div>
-    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.print()">
-        <i class="bi bi-printer"></i> Print / export
-    </button>
+    <c:url var="exportUrl" value="/reports/export">
+        <c:param name="period" value="${period}"/>
+        <c:param name="date" value="${refDate}"/>
+        <c:if test="${not empty branchId}">
+            <c:param name="branchId" value="${branchId}"/>
+        </c:if>
+    </c:url>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary btn-sm" href="${exportUrl}">Download CSV</a>
+        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print
+        </button>
+    </div>
 </div>
 
 <form method="get" class="filter-bar mb-4">

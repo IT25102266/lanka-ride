@@ -2,6 +2,9 @@ package com.lankaride.dashboard;
 
 import com.lankaride.vehicle.BranchRepository;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,5 +36,17 @@ public class ReportsController {
         model.addAllAttributes(report);
         model.addAttribute("branches", branchRepository.findAll());
         return "dashboard/reports";
+    }
+
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<String> export(@RequestParam(defaultValue = "daily") String period,
+                                         @RequestParam(required = false) Long branchId,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Map<String, Object> report = reportService.buildReport(period, branchId, date);
+        String csv = reportService.toCsv(report);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=lanka-ride-report.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv);
     }
 }
