@@ -34,6 +34,9 @@ public class PaymentTransaction {
     @Column(length = 300)
     private String note;
 
+    @Column(length = 80)
+    private String actorUsername;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -99,5 +102,13 @@ public class PaymentTransaction {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getActorUsername() {
+        return actorUsername;
+    }
+
+    public void setActorUsername(String actorUsername) {
+        this.actorUsername = actorUsername;
     }
 }

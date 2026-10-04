@@ -6,8 +6,8 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
-        <h1 class="page-title">Payments ledger</h1>
-        <p class="page-lead">Sandbox gateway history — deposits, rentals, late fees, damage, and refunds.</p>
+        <h1 class="page-title">Payment audit trail</h1>
+        <p class="page-lead">Every sandbox charge, decline, fee, and refund, with the account that recorded it.</p>
     </div>
 </div>
 
@@ -27,6 +27,7 @@
                         <div class="item-meta">
                             <span><i class="bi bi-hash"></i> ${p.gatewayReference}</span>
                             <span><i class="bi bi-clock"></i> ${p.createdAt}</span>
+                            <c:if test="${not empty p.actorUsername}"><span><i class="bi bi-person"></i> ${p.actorUsername}</span></c:if>
                             <c:if test="${not empty p.note}"><span>${p.note}</span></c:if>
                         </div>
                     </div>
