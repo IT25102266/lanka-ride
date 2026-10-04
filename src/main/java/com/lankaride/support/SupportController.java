@@ -2,6 +2,7 @@ package com.lankaride.support;
 
 import com.lankaride.auth.UserAccount;
 import com.lankaride.auth.UserAccountRepository;
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.TicketStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -53,12 +54,22 @@ public class SupportController {
     public String create(@RequestParam String subject,
                          @RequestParam String message,
                          Authentication auth,
-                         RedirectAttributes redirectAttributes) {
+                         RedirectAttributes redirectAttributes,
+                         Model model) {
+        try {
+            subject = InputChecks.requiredText(subject, "Subject", 3, 150);
+            message = InputChecks.requiredText(message, "Message", 10, 2000);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("subject", subject);
+            model.addAttribute("message", message);
+            return "support/form";
+        }
         UserAccount customer = userAccountRepository.findByUsername(auth.getName()).orElseThrow();
         SupportTicket ticket = new SupportTicket();
         ticket.setCustomer(customer);
-        ticket.setSubject(subject.trim());
-        ticket.setMessage(message.trim());
+        ticket.setSubject(subject);
+        ticket.setMessage(message);
         ticket.setStatus(TicketStatus.OPEN);
         SupportTicket saved = supportTicketRepository.save(ticket);
         notificationService.email(customer.getEmail(), "Support ticket #" + saved.getId() + " opened",
@@ -88,6 +99,12 @@ public class SupportController {
                           @RequestParam String staffResponse,
                           @RequestParam TicketStatus status,
                           RedirectAttributes redirectAttributes) {
+        try {
+            staffResponse = InputChecks.requiredText(staffResponse, "Response", 3, 2000);
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/support/" + id;
+        }
         SupportTicket ticket = supportTicketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
         ticket.setStaffResponse(staffResponse);
@@ -99,6 +116,23 @@ public class SupportController {
                 "Status: " + status + ". " + staffResponse);
         redirectAttributes.addFlashAttribute("message", "Ticket updated");
         return "redirect:/support/" + id;
+    }
+
+    @PostMapping("/{id}/delete")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(@PathVariable Long id,
+                         Authentication auth,
+                         RedirectAttributes redirectAttributes) {
+        SupportTicket ticket = supportTicketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        boolean staff = isStaff(auth);
+        if (!staff && !ticket.getCustomer().getUsername().equals(auth.getName())) {
+            redirectAttributes.addFlashAttribute("error", "You can only delete your own tickets");
+            return "redirect:/support";
+        }
+        supportTicketRepository.delete(ticket);
+        redirectAttributes.addFlashAttribute("message", "Ticket #" + id + " permanently deleted");
+        return "redirect:/support";
     }
 
     @GetMapping("/notifications")

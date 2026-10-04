@@ -3,6 +3,7 @@ package com.lankaride.support;
 import com.lankaride.auth.RoleRepository;
 import com.lankaride.auth.UserAccount;
 import com.lankaride.auth.UserAccountRepository;
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.RoleName;
 import com.lankaride.vehicle.Branch;
 import com.lankaride.vehicle.BranchRepository;
@@ -49,11 +50,18 @@ public class AdminController {
     public String addBranch(@RequestParam String name,
                             @RequestParam String address,
                             RedirectAttributes redirectAttributes) {
-        if (branchRepository.findByName(name.trim()).isPresent()) {
+        try {
+            name = InputChecks.label(name, "Branch name");
+            address = InputChecks.requiredText(address, "Address", 3, 200);
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/admin";
+        }
+        if (branchRepository.findByName(name).isPresent()) {
             redirectAttributes.addFlashAttribute("error", "Branch already exists");
             return "redirect:/admin";
         }
-        branchRepository.save(new Branch(name.trim(), address.trim()));
+        branchRepository.save(new Branch(name, address));
         redirectAttributes.addFlashAttribute("message", "Branch added");
         return "redirect:/admin";
     }
@@ -65,14 +73,23 @@ public class AdminController {
                           @RequestParam String password,
                           @RequestParam RoleName role,
                           RedirectAttributes redirectAttributes) {
+        try {
+            username = InputChecks.username(username);
+            email = InputChecks.email(email);
+            fullName = InputChecks.personName(fullName);
+            InputChecks.password(password);
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/admin";
+        }
         if (userAccountRepository.existsByUsername(username) || userAccountRepository.existsByEmail(email)) {
             redirectAttributes.addFlashAttribute("error", "Username or email already exists");
             return "redirect:/admin";
         }
         UserAccount user = new UserAccount();
-        user.setUsername(username.trim());
-        user.setEmail(email.trim());
-        user.setFullName(fullName.trim());
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setFullName(fullName);
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setRoles(Set.of(roleRepository.findByName(role).orElseThrow()));
         userAccountRepository.save(user);

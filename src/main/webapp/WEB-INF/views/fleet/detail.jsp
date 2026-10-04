@@ -55,11 +55,16 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <div>
                             <label class="form-label small mb-1" for="finalCost">Final cost (LKR)</label>
-                            <input class="form-control form-control-sm" id="finalCost" name="finalCost" type="number" step="0.01"/>
+                            <input class="form-control form-control-sm" id="finalCost" name="finalCost" type="number" min="0" step="0.01"/>
                         </div>
                         <button type="submit" class="btn btn-success btn-sm">Close &amp; make available</button>
                     </form>
                 </c:if>
+                <form method="post" action="<c:url value='/maintenance/${record.id}/delete'/>"
+                      onsubmit="return confirm('Permanently delete this maintenance record from the database?');">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete permanently</button>
+                </form>
             </div>
         </div>
     </div>

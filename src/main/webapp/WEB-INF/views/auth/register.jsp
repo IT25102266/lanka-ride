@@ -17,11 +17,12 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full name</label>
-                <input id="fullName" name="fullName" class="form-control" value="${fullName}" required/>
+                <input id="fullName" name="fullName" class="form-control" value="${fullName}" required minlength="2" maxlength="80"/>
             </div>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input id="username" name="username" class="form-control" value="${username}" required/>
+                <input id="username" name="username" class="form-control" value="${username}" required
+                       minlength="3" maxlength="30" pattern="[A-Za-z][A-Za-z0-9._]{2,29}"/>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -29,7 +30,7 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" name="password" class="form-control" required/>
+                <input id="password" type="password" name="password" class="form-control" required minlength="8" maxlength="80"/>
             </div>
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label">Confirm password</label>

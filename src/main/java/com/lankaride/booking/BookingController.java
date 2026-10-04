@@ -61,12 +61,16 @@ public class BookingController {
                              @RequestParam(required = false) LocalDate pickupDate,
                              @RequestParam(required = false) LocalDate returnDate,
                              Model model) {
+        LocalDate pickup = pickupDate != null ? pickupDate : LocalDate.now().plusDays(1);
+        LocalDate dropOff = returnDate != null ? returnDate : LocalDate.now().plusDays(3);
         model.addAttribute("vehicles", vehicleService.search(null, null, null, null, null, null, null));
         model.addAttribute("branches", vehicleService.listBranches());
+        model.addAttribute("blockedVehicleIds", bookingService.blockedVehicleIds(pickup, dropOff));
         model.addAttribute("selectedVehicleId", vehicleId);
         model.addAttribute("selectedBranchId", branchId);
-        model.addAttribute("pickupDate", pickupDate != null ? pickupDate : LocalDate.now().plusDays(1));
-        model.addAttribute("returnDate", returnDate != null ? returnDate : LocalDate.now().plusDays(3));
+        model.addAttribute("pickupDate", pickup);
+        model.addAttribute("returnDate", dropOff);
+        model.addAttribute("today", LocalDate.now());
         return "booking/form";
     }
 
@@ -88,9 +92,12 @@ public class BookingController {
             model.addAttribute("error", ex.getMessage());
             model.addAttribute("vehicles", vehicleService.search(null, null, null, null, null, null, null));
             model.addAttribute("branches", vehicleService.listBranches());
+            model.addAttribute("blockedVehicleIds", bookingService.blockedVehicleIds(pickupDate, returnDate));
             model.addAttribute("selectedVehicleId", vehicleId);
+            model.addAttribute("selectedBranchId", branchId);
             model.addAttribute("pickupDate", pickupDate);
             model.addAttribute("returnDate", returnDate);
+            model.addAttribute("today", LocalDate.now());
             return "booking/form";
         }
     }
@@ -152,6 +159,21 @@ public class BookingController {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/bookings/" + id;
+    }
+
+    @PostMapping("/{id}/delete")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(@PathVariable Long id,
+                         Authentication auth,
+                         RedirectAttributes redirectAttributes) {
+        try {
+            bookingService.deletePermanently(id, auth.getName(), isStaff(auth));
+            redirectAttributes.addFlashAttribute("message", "Booking #" + id + " permanently deleted");
+            return "redirect:/bookings";
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/bookings/" + id;
+        }
     }
 
     private boolean isStaff(Authentication auth) {

@@ -124,13 +124,22 @@
             </div>
         </c:if>
 
-        <c:if test="${booking.status.name() == 'PENDING' || booking.status.name() == 'APPROVED'}">
-            <form method="post" action="<c:url value='/bookings/${booking.id}/cancel'/>"
-                  onsubmit="return confirm('Cancel this booking?');">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn btn-outline-secondary btn-sm">Cancel booking</button>
-            </form>
-        </c:if>
+        <div class="d-flex flex-wrap gap-2">
+            <c:if test="${booking.status.name() == 'PENDING' || booking.status.name() == 'APPROVED'}">
+                <form method="post" action="<c:url value='/bookings/${booking.id}/cancel'/>"
+                      onsubmit="return confirm('Cancel this booking? The record stays, marked cancelled.');">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Cancel booking</button>
+                </form>
+            </c:if>
+            <c:if test="${staff or booking.paymentStatus.name() == 'UNPAID' or booking.paymentStatus.name() == 'PENDING_PAYMENT'}">
+                <form method="post" action="<c:url value='/bookings/${booking.id}/delete'/>"
+                      onsubmit="return confirm('Permanently delete this booking and its payments from the database?');">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete permanently</button>
+                </form>
+            </c:if>
+        </div>
     </div>
 
     <div class="col-lg-5">

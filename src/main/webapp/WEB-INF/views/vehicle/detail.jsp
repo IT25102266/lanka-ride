@@ -75,6 +75,11 @@
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-outline-danger">Retire</button>
                 </form>
+                <form method="post" action="<c:url value='/vehicles/${vehicle.id}/delete'/>"
+                      onsubmit="return confirm('Permanently delete this vehicle? Its bookings, payments, maintenance, and transfer log will also be removed from the database.');">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger">Delete permanently</button>
+                </form>
             </sec:authorize>
         </div>
     </div>

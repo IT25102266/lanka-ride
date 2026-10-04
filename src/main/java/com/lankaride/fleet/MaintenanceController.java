@@ -6,6 +6,8 @@ import com.lankaride.vehicle.VehicleService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
@@ -50,10 +52,18 @@ public class MaintenanceController {
 
     @PostMapping
     public String create(@RequestParam Long vehicleId,
-                         @ModelAttribute("record") MaintenanceRecord record,
+                         @Valid @ModelAttribute("record") MaintenanceRecord record,
+                         BindingResult bindingResult,
                          @RequestParam(defaultValue = "false") boolean force,
                          Model model,
                          RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("vehicles", vehicleService.search(null, null, null, null, null, null, null));
+            model.addAttribute("statuses", new MaintenanceStatus[]{MaintenanceStatus.OPEN, MaintenanceStatus.IN_PROGRESS});
+            model.addAttribute("selectedVehicleId", vehicleId);
+            model.addAttribute("conflicts", List.of());
+            return "fleet/form";
+        }
         try {
             List<Booking> conflicts = maintenanceService.findConflictingBookings(vehicleId);
             if (!conflicts.isEmpty() && !force) {
@@ -103,16 +113,30 @@ public class MaintenanceController {
 
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @ModelAttribute("record") MaintenanceRecord record,
+                         @Valid @ModelAttribute("record") MaintenanceRecord record,
+                         BindingResult bindingResult,
                          RedirectAttributes redirectAttributes,
                          Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("vehicles", List.of(maintenanceService.getById(id).getVehicle()));
+            model.addAttribute("statuses", new MaintenanceStatus[]{MaintenanceStatus.OPEN, MaintenanceStatus.IN_PROGRESS});
+            model.addAttribute("selectedVehicleId", maintenanceService.getById(id).getVehicle().getId());
+            model.addAttribute("editing", true);
+            model.addAttribute("conflicts", List.of());
+            return "fleet/form";
+        }
         try {
             maintenanceService.update(id, record);
             redirectAttributes.addFlashAttribute("message", "Maintenance record updated");
             return "redirect:/maintenance/" + id;
         } catch (IllegalArgumentException ex) {
+            MaintenanceRecord existing = maintenanceService.getById(id);
             model.addAttribute("error", ex.getMessage());
-            model.addAttribute("record", maintenanceService.getById(id));
+            model.addAttribute("record", record);
+            model.addAttribute("vehicles", List.of(existing.getVehicle()));
+            model.addAttribute("statuses", new MaintenanceStatus[]{MaintenanceStatus.OPEN, MaintenanceStatus.IN_PROGRESS});
+            model.addAttribute("selectedVehicleId", existing.getVehicle().getId());
+            model.addAttribute("conflicts", List.of());
             model.addAttribute("editing", true);
             return "fleet/form";
         }
@@ -131,5 +155,12 @@ public class MaintenanceController {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/maintenance/" + id;
         }
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        maintenanceService.deletePermanently(id);
+        redirectAttributes.addFlashAttribute("message", "Maintenance record #" + id + " permanently deleted");
+        return "redirect:/maintenance";
     }
 }

@@ -11,4 +11,6 @@ public interface MaintenanceRecordRepository extends JpaRepository<MaintenanceRe
     List<MaintenanceRecord> findAllByOrderByServiceDateDesc();
 
     long countByVehicleIdAndStatusIn(Long vehicleId, List<MaintenanceStatus> statuses);
+
+    void deleteByVehicleId(Long vehicleId);
 }

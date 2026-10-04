@@ -11,6 +11,8 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
 
     List<PaymentTransaction> findByBookingIdOrderByCreatedAtAsc(Long bookingId);
 
+    void deleteByBookingId(Long bookingId);
+
     List<PaymentTransaction> findAllByOrderByCreatedAtDesc();
 
     @Query("""

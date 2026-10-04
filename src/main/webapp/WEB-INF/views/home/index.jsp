@@ -38,12 +38,12 @@
                     <div class="col-6">
                         <label class="form-label" for="pickupDate">From</label>
                         <input class="form-control" type="date" id="pickupDate" name="pickupDate"
-                               value="${pickupDate}" required/>
+                               value="${pickupDate}" min="${today}" required/>
                     </div>
                     <div class="col-6">
                         <label class="form-label" for="returnDate">To</label>
                         <input class="form-control" type="date" id="returnDate" name="returnDate"
-                               value="${returnDate}" required/>
+                               value="${returnDate}" min="${pickupDate}" required/>
                     </div>
                 </div>
                 <div class="form-check mb-2">

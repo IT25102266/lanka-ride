@@ -3,6 +3,7 @@ package com.lankaride.payment;
 import com.lankaride.booking.Booking;
 import com.lankaride.booking.BookingRepository;
 import com.lankaride.common.BookingStatus;
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.PaymentStatus;
 import com.lankaride.common.PaymentType;
 import com.lankaride.fleet.MaintenanceService;
@@ -119,8 +120,8 @@ public class PaymentService {
         if (booking.getStatus() != BookingStatus.ONGOING && booking.getStatus() != BookingStatus.APPROVED) {
             throw new IllegalArgumentException("Booking is not ready for pickup");
         }
-        booking.setPickupMileage(mileage);
-        booking.setPickupFuelLevel(fuelLevel);
+        booking.setPickupMileage(InputChecks.mileage(mileage, "Pickup mileage"));
+        booking.setPickupFuelLevel(InputChecks.fuelLevel(fuelLevel));
         booking.setStatus(BookingStatus.ONGOING);
         return bookingRepository.save(booking);
     }
@@ -133,16 +134,16 @@ public class PaymentService {
         if (booking.getStatus() != BookingStatus.ONGOING) {
             throw new IllegalArgumentException("Only ongoing rentals can be returned");
         }
-        if (booking.getPickupMileage() != null && returnMileage != null
-                && returnMileage < booking.getPickupMileage()) {
+        int checkedMileage = InputChecks.mileage(returnMileage, "Return mileage");
+        if (booking.getPickupMileage() != null && checkedMileage < booking.getPickupMileage()) {
             throw new IllegalArgumentException("Return mileage cannot be less than pickup mileage");
         }
 
-        booking.setReturnMileage(returnMileage);
-        booking.setReturnFuelLevel(returnFuel);
+        booking.setReturnMileage(checkedMileage);
+        booking.setReturnFuelLevel(InputChecks.fuelLevel(returnFuel));
         booking.setReturnedAt(LocalDateTime.now());
-        booking.setLateFeeAmount(lateFee == null ? BigDecimal.ZERO : lateFee);
-        booking.setDamageChargeAmount(damageCharge == null ? BigDecimal.ZERO : damageCharge);
+        booking.setLateFeeAmount(InputChecks.optionalMoney(lateFee, "Late fee"));
+        booking.setDamageChargeAmount(InputChecks.optionalMoney(damageCharge, "Damage charge"));
 
         if (booking.getLateFeeAmount().compareTo(BigDecimal.ZERO) > 0) {
             saveTx(booking, PaymentType.LATE_FEE, booking.getLateFeeAmount(), true,
@@ -202,6 +203,7 @@ public class PaymentService {
             throw new IllegalArgumentException("Nothing to refund");
         }
 
+        reason = InputChecks.requiredText(reason, "Refund reason", 3, 300);
         saveTx(booking, PaymentType.REFUND, refundable, true,
                 "REF-" + booking.getId(), reason, staffUser);
         booking.setPaymentStatus(PaymentStatus.REFUNDED);

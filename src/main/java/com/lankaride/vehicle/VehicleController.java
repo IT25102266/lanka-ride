@@ -36,6 +36,15 @@ public class VehicleController {
                        @RequestParam(required = false, defaultValue = "false") boolean availableOnly,
                        Model model) {
         boolean dateSearch = pickupDate != null && returnDate != null;
+        if (dateSearch && returnDate.isBefore(pickupDate)) {
+            model.addAttribute("error", "Return date must be on or after the pickup date");
+            dateSearch = false;
+            pickupDate = null;
+            returnDate = null;
+        } else if (dateSearch && pickupDate.isBefore(LocalDate.now())) {
+            model.addAttribute("error", "Pickup date cannot be in the past");
+            dateSearch = false;
+        }
         model.addAttribute("vehicles", vehicleService.search(
                 category, gearbox, fuelType, branchId, minPrice, maxPrice, status,
                 pickupDate, returnDate, availableOnly || dateSearch));
@@ -157,6 +166,15 @@ public class VehicleController {
     public String retire(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         vehicleService.retire(id);
         redirectAttributes.addFlashAttribute("message", "Vehicle retired from active fleet");
+        return "redirect:/vehicles";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        String registration = vehicleService.getById(id).getRegistrationNumber();
+        vehicleService.deletePermanently(id);
+        redirectAttributes.addFlashAttribute("message",
+                registration + " and its related bookings, payments, and maintenance were permanently deleted");
         return "redirect:/vehicles";
     }
 

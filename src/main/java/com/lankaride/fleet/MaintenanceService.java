@@ -5,6 +5,7 @@ import com.lankaride.auth.UserAccountRepository;
 import com.lankaride.booking.Booking;
 import com.lankaride.booking.BookingRepository;
 import com.lankaride.common.BookingStatus;
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.MaintenanceStatus;
 import com.lankaride.common.RoleName;
 import com.lankaride.common.VehicleStatus;
@@ -72,6 +73,7 @@ public class MaintenanceService {
                             + " future/active booking(s). Confirm to take it offline for maintenance.");
         }
 
+        validate(incoming);
         incoming.setId(null);
         incoming.setVehicle(vehicle);
         if (incoming.getStatus() == null) {
@@ -92,6 +94,7 @@ public class MaintenanceService {
         if (existing.getStatus() == MaintenanceStatus.CLOSED) {
             throw new IllegalArgumentException("Closed records cannot be edited");
         }
+        validate(incoming);
         existing.setServiceType(incoming.getServiceType());
         existing.setServiceDate(incoming.getServiceDate());
         existing.setEstimatedCompletionDate(incoming.getEstimatedCompletionDate());
@@ -112,7 +115,7 @@ public class MaintenanceService {
         }
         existing.setStatus(MaintenanceStatus.CLOSED);
         existing.setCompletionDate(LocalDate.now());
-        existing.setFinalCost(finalCost);
+        existing.setFinalCost(finalCost == null ? null : InputChecks.optionalMoney(finalCost, "Final cost"));
         MaintenanceRecord saved = maintenanceRecordRepository.save(existing);
 
         Long vehicleId = existing.getVehicle().getId();
@@ -181,5 +184,37 @@ public class MaintenanceService {
             sent++;
         }
         return sent;
+    }
+
+    @Transactional
+    public void deletePermanently(Long id) {
+        MaintenanceRecord record = getById(id);
+        Long vehicleId = record.getVehicle().getId();
+        maintenanceRecordRepository.delete(record);
+        maintenanceRecordRepository.flush();
+        long openCount = maintenanceRecordRepository.countByVehicleIdAndStatusIn(
+                vehicleId, List.of(MaintenanceStatus.OPEN, MaintenanceStatus.IN_PROGRESS));
+        if (openCount == 0) {
+            vehicleRepository.findById(vehicleId).ifPresent(vehicle -> {
+                if (vehicle.getStatus() == VehicleStatus.MAINTENANCE) {
+                    vehicle.setStatus(VehicleStatus.AVAILABLE);
+                    vehicleRepository.save(vehicle);
+                }
+            });
+        }
+    }
+
+    private void validate(MaintenanceRecord record) {
+        record.setServiceType(InputChecks.requiredText(record.getServiceType(), "Service type", 3, 50));
+        if (record.getServiceDate() == null) {
+            throw new IllegalArgumentException("Service date is required");
+        }
+        InputChecks.orderedDates(record.getServiceDate(), record.getEstimatedCompletionDate(),
+                "Estimated completion");
+        if (record.getEstimatedCost() != null) {
+            record.setEstimatedCost(InputChecks.optionalMoney(record.getEstimatedCost(), "Estimated cost"));
+        }
+        record.setDescription(InputChecks.optionalText(record.getDescription(), "Description", 1000));
+        record.setMechanicsAssigned(InputChecks.optionalText(record.getMechanicsAssigned(), "Mechanics", 200));
     }
 }

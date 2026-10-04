@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:if test="${layoutMode != 'marketing'}">
             </div>
@@ -6,7 +7,7 @@
 <footer class="site-footer">
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
         <span class="small">&copy; 2026 Lanka Ride Rentals</span>
-        <span class="small">Colombo · Kandy · Galle</span>
+        <span class="small">Colombo &middot; Kandy &middot; Galle</span>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

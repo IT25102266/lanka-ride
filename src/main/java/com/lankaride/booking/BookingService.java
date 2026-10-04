@@ -3,8 +3,10 @@ package com.lankaride.booking;
 import com.lankaride.auth.UserAccount;
 import com.lankaride.auth.UserAccountRepository;
 import com.lankaride.common.BookingStatus;
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.PaymentStatus;
 import com.lankaride.common.VehicleStatus;
+import com.lankaride.payment.PaymentTransactionRepository;
 import com.lankaride.support.NotificationService;
 import com.lankaride.vehicle.Branch;
 import com.lankaride.vehicle.BranchRepository;
@@ -28,17 +30,20 @@ public class BookingService {
     private final BranchRepository branchRepository;
     private final UserAccountRepository userAccountRepository;
     private final NotificationService notificationService;
+    private final PaymentTransactionRepository paymentTransactionRepository;
 
     public BookingService(BookingRepository bookingRepository,
                           VehicleRepository vehicleRepository,
                           BranchRepository branchRepository,
                           UserAccountRepository userAccountRepository,
-                          NotificationService notificationService) {
+                          NotificationService notificationService,
+                          PaymentTransactionRepository paymentTransactionRepository) {
         this.bookingRepository = bookingRepository;
         this.vehicleRepository = vehicleRepository;
         this.branchRepository = branchRepository;
         this.userAccountRepository = userAccountRepository;
         this.notificationService = notificationService;
+        this.paymentTransactionRepository = paymentTransactionRepository;
     }
 
     public List<Booking> listAll() {
@@ -65,12 +70,7 @@ public class BookingService {
     @Transactional
     public Booking create(String username, Long vehicleId, Long branchId,
                           LocalDate pickupDate, LocalDate returnDate) {
-        if (pickupDate == null || returnDate == null || returnDate.isBefore(pickupDate)) {
-            throw new IllegalArgumentException("Return date must be on or after pickup date");
-        }
-        if (pickupDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Pickup date cannot be in the past");
-        }
+        InputChecks.tripDates(pickupDate, returnDate);
 
         UserAccount customer = userAccountRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
@@ -90,7 +90,8 @@ public class BookingService {
                 vehicleId, pickupDate, returnDate, BLOCKING_STATUSES);
         if (overlaps > 0) {
             throw new IllegalArgumentException(
-                    "Vehicle already has a booking overlapping those dates");
+                    "This vehicle is already booked from " + pickupDate + " to " + returnDate
+                            + ". Choose different dates.");
         }
 
         Booking booking = new Booking();
@@ -167,5 +168,35 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setDecidedBy(username);
         return bookingRepository.save(booking);
+    }
+
+    public java.util.Set<Long> blockedVehicleIds(LocalDate pickupDate, LocalDate returnDate) {
+        if (pickupDate == null || returnDate == null || returnDate.isBefore(pickupDate)) {
+            return java.util.Set.of();
+        }
+        return new java.util.HashSet<>(bookingRepository.findOverlappingVehicleIds(
+                pickupDate, returnDate, BLOCKING_STATUSES));
+    }
+
+    /**
+     * Removes the booking and its payment rows. Staff may delete any booking.
+     * A customer may delete only their own unpaid request.
+     */
+    @Transactional
+    public void deletePermanently(Long id, String username, boolean staff) {
+        Booking booking = getById(id);
+        if (!staff && !booking.getCustomer().getUsername().equals(username)) {
+            throw new IllegalArgumentException("You can only delete your own bookings");
+        }
+        if (!staff && (booking.getPaymentStatus() == PaymentStatus.PAID
+                || booking.getPaymentStatus() == PaymentStatus.REFUNDED
+                || booking.getStatus() == BookingStatus.ONGOING
+                || booking.getStatus() == BookingStatus.COMPLETED)) {
+            throw new IllegalArgumentException(
+                    "Paid or completed bookings stay on record. Ask staff if this booking should be removed.");
+        }
+        paymentTransactionRepository.deleteByBookingId(id);
+        paymentTransactionRepository.flush();
+        bookingRepository.delete(booking);
     }
 }
