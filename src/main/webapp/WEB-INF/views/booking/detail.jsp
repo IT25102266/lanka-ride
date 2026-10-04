@@ -80,6 +80,10 @@
                     <dd>${booking.returnMileage} km · fuel ${booking.returnFuelLevel}
                         · late LKR ${booking.lateFeeAmount} · damage LKR ${booking.damageChargeAmount}</dd>
                 </c:if>
+                <c:if test="${booking.discrepancyFlag}">
+                    <dt>Discrepancy</dt>
+                    <dd class="text-danger">${booking.discrepancyNote}</dd>
+                </c:if>
             </dl>
 
             <div class="d-flex flex-wrap gap-2 mt-3">

@@ -72,6 +72,12 @@ public class Booking {
 
     private String invoiceNumber;
 
+    @Column(nullable = false)
+    private boolean discrepancyFlag = false;
+
+    @Column(length = 500)
+    private String discrepancyNote;
+
     public Long getId() {
         return id;
     }
@@ -222,5 +228,21 @@ public class Booking {
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+    }
+
+    public boolean isDiscrepancyFlag() {
+        return discrepancyFlag;
+    }
+
+    public void setDiscrepancyFlag(boolean discrepancyFlag) {
+        this.discrepancyFlag = discrepancyFlag;
+    }
+
+    public String getDiscrepancyNote() {
+        return discrepancyNote;
+    }
+
+    public void setDiscrepancyNote(String discrepancyNote) {
+        this.discrepancyNote = discrepancyNote;
     }
 }
