@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
     List<NotificationLog> findAllByOrderByCreatedAtDesc();
+
+    List<NotificationLog> findByDeliveryStatusOrderByCreatedAtAsc(String deliveryStatus);
 }

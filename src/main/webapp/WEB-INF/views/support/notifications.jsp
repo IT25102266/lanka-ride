@@ -6,8 +6,12 @@
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
         <h1 class="page-title">Notification log</h1>
-        <p class="page-lead">Sandbox email / SMS-style messages recorded for the demo (booking, payment, reset).</p>
+        <p class="page-lead">Sandbox email log, including payment hooks and maintenance reminders. Failed rows can be retried.</p>
     </div>
+    <form method="post" action="<c:url value='/support/notifications/retry'/>">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <button class="btn btn-outline-primary btn-sm" type="submit">Retry failed (${failedCount})</button>
+    </form>
 </div>
 
 <c:choose>
@@ -19,7 +23,7 @@
             <c:forEach items="${notifications}" var="n">
                 <article class="notif-card">
                     <div class="d-flex flex-wrap justify-content-between gap-2 mb-1">
-                        <span class="channel">${n.channel}</span>
+                        <span class="channel">${n.channel} · ${n.deliveryStatus}<c:if test="${n.retryCount > 0}"> · retry ${n.retryCount}</c:if></span>
                         <span class="small text-muted">${n.createdAt}</span>
                     </div>
                     <h3 class="h6 mb-1">${n.subject}</h3>
