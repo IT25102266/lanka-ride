@@ -56,6 +56,11 @@
             </form>
         </div>
     </div>
+    <div class="hero-wave" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0,48 C180,80 360,8 540,36 C760,70 980,10 1200,40 C1320,56 1380,64 1440,48 L1440,80 L0,80 Z" fill="#f7f4ef"/>
+        </svg>
+    </div>
 </section>
 
 <section class="section-quiet">
