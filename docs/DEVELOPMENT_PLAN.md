@@ -154,7 +154,7 @@ Progress % below is **that member’s module**, not the whole repo.
 **Feature checklist**
 - [x] Vehicle CRUD  
 - [x] Photos / features  
-- [ ] Branch transfer log  
+- [x] Branch transfer log  
 - [x] Availability sync (with maintenance status)  
 - [x] Search & filter  
 - [x] Auth/RBAC foundation (with Pahasara)
@@ -179,7 +179,7 @@ Progress % below is **that member’s module**, not the whole repo.
 - [x] Full history view  
 - [x] Auto unavailable / available  
 - [x] Booking conflict warning  
-- [ ] Reminder hooks (with Pahasara)
+- [x] Reminder hooks (with Pahasara)
 
 ---
 
@@ -246,7 +246,7 @@ Progress % below is **that member’s module**, not the whole repo.
 - [x] Branch comparison  
 - [x] Utilization  
 - [x] Location visibility board  
-- [ ] Export (print via browser OK for demo)
+- [x] Export (CSV download and browser print)
 
 ---
 
@@ -268,7 +268,7 @@ Progress % below is **that member’s module**, not the whole repo.
 - [x] Support tickets  
 - [x] Password reset  
 - [x] Add branch / user (scalability)  
-- [ ] Cross-module QA (ongoing toward 100%)
+- [x] Cross-module QA (completion test + demo script)
 
 ---
 
@@ -298,16 +298,15 @@ Do **not** develop all six in parallel from empty repo. Sequence:
 
 | Member | Branch | 0% | 25% | 50% | 75% | 100% |
 |--------|--------|----|-----|-----|-----|------|
-| Sakalasooriya | `feat/sakalasooriya-vehicle` | ● | ● | ● | ●† | ○ |
-| De Silva | `feat/desilva-fleet` | ● | ● | ● | ●* | ○ |
-| Samaranayake | `feat/samaranayake-booking` | ● | ● | ● | ● | ○ |
-| Kavindi | `feat/kavindi-payment` | ● | ● | ● | ● | ○ |
-| Wickramasinghe | `feat/wickramasinghe-dashboard` | ● | ● | ● | ● | ○ |
-| Pahasara | `feat/pahasara-support` | ● | ● | ● | ● | ○ |
-| **Overall product** | `release/75-percent` | ● | ● | ● | **● 75% DONE** | ○ |
+| Sakalasooriya | `feat/sakalasooriya-vehicle` | ● | ● | ● | ● | ● |
+| De Silva | `feat/desilva-fleet` | ● | ● | ● | ● | ● |
+| Samaranayake | `feat/samaranayake-booking` | ● | ● | ● | ● | ● |
+| Kavindi | `feat/kavindi-payment` | ● | ● | ● | ● | ● |
+| Wickramasinghe | `feat/wickramasinghe-dashboard` | ● | ● | ● | ● | ● |
+| Pahasara | `feat/pahasara-support` | ● | ● | ● | ● | ● |
+| **Overall product** | `release/100-percent` | ● | ● | ● | ● | **● 100%** |
 
-\* De Silva auto unavailable/available + booking conflict warning shipped early to satisfy overall 50% integration.  
-† Branch transfer log still open for 100%; search/filters + availability already at 75%.
+The six module branches are merged to `main`. This release adds the curved UI pass, completion tests, and the demo script.
 
 Legend: ● reached · ○ not yet
 

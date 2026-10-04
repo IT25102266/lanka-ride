@@ -13,10 +13,10 @@
 
     <groupId>com.lankaride</groupId>
     <artifactId>lanka-ride</artifactId>
-    <version>0.75.0</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
     <name>Lanka Ride Rentals</name>
-    <description>Web-Based Vehicle Rental System — 75% milestone</description>
+    <description>Web-Based Vehicle Rental System — 100% complete</description>
 
     <properties>
         <java.version>17</java.version>
@@ -72,6 +72,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

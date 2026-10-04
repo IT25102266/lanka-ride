@@ -133,8 +133,8 @@ h1, h2, h3, .display-heading {
   justify-content: center;
   border: 1.5px solid var(--lr-gold);
   color: var(--lr-gold);
-  padding: 0.15rem 0.65rem;
-  border-radius: 0.4rem;
+  padding: 0.2rem 0.85rem;
+  border-radius: 999px;
   line-height: 1.2;
   text-decoration: none;
 }
@@ -169,6 +169,8 @@ h1, h2, h3, .display-heading {
   position: sticky;
   top: 0;
   z-index: 30;
+  border-radius: 0 0 2rem 2rem;
+  box-shadow: 0 16px 40px rgba(8, 24, 16, 0.18);
 }
 
 .nav-app .brand-mark {
@@ -208,12 +210,43 @@ h1, h2, h3, .display-heading {
   overflow: hidden;
 }
 
+.hero-full::before,
 .hero-full::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 30% 40%, transparent 0%, rgba(8, 24, 16, 0.25) 70%);
   pointer-events: none;
+  border-radius: 50%;
+}
+
+.hero-full::before {
+  width: 28rem;
+  height: 28rem;
+  right: -8rem;
+  top: -6rem;
+  background: radial-gradient(circle, rgba(232, 163, 23, 0.35), transparent 68%);
+}
+
+.hero-full::after {
+  width: 22rem;
+  height: 22rem;
+  left: -7rem;
+  bottom: 4rem;
+  background: radial-gradient(circle, rgba(45, 90, 69, 0.55), transparent 70%);
+}
+
+.hero-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 2;
+  line-height: 0;
+}
+
+.hero-wave svg {
+  display: block;
+  width: 100%;
+  height: 72px;
 }
 
 .hero-inner {
@@ -286,8 +319,8 @@ h1, h2, h3, .display-heading {
 .search-panel {
   background: var(--lr-surface);
   color: var(--lr-ink);
-  border-radius: 1.25rem;
-  padding: 1.5rem 1.5rem 1.35rem;
+  border-radius: 2.4rem 1.1rem 2.4rem 1.1rem;
+  padding: 1.6rem 1.55rem 1.4rem;
   box-shadow: var(--lr-shadow);
   max-width: 420px;
   margin: 0 auto;
@@ -375,6 +408,15 @@ h1, h2, h3, .display-heading {
   }
 }
 
+.branch-item,
+.step-item {
+  background: var(--lr-surface);
+  border: 1px solid var(--lr-border);
+  border-radius: 2.2rem 0.9rem 2.2rem 0.9rem;
+  padding: 1.35rem 1.4rem 1.45rem;
+  box-shadow: 0 10px 28px rgba(15, 42, 31, 0.05);
+}
+
 .branch-item h3 {
   font-size: 1.35rem;
   color: var(--lr-forest);
@@ -399,10 +441,6 @@ h1, h2, h3, .display-heading {
   }
 }
 
-.step-item {
-  padding: 0.25rem 0;
-}
-
 .step-item .num {
   font-family: var(--font-display);
   font-size: 1.75rem;
@@ -418,7 +456,7 @@ h1, h2, h3, .display-heading {
 .panel {
   background: var(--lr-surface);
   border: 1px solid var(--lr-border);
-  border-radius: 1rem;
+  border-radius: 1.8rem 0.85rem 1.8rem 0.85rem;
   box-shadow: 0 8px 28px rgba(15, 42, 31, 0.06);
 }
 
@@ -454,7 +492,7 @@ h1, h2, h3, .display-heading {
 .vehicle-card {
   background: var(--lr-surface);
   border: 1px solid var(--lr-border);
-  border-radius: 1rem;
+  border-radius: 1.8rem 0.85rem 1.8rem 0.85rem;
   overflow: hidden;
   height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -516,8 +554,26 @@ h1, h2, h3, .display-heading {
 .site-footer {
   background: var(--lr-forest);
   color: rgba(255, 255, 255, 0.75);
-  padding: 1.25rem 0;
+  padding: 0 0 1.25rem;
   margin-top: auto;
+  border-radius: 2.5rem 2.5rem 0 0;
+}
+
+.footer-wave {
+  display: block;
+  width: 100%;
+  height: 42px;
+  margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+  border-radius: 1rem;
+}
+
+.search-panel .form-control,
+.search-panel .form-select {
+  border-radius: 0;
 }
 
 .site-footer .small {
@@ -562,7 +618,7 @@ h1, h2, h3, .display-heading {
 .filter-bar {
   background: var(--lr-surface);
   border: 1px solid var(--lr-border);
-  border-radius: 1rem;
+  border-radius: 1.7rem 0.8rem 1.7rem 0.8rem;
   padding: 1rem 1.15rem;
   margin-bottom: 1.5rem;
 }
@@ -631,7 +687,7 @@ h1, h2, h3, .display-heading {
 .item-card {
   background: var(--lr-surface);
   border: 1px solid var(--lr-border);
-  border-radius: 1.1rem;
+  border-radius: 1.7rem 0.8rem 1.7rem 0.8rem;
   padding: 1.15rem 1.25rem;
   display: grid;
   grid-template-columns: 1fr auto;
