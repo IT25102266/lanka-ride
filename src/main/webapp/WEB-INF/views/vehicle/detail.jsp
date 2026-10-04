@@ -81,4 +81,47 @@
     </div>
 </div>
 
+<sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR','OPERATIONS_MANAGER')">
+    <div class="panel mt-4">
+        <h2 class="h5">Transfer to another branch</h2>
+        <p class="text-muted small">Moves the vehicle and writes a timestamped transfer log.</p>
+        <form method="post" action="<c:url value='/vehicles/${vehicle.id}/transfer'/>" class="row g-2 align-items-end">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="col-md-4">
+                <label class="form-label small">Destination branch</label>
+                <select class="form-select" name="toBranchId" required>
+                    <c:forEach items="${branches}" var="b">
+                        <option value="${b.id}" ${b.id == vehicle.branch.id ? 'disabled' : ''}>${b.name}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label small">Note</label>
+                <input class="form-control" name="note" maxlength="300" placeholder="Reason for the move"/>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" type="submit">Transfer</button>
+            </div>
+        </form>
+    </div>
+</sec:authorize>
+
+<div class="panel mt-4">
+    <h2 class="h5">Branch transfer log</h2>
+    <c:choose>
+        <c:when test="${empty transfers}">
+            <p class="text-muted mb-0">No transfers recorded.</p>
+        </c:when>
+        <c:otherwise>
+            <ul class="mb-0">
+                <c:forEach items="${transfers}" var="t">
+                    <li>${t.transferredAt} — ${t.fromBranch.name} → ${t.toBranch.name}
+                        <span class="text-muted">(by ${t.transferredBy}<c:if test="${not empty t.note}">, ${t.note}</c:if>)</span>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:otherwise>
+    </c:choose>
+</div>
+
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
