@@ -30,6 +30,14 @@ public class MaintenanceController {
         return "fleet/list";
     }
 
+    @PostMapping("/reminders")
+    public String reminders(RedirectAttributes redirectAttributes) {
+        int sent = maintenanceService.sendDueReminders();
+        redirectAttributes.addFlashAttribute("message",
+                sent == 0 ? "No maintenance reminders were due." : "Sent " + sent + " maintenance reminder(s).");
+        return "redirect:/maintenance";
+    }
+
     @GetMapping("/new")
     public String createForm(@RequestParam(required = false) Long vehicleId, Model model) {
         model.addAttribute("record", new MaintenanceRecord());
