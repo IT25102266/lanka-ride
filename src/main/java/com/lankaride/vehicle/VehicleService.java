@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,13 +22,16 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final BranchRepository branchRepository;
     private final BookingRepository bookingRepository;
+    private final BranchTransferRepository branchTransferRepository;
 
     public VehicleService(VehicleRepository vehicleRepository,
                           BranchRepository branchRepository,
-                          BookingRepository bookingRepository) {
+                          BookingRepository bookingRepository,
+                          BranchTransferRepository branchTransferRepository) {
         this.vehicleRepository = vehicleRepository;
         this.branchRepository = branchRepository;
         this.bookingRepository = bookingRepository;
+        this.branchTransferRepository = branchTransferRepository;
     }
 
     public List<Branch> listBranches() {
@@ -123,6 +127,37 @@ public class VehicleService {
         existing.setCurrentLocation(incoming.getCurrentLocation());
         existing.setBranch(branch);
         return vehicleRepository.save(existing);
+    }
+
+    public List<BranchTransfer> listTransfers(Long vehicleId) {
+        return branchTransferRepository.findByVehicleIdOrderByTransferredAtDesc(vehicleId);
+    }
+
+    @Transactional
+    public BranchTransfer transfer(Long vehicleId, Long toBranchId, String actor, String note) {
+        Vehicle vehicle = getById(vehicleId);
+        if (vehicle.getStatus() == VehicleStatus.RETIRED) {
+            throw new IllegalArgumentException("Retired vehicles cannot be transferred");
+        }
+        Branch toBranch = branchRepository.findById(toBranchId)
+                .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
+        if (vehicle.getBranch().getId().equals(toBranch.getId())) {
+            throw new IllegalArgumentException("Vehicle is already at " + toBranch.getName());
+        }
+
+        BranchTransfer transfer = new BranchTransfer();
+        transfer.setVehicle(vehicle);
+        transfer.setFromBranch(vehicle.getBranch());
+        transfer.setToBranch(toBranch);
+        transfer.setFromLocation(vehicle.getCurrentLocation());
+        transfer.setTransferredBy(actor);
+        transfer.setNote(note == null ? "" : note.trim());
+        transfer.setTransferredAt(LocalDateTime.now());
+
+        vehicle.setBranch(toBranch);
+        vehicle.setCurrentLocation(toBranch.getName());
+        vehicleRepository.save(vehicle);
+        return branchTransferRepository.save(transfer);
     }
 
     @Transactional

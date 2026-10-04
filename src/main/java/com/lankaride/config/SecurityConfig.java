@@ -61,7 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/vehicles/new"),
                                 AntPathRequestMatcher.antMatcher("/vehicles/*/edit"),
-                                AntPathRequestMatcher.antMatcher("/vehicles/*/retire")
+                                AntPathRequestMatcher.antMatcher("/vehicles/*/retire"),
+                                AntPathRequestMatcher.antMatcher("/vehicles/*/transfer")
                         ).hasAnyRole("ADMIN", "FLEET_COORDINATOR", "OPERATIONS_MANAGER")
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/vehicles"))
                         .hasAnyRole("ADMIN", "FLEET_COORDINATOR", "OPERATIONS_MANAGER")

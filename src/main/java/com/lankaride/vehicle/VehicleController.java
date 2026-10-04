@@ -4,6 +4,7 @@ import com.lankaride.common.FuelType;
 import com.lankaride.common.GearboxType;
 import com.lankaride.common.VehicleStatus;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,6 +63,8 @@ public class VehicleController {
                          @RequestParam(required = false) Long branchId,
                          Model model) {
         model.addAttribute("vehicle", vehicleService.getById(id));
+        model.addAttribute("transfers", vehicleService.listTransfers(id));
+        model.addAttribute("branches", vehicleService.listBranches());
         model.addAttribute("pickupDate", pickupDate);
         model.addAttribute("returnDate", returnDate);
         model.addAttribute("branchId", branchId);
@@ -132,6 +135,22 @@ public class VehicleController {
             model.addAttribute("formAction", "/vehicles/" + id);
             return "vehicle/form";
         }
+    }
+
+    @PostMapping("/{id}/transfer")
+    public String transfer(@PathVariable Long id,
+                           @RequestParam Long toBranchId,
+                           @RequestParam(required = false) String note,
+                           Authentication auth,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            BranchTransfer saved = vehicleService.transfer(id, toBranchId, auth.getName(), note);
+            redirectAttributes.addFlashAttribute("message",
+                    "Transferred to " + saved.getToBranch().getName() + " at " + saved.getTransferredAt());
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/vehicles/" + id;
     }
 
     @PostMapping("/{id}/retire")
