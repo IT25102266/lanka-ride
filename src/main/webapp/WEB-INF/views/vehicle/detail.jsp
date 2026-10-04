@@ -1,53 +1,52 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <c:set var="pageTitle" value="${vehicle.brand} ${vehicle.model}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="mb-3">
-    <a class="small text-decoration-none" href="<c:url value='/vehicles'/>">&larr; Back to search</a>
-</div>
+<a class="back-link" href="<c:url value='/vehicles'/>">&larr; Back to search</a>
 
-<div class="row g-4">
-    <div class="col-lg-5">
+<div class="vehicle-layout">
+    <div class="vehicle-photo">
         <c:choose>
             <c:when test="${not empty vehicle.photoUrl}">
-                <img class="img-fluid rounded-4 border" src="${vehicle.photoUrl}" alt="${vehicle.brand} ${vehicle.model}"/>
+                <img src="${vehicle.photoUrl}" alt="${vehicle.brand} ${vehicle.model}"
+                     onerror="this.hidden=true; this.nextElementSibling.hidden=false;"/>
+                <div class="photo-fallback" hidden>
+                    <i class="bi bi-car-front"></i>
+                    <span>No photo</span>
+                </div>
             </c:when>
             <c:otherwise>
-                <div class="bg-light border rounded-4 d-flex align-items-center justify-content-center" style="min-height:220px;">
-                    <span class="text-muted">No photo</span>
+                <div class="photo-fallback">
+                    <i class="bi bi-car-front"></i>
+                    <span>No photo</span>
                 </div>
             </c:otherwise>
         </c:choose>
     </div>
-    <div class="col-lg-7">
-        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
-            <h1 class="h2 mb-0">${vehicle.brand} ${vehicle.model}</h1>
-            <span class="badge badge-lr align-self-center">${vehicle.status}</span>
+    <div class="vehicle-summary">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+            <div>
+                <h1>${vehicle.brand} ${vehicle.model}</h1>
+                <p class="page-lead">${vehicle.registrationNumber} · ${vehicle.branch.name}</p>
+            </div>
+            <span class="status-pill status-${fn:toLowerCase(vehicle.status.name())}">${vehicle.status}</span>
         </div>
-        <p class="text-muted">${vehicle.registrationNumber} · ${vehicle.branch.name}</p>
 
-        <dl class="row mb-4">
-            <dt class="col-sm-4">Category</dt>
-            <dd class="col-sm-8">${vehicle.category}</dd>
-            <dt class="col-sm-4">Seats</dt>
-            <dd class="col-sm-8">${vehicle.seats}</dd>
-            <dt class="col-sm-4">Gearbox</dt>
-            <dd class="col-sm-8">${vehicle.gearbox}</dd>
-            <dt class="col-sm-4">Fuel</dt>
-            <dd class="col-sm-8">${vehicle.fuelType}</dd>
-            <dt class="col-sm-4">Features</dt>
-            <dd class="col-sm-8">${empty vehicle.features ? '—' : vehicle.features}</dd>
-            <dt class="col-sm-4">Location</dt>
-            <dd class="col-sm-8">${vehicle.currentLocation}</dd>
-            <dt class="col-sm-4">Price / day</dt>
-            <dd class="col-sm-8 fw-semibold text-primary">LKR ${vehicle.pricePerDay}</dd>
-            <dt class="col-sm-4">Deposit</dt>
-            <dd class="col-sm-8">LKR ${vehicle.depositAmount}</dd>
+        <dl class="spec-grid">
+            <div><dt>Category</dt><dd>${vehicle.category}</dd></div>
+            <div><dt>Seats</dt><dd>${vehicle.seats}</dd></div>
+            <div><dt>Gearbox</dt><dd>${vehicle.gearbox}</dd></div>
+            <div><dt>Fuel</dt><dd>${vehicle.fuelType}</dd></div>
+            <div><dt>Features</dt><dd>${empty vehicle.features ? '—' : vehicle.features}</dd></div>
+            <div><dt>Location</dt><dd>${vehicle.currentLocation}</dd></div>
+            <div><dt>Price / day</dt><dd>LKR ${vehicle.pricePerDay}</dd></div>
+            <div><dt>Deposit</dt><dd>LKR ${vehicle.depositAmount}</dd></div>
         </dl>
 
-        <div class="d-flex flex-wrap gap-2">
+        <div class="action-row">
             <sec:authorize access="isAuthenticated()">
                 <c:if test="${vehicle.status.name() == 'AVAILABLE'}">
                     <c:url var="bookUrl" value="/bookings/new">

@@ -6,7 +6,7 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="mb-3">
-    <a class="small text-decoration-none" href="<c:url value='/bookings/${booking.id}'/>">&larr; Back to booking</a>
+    <a class="back-link" href="<c:url value='/bookings/${booking.id}'/>">&larr; Back to booking</a>
 </div>
 
 <c:set var="st" value="${fn:toLowerCase(booking.status.name())}"/>

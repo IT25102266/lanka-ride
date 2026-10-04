@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lanka Ride — testing flow</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm 16mm 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", "Noto Sans", sans-serif; color: #1a2332; font-size: 10.5pt; line-height: 1.4; margin: 0; }
+  h1 { font-size: 18pt; margin: 0 0 4px; color: #0b3d2e; }
+  p { margin: 6px 0 10px; }
+  .note { background: #f4faf6; border-left: 4px solid #1f7a4d; padding: 8px 12px; margin: 0 0 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.2pt; }
+  th, td { border: 1px solid #c5d4cc; padding: 5px 5px; text-align: left; vertical-align: top; }
+  th { background: #0b3d2e; color: #fff; }
+  tr { page-break-inside: avoid; }
+  tr:nth-child(even) td { background: #f7fbf8; }
+  code { font-family: "Ubuntu Mono", Consolas, monospace; font-size: 8pt; }
+  h2 { font-size: 12pt; color: #0b3d2e; margin: 16px 0 6px; }
+</style>
+</head>
+<body>
+<h1>Lanka Ride — testing flow</h1>
+<p>Demo logins for each module. Close, cancel, retire, and refund change the status. They do not delete the database row.</p>
+<div class="note">Open <strong>http://localhost:8080</strong> after the app is running against Docker MySQL. Start at <strong>/login</strong>.</div>
+
+<table>
+  <tr>
+    <th>Member</th>
+    <th>Login</th>
+    <th>Create</th>
+    <th>Read</th>
+    <th>Update</th>
+    <th>Close / cancel</th>
+    <th>Where</th>
+  </tr>
+  <tr>
+    <td>Sakalasooriya<br>Vehicles</td>
+    <td><code>fleet</code><br><code>fleet123</code></td>
+    <td>Add vehicle</td>
+    <td>Search and open a vehicle. Browsing does not need a login.</td>
+    <td>Edit it, or transfer it to another branch</td>
+    <td>Retire</td>
+    <td><code>/vehicles</code><br><code>/vehicles/new</code><br><code>/vehicles/{id}</code></td>
+  </tr>
+  <tr>
+    <td>De Silva<br>Maintenance</td>
+    <td><code>fleet</code><br><code>fleet123</code></td>
+    <td>Add a service record</td>
+    <td>Maintenance list and the record page</td>
+    <td>Edit an open record</td>
+    <td>Close the job</td>
+    <td><code>/maintenance</code></td>
+  </tr>
+  <tr>
+    <td>Samaranayake<br>Bookings</td>
+    <td><code>customer</code> / <code>customer123</code> to book<br><code>supervisor</code> / <code>super123</code> to decide<br><code>operations</code> / <code>ops123</code> for the monitor</td>
+    <td>New booking</td>
+    <td>My bookings, pending list, booking page, operations monitor</td>
+    <td>Approve or deny</td>
+    <td>Cancel</td>
+    <td><code>/bookings</code><br><code>/bookings/pending</code><br><code>/bookings/monitor</code></td>
+  </tr>
+  <tr>
+    <td>Kavindi<br>Payments</td>
+    <td><code>customer</code> / <code>customer123</code> to pay<br><code>finance</code> / <code>finance123</code> for the ledger and refunds<br><code>fleet</code> / <code>fleet123</code> for pickup and return</td>
+    <td>Pay deposit and rental. Record pickup and return as fleet.</td>
+    <td>Payment list and invoice</td>
+    <td>Past payments stay as they are</td>
+    <td>Refund</td>
+    <td><code>/payments</code><br><code>/payments/booking/{id}</code></td>
+  </tr>
+  <tr>
+    <td>Wickramasinghe<br>Reports</td>
+    <td><code>finance</code> / <code>finance123</code><br>or <code>operations</code> / <code>ops123</code></td>
+    <td>None</td>
+    <td>Staff dashboard and reports</td>
+    <td>None</td>
+    <td>None</td>
+    <td><code>/dashboard</code><br><code>/reports</code><br>Print and Download CSV</td>
+  </tr>
+  <tr>
+    <td>Pahasara<br>Support</td>
+    <td><code>customer</code> / <code>customer123</code> to open a ticket<br><code>admin</code> / <code>admin123</code> to reply, add a branch or user, and retry alerts</td>
+    <td>New ticket. Admin can add a branch or user. Forgot password needs no login.</td>
+    <td>Ticket list, ticket page, alerts</td>
+    <td>Staff reply and status</td>
+    <td>Close the ticket. Retry a failed alert.</td>
+    <td><code>/support</code><br><code>/admin</code><br><code>/support/notifications</code><br><code>/forgot-password</code></td>
+  </tr>
+</table>
+
+<h2>Suggested order</h2>
+<ol>
+  <li>Log in as <code>customer</code> and submit a booking from Find a ride.</li>
+  <li>Log in as <code>supervisor</code> and approve it.</li>
+  <li>Log in as <code>customer</code> and pay the deposit and rental.</li>
+  <li>Log in as <code>fleet</code>, record pickup (fuel FULL), then return with fuel EMPTY.</li>
+  <li>Log in as <code>operations</code> and open Monitor. The booking should be flagged.</li>
+  <li>Log in as <code>finance</code> and open Payments, then Reports (Print and Download CSV).</li>
+  <li>Log in as <code>fleet</code>, add or edit a vehicle, transfer it, and open Maintenance.</li>
+  <li>Log in as <code>customer</code> and open a support ticket. Log in as <code>admin</code> to reply and to open Alerts.</li>
+</ol>
+</body>
+</html>

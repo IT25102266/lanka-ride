@@ -111,6 +111,13 @@ public class DataSeeder {
                         GearboxType.MANUAL, FuelType.DIESEL, "AC",
                         new BigDecimal("15000.00"), new BigDecimal("35000.00"), galle));
             }
+            for (Vehicle existing : vehicleRepository.findAll()) {
+                String photo = existing.getPhotoUrl();
+                if (photo != null && photo.contains("placehold.co")) {
+                    existing.setPhotoUrl(null);
+                    vehicleRepository.save(existing);
+                }
+            }
         };
     }
 
@@ -126,7 +133,7 @@ public class DataSeeder {
         v.setGearbox(gearbox);
         v.setFuelType(fuel);
         v.setFeatures(features);
-        v.setPhotoUrl("https://placehold.co/600x400?text=" + brand + "+" + model);
+        v.setPhotoUrl(null);
         v.setPricePerDay(price);
         v.setDepositAmount(deposit);
         v.setBranch(branch);
