@@ -105,7 +105,18 @@ public class SupportController {
     @PreAuthorize("hasAnyRole('ADMIN','OPERATIONS_MANAGER')")
     public String notifications(Model model) {
         model.addAttribute("notifications", notificationLogRepository.findAllByOrderByCreatedAtDesc());
+        model.addAttribute("failedCount",
+                notificationLogRepository.findByDeliveryStatusOrderByCreatedAtAsc("FAILED").size());
         return "support/notifications";
+    }
+
+    @PostMapping("/notifications/retry")
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATIONS_MANAGER')")
+    public String retryNotifications(RedirectAttributes redirectAttributes) {
+        int retried = notificationService.retryFailed();
+        redirectAttributes.addFlashAttribute("message",
+                retried == 0 ? "No failed notifications to retry." : "Retried " + retried + " notification(s).");
+        return "redirect:/support/notifications";
     }
 
     private boolean isStaff(Authentication auth) {
