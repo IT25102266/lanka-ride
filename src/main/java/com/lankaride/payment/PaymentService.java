@@ -5,6 +5,7 @@ import com.lankaride.booking.BookingRepository;
 import com.lankaride.common.BookingStatus;
 import com.lankaride.common.PaymentStatus;
 import com.lankaride.common.PaymentType;
+import com.lankaride.fleet.MaintenanceService;
 import com.lankaride.support.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,22 +13,36 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class PaymentService {
 
+    private static final Map<String, Integer> FUEL_RANK = Map.of(
+            "EMPTY", 0,
+            "1/4", 1,
+            "1/2", 2,
+            "3/4", 3,
+            "FULL", 4
+    );
+
     private final PaymentTransactionRepository paymentTransactionRepository;
     private final BookingRepository bookingRepository;
     private final NotificationService notificationService;
+    private final MaintenanceService maintenanceService;
 
     public PaymentService(PaymentTransactionRepository paymentTransactionRepository,
                           BookingRepository bookingRepository,
-                          NotificationService notificationService) {
+                          NotificationService notificationService,
+                          MaintenanceService maintenanceService) {
         this.paymentTransactionRepository = paymentTransactionRepository;
         this.bookingRepository = bookingRepository;
         this.notificationService = notificationService;
+        this.maintenanceService = maintenanceService;
     }
 
     public List<PaymentTransaction> listAll() {
@@ -69,12 +84,17 @@ public class PaymentService {
         String gatewayRef = "MOCK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         if (failGateway) {
-            saveTx(booking, PaymentType.DEPOSIT, deposit, false, gatewayRef + "-FAIL", "Sandbox decline");
+            saveTx(booking, PaymentType.DEPOSIT, deposit, false, gatewayRef + "-FAIL",
+                    "Sandbox decline", username);
+            notificationService.email(
+                    booking.getCustomer().getEmail(),
+                    "Payment declined — booking #" + booking.getId(),
+                    "The sandbox gateway declined the deposit. You can try again.");
             throw new IllegalArgumentException("Payment gateway declined the transaction (sandbox fail)");
         }
 
-        saveTx(booking, PaymentType.DEPOSIT, deposit, true, gatewayRef + "-D", "Booking deposit");
-        saveTx(booking, PaymentType.RENTAL, rental, true, gatewayRef + "-R", "Rental fee");
+        saveTx(booking, PaymentType.DEPOSIT, deposit, true, gatewayRef + "-D", "Booking deposit", username);
+        saveTx(booking, PaymentType.RENTAL, rental, true, gatewayRef + "-R", "Rental fee", username);
 
         booking.setPaymentStatus(PaymentStatus.PAID);
         booking.setInvoiceNumber("INV-" + booking.getId() + "-" + LocalDate.now().getYear());
@@ -126,15 +146,26 @@ public class PaymentService {
 
         if (booking.getLateFeeAmount().compareTo(BigDecimal.ZERO) > 0) {
             saveTx(booking, PaymentType.LATE_FEE, booking.getLateFeeAmount(), true,
-                    "LATE-" + booking.getId(), "Late return fee by " + staffUser);
+                    "LATE-" + booking.getId(), "Late return fee", staffUser);
         }
         if (booking.getDamageChargeAmount().compareTo(BigDecimal.ZERO) > 0) {
             saveTx(booking, PaymentType.DAMAGE, booking.getDamageChargeAmount(), true,
-                    "DMG-" + booking.getId(), "Damage charge by " + staffUser);
+                    "DMG-" + booking.getId(), "Damage charge", staffUser);
         }
 
+        String discrepancy = describeDiscrepancy(booking);
+        booking.setDiscrepancyFlag(discrepancy != null);
+        booking.setDiscrepancyNote(discrepancy);
         booking.setStatus(BookingStatus.COMPLETED);
         Booking saved = bookingRepository.save(booking);
+        if (discrepancy != null) {
+            maintenanceService.openInspectionFromReturn(saved, discrepancy);
+            notificationService.email(
+                    saved.getCustomer().getEmail(),
+                    "Return check — booking #" + saved.getId(),
+                    "A mileage or fuel discrepancy was recorded: " + discrepancy
+                            + ". Fleet has opened an inspection.");
+        }
         notificationService.email(
                 saved.getCustomer().getEmail(),
                 "Vehicle returned — booking #" + saved.getId(),
@@ -172,7 +203,7 @@ public class PaymentService {
         }
 
         saveTx(booking, PaymentType.REFUND, refundable, true,
-                "REF-" + booking.getId(), reason + " (by " + staffUser + ")");
+                "REF-" + booking.getId(), reason, staffUser);
         booking.setPaymentStatus(PaymentStatus.REFUNDED);
         if (booking.getStatus() == BookingStatus.APPROVED || booking.getStatus() == BookingStatus.ONGOING) {
             booking.setStatus(BookingStatus.CANCELLED);
@@ -185,8 +216,41 @@ public class PaymentService {
         return saved;
     }
 
+    String describeDiscrepancy(Booking booking) {
+        List<String> notes = new ArrayList<>();
+        Integer pickupMileage = booking.getPickupMileage();
+        Integer returnMileage = booking.getReturnMileage();
+        if (pickupMileage != null && returnMileage != null) {
+            int driven = returnMileage - pickupMileage;
+            long days = ChronoUnit.DAYS.between(booking.getPickupDate(), booking.getReturnDate());
+            if (days < 1) {
+                days = 1;
+            }
+            if (driven > days * 500) {
+                notes.add("High mileage: " + driven + " km over " + days + " day(s)");
+            }
+        }
+        int pickupFuel = fuelRank(booking.getPickupFuelLevel());
+        int returnFuel = fuelRank(booking.getReturnFuelLevel());
+        if (pickupFuel >= 0 && returnFuel >= 0 && returnFuel + 1 < pickupFuel) {
+            notes.add("Fuel drop from " + booking.getPickupFuelLevel()
+                    + " to " + booking.getReturnFuelLevel());
+        }
+        if (notes.isEmpty()) {
+            return null;
+        }
+        return String.join("; ", notes);
+    }
+
+    private int fuelRank(String level) {
+        if (level == null) {
+            return -1;
+        }
+        return FUEL_RANK.getOrDefault(level.trim().toUpperCase(Locale.ROOT), -1);
+    }
+
     private void saveTx(Booking booking, PaymentType type, BigDecimal amount,
-                        boolean success, String ref, String note) {
+                        boolean success, String ref, String note, String actor) {
         PaymentTransaction tx = new PaymentTransaction();
         tx.setBooking(booking);
         tx.setType(type);
@@ -194,6 +258,7 @@ public class PaymentService {
         tx.setSuccess(success);
         tx.setGatewayReference(ref);
         tx.setNote(note);
+        tx.setActorUsername(actor);
         paymentTransactionRepository.save(tx);
     }
 }
