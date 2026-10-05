@@ -57,8 +57,13 @@
                     <div class="col-md-6">
                         <label class="form-label" for="serviceType">Service type</label>
                         <form:input path="serviceType" id="serviceType" cssClass="form-control" required="true"
-                                    minlength="3" maxlength="50"
+                                    minlength="3" maxlength="50" list="serviceTypeList"
                                     placeholder="Routine service / Repair / Damage"/>
+                        <datalist id="serviceTypeList">
+                            <c:forEach items="${serviceTypes}" var="service">
+                                <option value="${service.name}"></option>
+                            </c:forEach>
+                        </datalist>
                         <form:errors path="serviceType" cssClass="text-danger small d-block"/>
                     </div>
                     <div class="col-md-6">

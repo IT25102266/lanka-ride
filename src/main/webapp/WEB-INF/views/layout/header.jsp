@@ -14,6 +14,16 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <c:set var="isMarketing" value="${layoutMode == 'marketing'}"/>
+<c:choose>
+<c:when test="${layoutMode == 'gateway'}">
+<nav class="navbar navbar-dark nav-app">
+    <div class="container d-flex justify-content-between">
+        <span class="navbar-brand brand-mark mb-0"><i class="bi bi-lock-fill"></i> Lanka Pay</span>
+        <span class="navbar-text small">Secure payment</span>
+    </div>
+</nav>
+</c:when>
+<c:otherwise>
 <nav class="navbar navbar-expand-lg <c:choose><c:when test='${isMarketing}'>nav-marketing</c:when><c:otherwise>navbar-dark nav-app</c:otherwise></c:choose>">
     <div class="container">
         <a class="navbar-brand brand-mark" href="<c:url value='/'/>">Lanka Ride</a>
@@ -61,6 +71,11 @@
                 <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','OPERATIONS_MANAGER')">
                     <li class="nav-item">
                         <a class="nav-link" href="<c:url value='/reports'/>">Reports</a>
+                    </li>
+                </sec:authorize>
+                <sec:authorize access="hasAnyRole('ADMIN','OPERATIONS_MANAGER')">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value='/dashboard/catalog'/>">Defaults</a>
                     </li>
                 </sec:authorize>
                 <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR')">
@@ -111,6 +126,8 @@
         </div>
     </div>
 </nav>
+</c:otherwise>
+</c:choose>
 <main class="flex-grow-1 ${isMarketing ? '' : ''}">
     <c:choose>
         <c:when test="${isMarketing}">

@@ -5,6 +5,9 @@ import com.lankaride.auth.RoleRepository;
 import com.lankaride.auth.UserAccount;
 import com.lankaride.auth.UserAccountRepository;
 import com.lankaride.common.*;
+import com.lankaride.dashboard.DefaultKind;
+import com.lankaride.dashboard.FleetDefault;
+import com.lankaride.dashboard.FleetDefaultRepository;
 import com.lankaride.vehicle.Branch;
 import com.lankaride.vehicle.BranchRepository;
 import com.lankaride.vehicle.Vehicle;
@@ -24,6 +27,7 @@ public class DataSeeder {
                                UserAccountRepository userAccountRepository,
                                BranchRepository branchRepository,
                                VehicleRepository vehicleRepository,
+                               FleetDefaultRepository fleetDefaultRepository,
                                PasswordEncoder passwordEncoder) {
         return args -> {
             for (RoleName roleName : RoleName.values()) {
@@ -100,6 +104,19 @@ public class DataSeeder {
                 userAccountRepository.save(operations);
             }
 
+            if (fleetDefaultRepository.count() == 0) {
+                fleetDefaultRepository.save(category("Sedan"));
+                fleetDefaultRepository.save(category("SUV"));
+                fleetDefaultRepository.save(category("Van"));
+                fleetDefaultRepository.save(model("Toyota", "Axio", "Sedan", 5, GearboxType.AUTOMATIC, FuelType.PETROL));
+                fleetDefaultRepository.save(model("Honda", "CR-V", "SUV", 7, GearboxType.AUTOMATIC, FuelType.HYBRID));
+                fleetDefaultRepository.save(model("Nissan", "Caravan", "Van", 12, GearboxType.MANUAL, FuelType.DIESEL));
+                fleetDefaultRepository.save(model("Suzuki", "Swift", "Sedan", 5, GearboxType.MANUAL, FuelType.PETROL));
+                fleetDefaultRepository.save(serviceType("Routine service"));
+                fleetDefaultRepository.save(serviceType("Repair"));
+                fleetDefaultRepository.save(serviceType("Damage inspection"));
+            }
+
             if (vehicleRepository.count() == 0) {
                 vehicleRepository.save(sample("CAB-1001", "Sedan", "Toyota", "Axio", 5,
                         GearboxType.AUTOMATIC, FuelType.PETROL, "AC, GPS",
@@ -119,6 +136,35 @@ public class DataSeeder {
                 }
             }
         };
+    }
+
+    private static FleetDefault category(String name) {
+        FleetDefault item = new FleetDefault();
+        item.setKind(DefaultKind.CATEGORY);
+        item.setName(name);
+        item.setBrand("");
+        return item;
+    }
+
+    private static FleetDefault serviceType(String name) {
+        FleetDefault item = new FleetDefault();
+        item.setKind(DefaultKind.SERVICE_TYPE);
+        item.setName(name);
+        item.setBrand("");
+        return item;
+    }
+
+    private static FleetDefault model(String brand, String name, String category, int seats,
+                                      GearboxType gearbox, FuelType fuelType) {
+        FleetDefault item = new FleetDefault();
+        item.setKind(DefaultKind.MODEL);
+        item.setBrand(brand);
+        item.setName(name);
+        item.setCategoryName(category);
+        item.setSeats(seats);
+        item.setGearbox(gearbox);
+        item.setFuelType(fuelType);
+        return item;
     }
 
     private static Vehicle sample(String reg, String category, String brand, String model, int seats,

@@ -17,6 +17,27 @@
                 <form:form method="post" modelAttribute="vehicle" action="${formAction}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
+                    <c:if test="${not empty savedModels}">
+                        <div class="mb-3">
+                            <label class="form-label" for="savedModel">Saved model</label>
+                            <select class="form-select" id="savedModel">
+                                <option value="">Type the details yourself</option>
+                                <c:forEach items="${savedModels}" var="m">
+                                    <option value="${m.id}"
+                                            data-brand="${m.brand}"
+                                            data-model="${m.name}"
+                                            data-category="${m.categoryName}"
+                                            data-seats="${m.seats}"
+                                            data-gearbox="${m.gearbox}"
+                                            data-fuel="${m.fuelType}">
+                                        ${m.brand} ${m.name} · ${m.categoryName}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                            <div class="form-text">Choosing a model fills the fields below. You can still edit them.</div>
+                        </div>
+                    </c:if>
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="registrationNumber">Registration number</label>
@@ -26,7 +47,12 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="category">Category</label>
-                            <form:input path="category" id="category" cssClass="form-control" required="true" maxlength="50"/>
+                            <form:input path="category" id="category" cssClass="form-control" required="true" maxlength="50" list="categoryList"/>
+                            <datalist id="categoryList">
+                                <c:forEach items="${savedCategories}" var="cItem">
+                                    <option value="${cItem.name}"></option>
+                                </c:forEach>
+                            </datalist>
                             <form:errors path="category" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-6">
@@ -106,5 +132,21 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        var picker = document.getElementById("savedModel");
+        if (!picker) return;
+        picker.addEventListener("change", function () {
+            var option = picker.options[picker.selectedIndex];
+            if (!option.value) return;
+            document.getElementById("brand").value = option.getAttribute("data-brand") || "";
+            document.getElementById("model").value = option.getAttribute("data-model") || "";
+            document.getElementById("category").value = option.getAttribute("data-category") || "";
+            document.getElementById("seats").value = option.getAttribute("data-seats") || "";
+            document.getElementById("gearbox").value = option.getAttribute("data-gearbox") || "";
+            document.getElementById("fuelType").value = option.getAttribute("data-fuel") || "";
+        });
+    })();
+</script>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

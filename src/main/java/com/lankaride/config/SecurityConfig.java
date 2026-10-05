@@ -51,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/reports/**"))
                         .hasAnyRole("ADMIN", "FINANCE_MANAGER", "OPERATIONS_MANAGER")
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/dashboard/catalog/**"))
+                        .hasAnyRole("ADMIN", "OPERATIONS_MANAGER")
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/dashboard"))
                         .hasAnyRole("ADMIN", "BOOKING_SUPERVISOR", "FLEET_COORDINATOR",
                                 "FINANCE_MANAGER", "OPERATIONS_MANAGER")

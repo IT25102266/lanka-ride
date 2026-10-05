@@ -13,6 +13,7 @@
 - Branch comparison (Colombo / Kandy / Galle) + utilization
 - Vehicle location overview board
 - Print / export via browser print
+- Operations and admin can create, update, and delete fleet defaults (categories, models, service types) at `/dashboard/catalog`
 
 ## Main types
 
@@ -32,4 +33,5 @@
 
 1. Login as `finance` / `operations` / `admin` → `/dashboard`  
 2. Open Reports → switch daily / monthly / annual  
-3. Filter by branch; print if needed  
+3. Filter by branch; print if needed
+4. Log in as `operations` / `ops123` → Fleet defaults → add, edit, or delete a model  

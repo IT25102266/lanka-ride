@@ -2,6 +2,9 @@ package com.lankaride.fleet;
 
 import com.lankaride.booking.Booking;
 import com.lankaride.common.MaintenanceStatus;
+import com.lankaride.dashboard.DefaultKind;
+import com.lankaride.dashboard.FleetDefault;
+import com.lankaride.dashboard.FleetDefaultService;
 import com.lankaride.vehicle.VehicleService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -20,10 +23,18 @@ public class MaintenanceController {
 
     private final MaintenanceService maintenanceService;
     private final VehicleService vehicleService;
+    private final FleetDefaultService fleetDefaultService;
 
-    public MaintenanceController(MaintenanceService maintenanceService, VehicleService vehicleService) {
+    public MaintenanceController(MaintenanceService maintenanceService, VehicleService vehicleService,
+                                 FleetDefaultService fleetDefaultService) {
         this.maintenanceService = maintenanceService;
         this.vehicleService = vehicleService;
+        this.fleetDefaultService = fleetDefaultService;
+    }
+
+    @ModelAttribute("serviceTypes")
+    public List<FleetDefault> serviceTypes() {
+        return fleetDefaultService.list(DefaultKind.SERVICE_TYPE);
     }
 
     @GetMapping
