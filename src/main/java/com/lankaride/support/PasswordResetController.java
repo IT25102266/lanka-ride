@@ -1,6 +1,7 @@
 package com.lankaride.support;
 
 import com.lankaride.auth.UserAccount;
+import com.lankaride.common.InputChecks;
 import com.lankaride.auth.UserAccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -72,6 +73,12 @@ public class PasswordResetController {
                         RedirectAttributes redirectAttributes) {
         if (!password.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Passwords do not match");
+            return "redirect:/reset-password?token=" + token;
+        }
+        try {
+            InputChecks.password(password);
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/reset-password?token=" + token;
         }
         PasswordResetToken reset = passwordResetTokenRepository.findByToken(token)

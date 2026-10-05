@@ -57,7 +57,9 @@
                     <div class="col-md-6">
                         <label class="form-label" for="serviceType">Service type</label>
                         <form:input path="serviceType" id="serviceType" cssClass="form-control" required="true"
+                                    minlength="3" maxlength="50"
                                     placeholder="Routine service / Repair / Damage"/>
+                        <form:errors path="serviceType" cssClass="text-danger small d-block"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="status">Status</label>
@@ -65,7 +67,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="serviceDate">Service date</label>
-                        <form:input path="serviceDate" id="serviceDate" type="date" cssClass="form-control"/>
+                        <form:input path="serviceDate" id="serviceDate" type="date" cssClass="form-control" required="true"/>
+                        <form:errors path="serviceDate" cssClass="text-danger small d-block"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="estimatedCompletionDate">Est. completion</label>
@@ -73,7 +76,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="estimatedCost">Estimated cost (LKR)</label>
-                        <form:input path="estimatedCost" id="estimatedCost" type="number" step="0.01" cssClass="form-control"/>
+                        <form:input path="estimatedCost" id="estimatedCost" type="number" min="0" step="0.01" cssClass="form-control"/>
+                        <form:errors path="estimatedCost" cssClass="text-danger small d-block"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="mechanicsAssigned">Mechanics</label>

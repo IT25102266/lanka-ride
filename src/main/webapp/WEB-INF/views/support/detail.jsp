@@ -34,7 +34,14 @@
             </div>
         </c:if>
         <c:if test="${empty ticket.staffResponse && !staff}">
-            <div class="alert alert-info small mb-0">No staff reply yet — check back soon.</div>
+            <div class="alert alert-info small mb-3">No staff reply yet — check back soon.</div>
+        </c:if>
+        <c:if test="${!staff}">
+            <form method="post" action="<c:url value='/support/${ticket.id}/delete'/>"
+                  onsubmit="return confirm('Permanently delete this ticket from the database?');">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button class="btn btn-danger btn-sm" type="submit">Delete permanently</button>
+            </form>
         </c:if>
     </div>
     <c:if test="${staff}">
@@ -57,6 +64,11 @@
                         </select>
                     </div>
                     <button class="btn btn-primary" type="submit">Save update</button>
+                </form>
+                <form class="mt-3" method="post" action="<c:url value='/support/${ticket.id}/delete'/>"
+                      onsubmit="return confirm('Permanently delete this ticket from the database?');">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button class="btn btn-danger btn-sm" type="submit">Delete permanently</button>
                 </form>
             </div>
         </div>

@@ -20,24 +20,29 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="registrationNumber">Registration number</label>
-                            <form:input path="registrationNumber" id="registrationNumber" cssClass="form-control" required="true"/>
-                            <form:errors path="registrationNumber" cssClass="text-danger small"/>
+                            <form:input path="registrationNumber" id="registrationNumber" cssClass="form-control"
+                                        required="true" maxlength="20" pattern="[A-Za-z0-9-]{3,20}"/>
+                            <form:errors path="registrationNumber" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="category">Category</label>
-                            <form:input path="category" id="category" cssClass="form-control" required="true"/>
+                            <form:input path="category" id="category" cssClass="form-control" required="true" maxlength="50"/>
+                            <form:errors path="category" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="brand">Brand</label>
-                            <form:input path="brand" id="brand" cssClass="form-control" required="true"/>
+                            <form:input path="brand" id="brand" cssClass="form-control" required="true" maxlength="50"/>
+                            <form:errors path="brand" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="model">Model</label>
-                            <form:input path="model" id="model" cssClass="form-control" required="true"/>
+                            <form:input path="model" id="model" cssClass="form-control" required="true" maxlength="50"/>
+                            <form:errors path="model" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="seats">Seats</label>
                             <form:input path="seats" id="seats" type="number" min="1" max="20" cssClass="form-control" required="true"/>
+                            <form:errors path="seats" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="gearbox">Gearbox</label>
@@ -49,19 +54,26 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="features">Features</label>
-                            <form:textarea path="features" id="features" cssClass="form-control" rows="2"/>
+                            <form:textarea path="features" id="features" cssClass="form-control" rows="2" maxlength="500"/>
+                            <form:errors path="features" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="photoUrl">Photo URL</label>
-                            <form:input path="photoUrl" id="photoUrl" cssClass="form-control"/>
+                            <form:input path="photoUrl" id="photoUrl" cssClass="form-control" maxlength="500"
+                                        placeholder="https://"/>
+                            <form:errors path="photoUrl" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="pricePerDay">Price per day (LKR)</label>
-                            <form:input path="pricePerDay" id="pricePerDay" type="number" step="0.01" cssClass="form-control" required="true"/>
+                            <form:input path="pricePerDay" id="pricePerDay" type="number" min="0.01" step="0.01"
+                                        cssClass="form-control" required="true"/>
+                            <form:errors path="pricePerDay" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="depositAmount">Deposit (LKR)</label>
-                            <form:input path="depositAmount" id="depositAmount" type="number" step="0.01" cssClass="form-control" required="true"/>
+                            <form:input path="depositAmount" id="depositAmount" type="number" min="0.01" step="0.01"
+                                        cssClass="form-control" required="true"/>
+                            <form:errors path="depositAmount" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="branchId">Home branch</label>
@@ -76,7 +88,8 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="currentLocation">Current location</label>
-                            <form:input path="currentLocation" id="currentLocation" cssClass="form-control"/>
+                            <form:input path="currentLocation" id="currentLocation" cssClass="form-control" maxlength="100"/>
+                            <form:errors path="currentLocation" cssClass="text-danger small d-block"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="status">Status</label>

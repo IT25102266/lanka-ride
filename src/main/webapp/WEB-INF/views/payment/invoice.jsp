@@ -106,7 +106,7 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <div class="mb-2">
                             <label class="form-label small">Mileage</label>
-                            <input class="form-control form-control-sm" type="number" name="pickupMileage" required/>
+                            <input class="form-control form-control-sm" type="number" name="pickupMileage" min="0" max="2000000" required/>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Fuel</label>
@@ -126,7 +126,7 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <div class="mb-2">
                             <label class="form-label small">Return mileage</label>
-                            <input class="form-control form-control-sm" type="number" name="returnMileage" required/>
+                            <input class="form-control form-control-sm" type="number" name="returnMileage" min="0" max="2000000" required/>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Return fuel</label>
@@ -136,11 +136,11 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Late fee (LKR)</label>
-                            <input class="form-control form-control-sm" type="number" step="0.01" name="lateFee" value="0"/>
+                            <input class="form-control form-control-sm" type="number" min="0" step="0.01" name="lateFee" value="0"/>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Damage charge (LKR)</label>
-                            <input class="form-control form-control-sm" type="number" step="0.01" name="damageCharge" value="0"/>
+                            <input class="form-control form-control-sm" type="number" min="0" step="0.01" name="damageCharge" value="0"/>
                         </div>
                         <button class="btn btn-success btn-sm" type="submit">Complete return</button>
                     </form>
@@ -156,7 +156,7 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <div class="mb-2">
                             <label class="form-label small">Reason</label>
-                            <input class="form-control form-control-sm" name="reason" required/>
+                            <input class="form-control form-control-sm" name="reason" required minlength="3" maxlength="300"/>
                         </div>
                         <button class="btn btn-outline-danger btn-sm" type="submit">Process refund</button>
                     </form>

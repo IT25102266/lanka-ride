@@ -16,12 +16,13 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
                     <label class="form-label">Subject</label>
-                    <input class="form-control" name="subject" required placeholder="e.g. Change pickup time for booking #12"/>
+                    <input class="form-control" name="subject" required minlength="3" maxlength="150"
+                           value="${subject}" placeholder="e.g. Change pickup time for booking #12"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Message</label>
-                    <textarea class="form-control" name="message" rows="6" required
-                              placeholder="What happened, and what do you need?"></textarea>
+                    <textarea class="form-control" name="message" rows="6" required minlength="10" maxlength="2000"
+                              placeholder="What happened, and what do you need?"><c:out value="${message}"/></textarea>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
                     <button class="btn btn-primary" type="submit">Submit ticket</button>

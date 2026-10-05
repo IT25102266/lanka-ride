@@ -26,12 +26,16 @@
                     <label class="form-label" for="vehicleId">Vehicle</label>
                     <select class="form-select" id="vehicleId" name="vehicleId" required>
                         <c:forEach items="${vehicles}" var="v">
-                            <option value="${v.id}" <c:if test="${selectedVehicleId == v.id}">selected</c:if>
-                                    <c:if test="${v.status.name() != 'AVAILABLE'}">disabled</c:if>>
+                            <c:set var="dateBlocked" value="${blockedVehicleIds != null and blockedVehicleIds.contains(v.id)}"/>
+                            <option value="${v.id}"
+                                    <c:if test="${selectedVehicleId == v.id and not dateBlocked}">selected</c:if>
+                                    <c:if test="${v.status.name() != 'AVAILABLE' or dateBlocked}">disabled</c:if>>
                                 ${v.registrationNumber} — ${v.brand} ${v.model} (${v.branch.name}) — ${v.status}
+                                <c:if test="${dateBlocked}"> — already booked for these dates</c:if>
                             </option>
                         </c:forEach>
                     </select>
+                    <div class="form-text">A vehicle already reserved for the dates below cannot be selected.</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="branchId">Pickup branch</label>
@@ -44,11 +48,13 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="pickupDate">Pickup date</label>
-                        <input class="form-control" type="date" id="pickupDate" name="pickupDate" value="${pickupDate}" required/>
+                        <input class="form-control" type="date" id="pickupDate" name="pickupDate" value="${pickupDate}"
+                               min="${today}" required/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="returnDate">Return date</label>
-                        <input class="form-control" type="date" id="returnDate" name="returnDate" value="${returnDate}" required/>
+                        <input class="form-control" type="date" id="returnDate" name="returnDate" value="${returnDate}"
+                               min="${pickupDate}" required/>
                     </div>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
@@ -56,6 +62,19 @@
                     <a class="btn btn-outline-secondary" href="<c:url value='/vehicles'/>">Cancel</a>
                 </div>
             </form>
+            <script>
+                (function () {
+                    var pickup = document.getElementById("pickupDate");
+                    var dropOff = document.getElementById("returnDate");
+                    if (!pickup || !dropOff) return;
+                    pickup.addEventListener("change", function () {
+                        dropOff.min = pickup.value;
+                        if (dropOff.value && dropOff.value < pickup.value) {
+                            dropOff.value = pickup.value;
+                        }
+                    });
+                })();
+            </script>
         </div>
     </div>
 </div>

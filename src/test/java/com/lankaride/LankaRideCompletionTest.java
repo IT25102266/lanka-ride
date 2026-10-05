@@ -27,6 +27,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -144,6 +145,49 @@ class LankaRideCompletionTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.containsString("lanka-ride-report.csv")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("summary")));
+    }
+
+    @Test
+    void overlappingDatesAndInvalidVehicleFieldsAreRejected() {
+        Vehicle vehicle = vehicleRepository.findByRegistrationNumber("CAB-3003").orElseThrow();
+        Long branchId = vehicle.getBranch().getId();
+        LocalDate start = LocalDate.now().plusDays(40);
+        LocalDate end = start.plusDays(2);
+        bookingService.create("customer", vehicle.getId(), branchId, start, end);
+
+        IllegalArgumentException overlap = assertThrows(IllegalArgumentException.class, () ->
+                bookingService.create("customer", vehicle.getId(), branchId, start.plusDays(1), end.plusDays(1)));
+        assertTrue(overlap.getMessage().contains("already booked"));
+
+        Vehicle bad = new Vehicle();
+        bad.setRegistrationNumber("TEMP-1");
+        bad.setCategory("Sedan");
+        bad.setBrand("!");
+        bad.setModel("Swift");
+        bad.setSeats(5);
+        bad.setPricePerDay(new BigDecimal("1000.00"));
+        bad.setDepositAmount(new BigDecimal("1000.00"));
+        assertThrows(IllegalArgumentException.class, () -> vehicleService.create(bad, branchId));
+    }
+
+    @Test
+    void permanentDeleteRemovesTheVehicleRow() {
+        Vehicle vehicle = vehicleRepository.findByRegistrationNumber("CAB-1001").orElseThrow();
+        Long branchId = vehicle.getBranch().getId();
+        Vehicle extra = new Vehicle();
+        extra.setRegistrationNumber("DEL-9001");
+        extra.setCategory("Sedan");
+        extra.setBrand("Test");
+        extra.setModel("Delete");
+        extra.setSeats(4);
+        extra.setPricePerDay(new BigDecimal("5000.00"));
+        extra.setDepositAmount(new BigDecimal("8000.00"));
+        extra.setStatus(VehicleStatus.AVAILABLE);
+        Vehicle saved = vehicleService.create(extra, branchId);
+
+        vehicleService.deletePermanently(saved.getId());
+
+        assertTrue(vehicleRepository.findByRegistrationNumber("DEL-9001").isEmpty());
     }
 
     @Test

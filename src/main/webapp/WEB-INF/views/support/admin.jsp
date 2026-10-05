@@ -17,11 +17,11 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <input class="form-control" name="name" required placeholder="e.g. Negombo"/>
+                    <input class="form-control" name="name" required minlength="2" maxlength="50" placeholder="e.g. Negombo"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Address</label>
-                    <input class="form-control" name="address" required placeholder="Street / area"/>
+                    <input class="form-control" name="address" required minlength="3" maxlength="200" placeholder="Street / area"/>
                 </div>
                 <button class="btn btn-primary" type="submit">Add branch</button>
             </form>
@@ -45,11 +45,11 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
                     <label class="form-label">Full name</label>
-                    <input class="form-control" name="fullName" required/>
+                    <input class="form-control" name="fullName" required minlength="2" maxlength="80"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Username</label>
-                    <input class="form-control" name="username" required/>
+                    <input class="form-control" name="username" required minlength="3" maxlength="30" pattern="[A-Za-z][A-Za-z0-9._]{2,29}"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email</label>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input class="form-control" type="password" name="password" required/>
+                    <input class="form-control" type="password" name="password" required minlength="8" maxlength="80"/>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Role</label>

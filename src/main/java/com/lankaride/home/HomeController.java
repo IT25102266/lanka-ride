@@ -18,6 +18,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("branches", vehicleService.listBranches());
+        model.addAttribute("today", LocalDate.now());
         model.addAttribute("pickupDate", LocalDate.now().plusDays(1));
         model.addAttribute("returnDate", LocalDate.now().plusDays(3));
         return "home/index";

@@ -17,6 +17,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     long countByStatus(BookingStatus status);
 
+    List<Booking> findByVehicleId(Long vehicleId);
+
+    @Query("""
+            SELECT DISTINCT b.vehicle.id FROM Booking b
+            WHERE b.status IN :statuses
+              AND b.pickupDate <= :endDate
+              AND b.returnDate >= :startDate
+            """)
+    List<Long> findOverlappingVehicleIds(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("statuses") List<BookingStatus> statuses
+    );
+
     @Query("""
             SELECT COUNT(b) FROM Booking b
             WHERE b.vehicle.id = :vehicleId

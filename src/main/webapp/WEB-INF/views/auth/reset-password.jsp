@@ -19,7 +19,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">New password</label>
-                <input class="form-control" type="password" name="password" required/>
+                <input class="form-control" type="password" name="password" required minlength="8" maxlength="80"/>
             </div>
             <div class="mb-3">
                 <label class="form-label">Confirm password</label>

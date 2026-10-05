@@ -1,5 +1,6 @@
 package com.lankaride.auth;
 
+import com.lankaride.common.InputChecks;
 import com.lankaride.common.RoleName;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class AuthService {
 
     @Transactional
     public UserAccount registerCustomer(String username, String email, String fullName, String rawPassword) {
+        username = InputChecks.username(username);
+        email = InputChecks.email(email);
+        fullName = InputChecks.personName(fullName);
+        InputChecks.password(rawPassword);
         if (userAccountRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username already taken");
         }

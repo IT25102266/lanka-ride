@@ -3,6 +3,10 @@ package com.lankaride.fleet;
 import com.lankaride.common.MaintenanceStatus;
 import com.lankaride.vehicle.Vehicle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,24 +26,30 @@ public class MaintenanceRecord {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    @NotBlank(message = "Service type is required")
+    @Size(min = 3, max = 50, message = "Service type must be 3–50 characters")
     @Column(nullable = false, length = 50)
     private String serviceType;
 
+    @NotNull(message = "Service date is required")
     private LocalDate serviceDate;
 
     private LocalDate estimatedCompletionDate;
 
     private LocalDate completionDate;
 
+    @DecimalMin(value = "0.00", message = "Estimated cost cannot be negative")
     @Column(precision = 10, scale = 2)
     private BigDecimal estimatedCost;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal finalCost;
 
+    @Size(max = 1000, message = "Description must be 1000 characters or fewer")
     @Column(length = 1000)
     private String description;
 
+    @Size(max = 200, message = "Mechanics must be 200 characters or fewer")
     @Column(length = 200)
     private String mechanicsAssigned;
 
