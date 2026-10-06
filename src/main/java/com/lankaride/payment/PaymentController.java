@@ -2,6 +2,8 @@ package com.lankaride.payment;
 
 import com.lankaride.booking.Booking;
 import com.lankaride.booking.BookingService;
+import com.lankaride.common.BookingStatus;
+import com.lankaride.common.PaymentStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,10 +19,13 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final BookingService bookingService;
+    private final DummyGateway dummyGateway;
 
-    public PaymentController(PaymentService paymentService, BookingService bookingService) {
+    public PaymentController(PaymentService paymentService, BookingService bookingService,
+                             DummyGateway dummyGateway) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
+        this.dummyGateway = dummyGateway;
     }
 
     @GetMapping
@@ -45,20 +50,71 @@ public class PaymentController {
         return "payment/invoice";
     }
 
-    @PostMapping("/booking/{bookingId}/pay")
+    @GetMapping("/booking/{bookingId}/checkout")
     @PreAuthorize("isAuthenticated()")
-    public String pay(@PathVariable Long bookingId,
-                      @RequestParam(defaultValue = "false") boolean fail,
-                      Authentication auth,
-                      RedirectAttributes redirectAttributes) {
-        try {
-            paymentService.payApprovedBooking(bookingId, auth.getName(), fail);
-            redirectAttributes.addFlashAttribute("message", "Payment successful. Invoice generated.");
-            return "redirect:/payments/booking/" + bookingId;
-        } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+    public String checkout(@PathVariable Long bookingId, Authentication auth, Model model) {
+        Booking booking = bookingService.getById(bookingId);
+        if (!booking.getCustomer().getUsername().equals(auth.getName())) {
+            return "redirect:/bookings";
+        }
+        if (booking.getStatus() != BookingStatus.APPROVED
+                || booking.getPaymentStatus() != PaymentStatus.PENDING_PAYMENT) {
             return "redirect:/payments/booking/" + bookingId;
         }
+        addCheckout(model, booking);
+        return "payment/gateway";
+    }
+
+    @PostMapping("/booking/{bookingId}/checkout")
+    @PreAuthorize("isAuthenticated()")
+    public String charge(@PathVariable Long bookingId,
+                         @RequestParam String method,
+                         @RequestParam String cardNumber,
+                         @RequestParam String holder,
+                         @RequestParam String expiry,
+                         @RequestParam String cvv,
+                         Authentication auth,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        Booking booking = bookingService.getById(bookingId);
+        if (!booking.getCustomer().getUsername().equals(auth.getName())) {
+            return "redirect:/bookings";
+        }
+        try {
+            DummyGateway.GatewayDecision decision = dummyGateway.charge(method, cardNumber, holder, expiry, cvv);
+            paymentService.payApprovedBooking(bookingId, auth.getName(), decision.declined(),
+                    decision.brand(), decision.last4());
+            redirectAttributes.addFlashAttribute("paidBrand", decision.brand());
+            redirectAttributes.addFlashAttribute("paidLast4", decision.last4());
+            return "redirect:/payments/booking/" + bookingId + "/checkout/success";
+        } catch (IllegalArgumentException ex) {
+            addCheckout(model, booking);
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("method", method);
+            model.addAttribute("holder", holder);
+            model.addAttribute("expiry", expiry);
+            return "payment/gateway";
+        }
+    }
+
+    @GetMapping("/booking/{bookingId}/checkout/success")
+    @PreAuthorize("isAuthenticated()")
+    public String checkoutSuccess(@PathVariable Long bookingId, Authentication auth, Model model) {
+        Booking booking = bookingService.getById(bookingId);
+        if (!booking.getCustomer().getUsername().equals(auth.getName())) {
+            return "redirect:/bookings";
+        }
+        if (booking.getPaymentStatus() != PaymentStatus.PAID) {
+            return "redirect:/payments/booking/" + bookingId + "/checkout";
+        }
+        model.addAttribute("booking", booking);
+        return "payment/gateway-success";
+    }
+
+    private void addCheckout(Model model, Booking booking) {
+        model.addAttribute("booking", booking);
+        model.addAttribute("totalDue", paymentService.totalDueForApproval(booking));
+        model.addAttribute("rentalAmount", paymentService.rentalDaysAmount(booking));
     }
 
     @PostMapping("/booking/{bookingId}/pickup")

@@ -5,6 +5,11 @@ import com.lankaride.booking.BookingService;
 import com.lankaride.common.BookingStatus;
 import com.lankaride.common.VehicleStatus;
 import com.lankaride.fleet.MaintenanceService;
+import com.lankaride.common.FuelType;
+import com.lankaride.common.GearboxType;
+import com.lankaride.dashboard.DefaultKind;
+import com.lankaride.dashboard.FleetDefaultService;
+import com.lankaride.payment.DummyGateway;
 import com.lankaride.payment.PaymentService;
 import com.lankaride.payment.PaymentTransaction;
 import com.lankaride.support.NotificationLog;
@@ -29,8 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +67,10 @@ class LankaRideCompletionTest {
     private NotificationLogRepository notificationLogRepository;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private DummyGateway dummyGateway;
+    @Autowired
+    private FleetDefaultService fleetDefaultService;
 
     @Test
     void branchTransferWritesTimestampedLog() {
@@ -188,6 +199,63 @@ class LankaRideCompletionTest {
         vehicleService.deletePermanently(saved.getId());
 
         assertTrue(vehicleRepository.findByRegistrationNumber("DEL-9001").isEmpty());
+    }
+
+    @Test
+    void lankaPayAcceptsAVisaCardAndDeclinesTheSandboxCard() throws Exception {
+        DummyGateway.GatewayDecision approved = dummyGateway.charge(
+                "VISA", "4242 4242 4242 4242", "Demo Customer", "12/30", "123");
+        assertFalse(approved.declined());
+        assertEquals("4242", approved.last4());
+
+        DummyGateway.GatewayDecision declined = dummyGateway.charge(
+                "VISA", "4000000000000002", "Demo Customer", "12/30", "123");
+        assertTrue(declined.declined());
+        assertThrows(IllegalArgumentException.class, () ->
+                dummyGateway.charge("MASTERCARD", "4242424242424242", "Demo Customer", "12/30", "123"));
+
+        Vehicle vehicle = vehicleRepository.findByRegistrationNumber("CAB-1001").orElseThrow();
+        Booking created = bookingService.create(
+                "customer", vehicle.getId(), vehicle.getBranch().getId(),
+                LocalDate.now().plusDays(12), LocalDate.now().plusDays(13));
+        bookingService.approve(created.getId(), "supervisor", "ok");
+
+        mockMvc.perform(get("/payments/booking/" + created.getId() + "/checkout")
+                        .with(user("customer").roles("CUSTOMER")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("payment/gateway"));
+
+        mockMvc.perform(post("/payments/booking/" + created.getId() + "/checkout")
+                        .with(user("customer").roles("CUSTOMER"))
+                        .with(csrf())
+                        .param("method", "VISA")
+                        .param("cardNumber", "4242424242424242")
+                        .param("holder", "Demo Customer")
+                        .param("expiry", "12/30")
+                        .param("cvv", "123"))
+                .andExpect(status().is3xxRedirection());
+
+        assertEquals(com.lankaride.common.PaymentStatus.PAID,
+                bookingService.getById(created.getId()).getPaymentStatus());
+    }
+
+    @Test
+    void operationsCanCreateAndDeleteFleetDefaults() throws Exception {
+        var saved = fleetDefaultService.create(
+                DefaultKind.MODEL, "Wagon", "Toyota", "Sedan", 5, GearboxType.AUTOMATIC, FuelType.PETROL);
+        assertEquals("Wagon", fleetDefaultService.list(DefaultKind.MODEL).stream()
+                .filter(item -> item.getId().equals(saved.getId()))
+                .findFirst().orElseThrow().getName());
+
+        mockMvc.perform(get("/dashboard/catalog").with(user("operations").roles("OPERATIONS_MANAGER")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard/catalog"));
+        mockMvc.perform(get("/dashboard/catalog").with(user("finance").roles("FINANCE_MANAGER")))
+                .andExpect(status().isForbidden());
+
+        fleetDefaultService.delete(saved.getId());
+        assertTrue(fleetDefaultService.list(DefaultKind.MODEL).stream()
+                .noneMatch(item -> "Wagon".equals(item.getName())));
     }
 
     @Test

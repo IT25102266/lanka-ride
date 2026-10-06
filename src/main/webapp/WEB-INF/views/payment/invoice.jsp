@@ -78,19 +78,11 @@
     <div class="col-lg-5">
         <c:if test="${booking.status.name() == 'APPROVED' && booking.paymentStatus.name() == 'PENDING_PAYMENT'}">
             <div class="detail-block border border-warning-subtle">
-                <h2>Pay now (sandbox)</h2>
-                <p class="page-lead mb-3">Approved — pay deposit and rental to continue.</p>
-                <form method="post" action="<c:url value='/payments/booking/${booking.id}/pay'/>" class="mb-2">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit" class="pay-cta w-100 justify-content-center">
-                        <i class="bi bi-credit-card"></i> Pay deposit + rental
-                    </button>
-                </form>
-                <form method="post" action="<c:url value='/payments/booking/${booking.id}/pay'/>">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <input type="hidden" name="fail" value="true"/>
-                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">Simulate gateway fail</button>
-                </form>
+                <h2>Pay securely</h2>
+                <p class="page-lead mb-3">Approved. Continue to Lanka Pay to enter the card. This page does not charge the booking.</p>
+                <a class="pay-cta w-100 justify-content-center" href="<c:url value='/payments/booking/${booking.id}/checkout'/>">
+                    <i class="bi bi-lock-fill"></i> Continue to secure payment
+                </a>
             </div>
         </c:if>
 

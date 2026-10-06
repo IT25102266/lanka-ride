@@ -90,6 +90,15 @@
             </a>
         </div>
     </sec:authorize>
+    <sec:authorize access="hasAnyRole('ADMIN','OPERATIONS_MANAGER')">
+        <div class="col-md-6 col-lg-4">
+            <a class="item-card h-100" href="<c:url value='/dashboard/catalog'/>">
+                <div class="item-kicker">Defaults</div>
+                <h3 class="item-title">Fleet defaults</h3>
+                <div class="item-meta"><span>Add, edit, or delete categories, models, and service types</span></div>
+            </a>
+        </div>
+    </sec:authorize>
     <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','OPERATIONS_MANAGER')">
         <div class="col-md-6 col-lg-4">
             <a class="item-card h-100" href="<c:url value='/reports'/>">

@@ -21,7 +21,7 @@
 </head>
 <body>
 <h1>Lanka Ride — testing flow</h1>
-<p>Demo logins for each module. Close, cancel, retire, and refund change the status. They do not delete the database row.</p>
+<p>Demo logins for each module. Close, cancel, retire, and refund change the status. They do not delete the database row. Delete permanently does. Paying an approved booking opens Lanka Pay, where the card is chosen and the card details are entered.</p>
 <div class="note">Open <strong>http://localhost:8080</strong> after the app is running against Docker MySQL. Start at <strong>/login</strong>.</div>
 
 <table>
@@ -31,7 +31,7 @@
     <th>Create</th>
     <th>Read</th>
     <th>Update</th>
-    <th>Close / cancel</th>
+    <th>Close / cancel / delete</th>
     <th>Where</th>
   </tr>
   <tr>
@@ -64,20 +64,20 @@
   <tr>
     <td>Kavindi<br>Payments</td>
     <td><code>customer</code> / <code>customer123</code> to pay<br><code>finance</code> / <code>finance123</code> for the ledger and refunds<br><code>fleet</code> / <code>fleet123</code> for pickup and return</td>
-    <td>Pay deposit and rental. Record pickup and return as fleet.</td>
-    <td>Payment list and invoice</td>
+    <td>From the invoice, continue to Lanka Pay. Choose Visa, Mastercard, or American Express and enter the card. <code>4242 4242 4242 4242</code> succeeds. <code>4000 0000 0000 0002</code> is declined. Record pickup and return as fleet.</td>
+    <td>Payment list, invoice, and the Lanka Pay receipt</td>
     <td>Past payments stay as they are</td>
     <td>Refund</td>
-    <td><code>/payments</code><br><code>/payments/booking/{id}</code></td>
+    <td><code>/payments</code><br><code>/payments/booking/{id}</code><br><code>/payments/booking/{id}/checkout</code></td>
   </tr>
   <tr>
     <td>Wickramasinghe<br>Reports</td>
     <td><code>finance</code> / <code>finance123</code><br>or <code>operations</code> / <code>ops123</code></td>
-    <td>None</td>
-    <td>Staff dashboard and reports</td>
-    <td>None</td>
-    <td>None</td>
-    <td><code>/dashboard</code><br><code>/reports</code><br>Print and Download CSV</td>
+    <td>As <code>operations</code>, add a category, a vehicle model, or a service type</td>
+    <td>Staff dashboard, reports, and the defaults list</td>
+    <td>Edit a saved default. New vehicles and maintenance forms use those values.</td>
+    <td>Delete a default. Saved vehicles are not removed.</td>
+    <td><code>/dashboard</code><br><code>/dashboard/catalog</code><br><code>/reports</code><br>Print and Download CSV</td>
   </tr>
   <tr>
     <td>Pahasara<br>Support</td>
@@ -94,7 +94,7 @@
 <ol>
   <li>Log in as <code>customer</code> and submit a booking from Find a ride.</li>
   <li>Log in as <code>supervisor</code> and approve it.</li>
-  <li>Log in as <code>customer</code> and pay the deposit and rental.</li>
+  <li>Log in as <code>customer</code>, open the invoice, continue to Lanka Pay, and pay with <code>4242 4242 4242 4242</code>.</li>
   <li>Log in as <code>fleet</code>, record pickup (fuel FULL), then return with fuel EMPTY.</li>
   <li>Log in as <code>operations</code> and open Monitor. The booking should be flagged.</li>
   <li>Log in as <code>finance</code> and open Payments, then Reports (Print and Download CSV).</li>

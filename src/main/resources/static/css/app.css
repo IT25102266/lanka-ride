@@ -745,6 +745,32 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   color: var(--lr-ink) !important;
 }
 
+.gateway-card {
+  background: var(--lr-surface);
+  border: 1px solid var(--lr-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(11, 61, 46, 0.06);
+}
+
+.gateway-kicker {
+  color: var(--lr-forest);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.gateway-method {
+  border: 1px solid var(--lr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fff;
+}
+
 .empty-state {
   text-align: center;
   padding: 2rem 1rem;

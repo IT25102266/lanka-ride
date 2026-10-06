@@ -6,7 +6,7 @@
 
 ## Scope
 
-- Mock sandbox gateway: pay deposit + rental after approval
+- Lanka Pay sandbox: choose Visa, Mastercard, or American Express, then enter card details. Card data is not stored. `4242…4242` succeeds and `4000…0002` is declined.
 - Mark Paid; store payment history; HTML invoice
 - Refunds for authorized cancellations (finance / admin)
 - Late fee / damage charges on return
@@ -28,7 +28,7 @@
 
 ## Demo flow
 
-1. Approved booking → customer pays on invoice  
+1. Approved booking → invoice → Lanka Pay checkout → payment successful  
 2. Staff records pickup mileage/fuel  
 3. Staff completes return (optional late/damage)  
 4. Finance can refund when allowed  

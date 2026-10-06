@@ -68,6 +68,12 @@ public class PaymentService {
 
     @Transactional
     public Booking payApprovedBooking(Long bookingId, String username, boolean failGateway) {
+        return payApprovedBooking(bookingId, username, failGateway, null, null);
+    }
+
+    @Transactional
+    public Booking payApprovedBooking(Long bookingId, String username, boolean failGateway,
+                                      String cardBrand, String last4) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
         if (!booking.getCustomer().getUsername().equals(username)) {
@@ -82,20 +88,21 @@ public class PaymentService {
 
         BigDecimal deposit = booking.getVehicle().getDepositAmount();
         BigDecimal rental = rentalDaysAmount(booking);
-        String gatewayRef = "MOCK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String gatewayRef = "LP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
+        String cardNote = cardBrand == null ? "" : " · " + cardBrand + " •••• " + last4;
 
         if (failGateway) {
             saveTx(booking, PaymentType.DEPOSIT, deposit, false, gatewayRef + "-FAIL",
-                    "Sandbox decline", username);
+                    "Lanka Pay declined" + cardNote, username);
             notificationService.email(
                     booking.getCustomer().getEmail(),
                     "Payment declined — booking #" + booking.getId(),
-                    "The sandbox gateway declined the deposit. You can try again.");
-            throw new IllegalArgumentException("Payment gateway declined the transaction (sandbox fail)");
+                    "Lanka Pay declined the card. You can try another card.");
+            throw new IllegalArgumentException("Lanka Pay declined this card. Try another card.");
         }
 
-        saveTx(booking, PaymentType.DEPOSIT, deposit, true, gatewayRef + "-D", "Booking deposit", username);
-        saveTx(booking, PaymentType.RENTAL, rental, true, gatewayRef + "-R", "Rental fee", username);
+        saveTx(booking, PaymentType.DEPOSIT, deposit, true, gatewayRef + "-D", "Booking deposit" + cardNote, username);
+        saveTx(booking, PaymentType.RENTAL, rental, true, gatewayRef + "-R", "Rental fee" + cardNote, username);
 
         booking.setPaymentStatus(PaymentStatus.PAID);
         booking.setInvoiceNumber("INV-" + booking.getId() + "-" + LocalDate.now().getYear());

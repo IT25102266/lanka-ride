@@ -3,6 +3,9 @@ package com.lankaride.vehicle;
 import com.lankaride.common.FuelType;
 import com.lankaride.common.GearboxType;
 import com.lankaride.common.VehicleStatus;
+import com.lankaride.dashboard.DefaultKind;
+import com.lankaride.dashboard.FleetDefault;
+import com.lankaride.dashboard.FleetDefaultService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,9 +21,21 @@ import java.time.LocalDate;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final FleetDefaultService fleetDefaultService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, FleetDefaultService fleetDefaultService) {
         this.vehicleService = vehicleService;
+        this.fleetDefaultService = fleetDefaultService;
+    }
+
+    @ModelAttribute("savedModels")
+    public java.util.List<FleetDefault> savedModels() {
+        return fleetDefaultService.list(DefaultKind.MODEL);
+    }
+
+    @ModelAttribute("savedCategories")
+    public java.util.List<FleetDefault> savedCategories() {
+        return fleetDefaultService.list(DefaultKind.CATEGORY);
     }
 
     @GetMapping
