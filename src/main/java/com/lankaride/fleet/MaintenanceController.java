@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -35,6 +36,11 @@ public class MaintenanceController {
     @ModelAttribute("serviceTypes")
     public List<FleetDefault> serviceTypes() {
         return fleetDefaultService.list(DefaultKind.SERVICE_TYPE);
+    }
+
+    @ModelAttribute("today")
+    public LocalDate today() {
+        return LocalDate.now();
     }
 
     @GetMapping

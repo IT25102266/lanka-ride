@@ -109,9 +109,7 @@ public class BookingService {
     @Transactional
     public Booking approve(Long id, String staffUsername, String note) {
         Booking booking = getById(id);
-        if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalArgumentException("Only pending bookings can be approved");
-        }
+        BookingFlow.of(booking.getStatus()).requireApprove();
         Vehicle vehicle = booking.getVehicle();
         if (vehicle.getStatus() == VehicleStatus.MAINTENANCE
                 || vehicle.getStatus() == VehicleStatus.UNAVAILABLE
@@ -140,9 +138,7 @@ public class BookingService {
     @Transactional
     public Booking deny(Long id, String staffUsername, String reason) {
         Booking booking = getById(id);
-        if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new IllegalArgumentException("Only pending bookings can be denied");
-        }
+        BookingFlow.of(booking.getStatus()).requireDeny();
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException("A denial reason is required");
         }
@@ -159,9 +155,7 @@ public class BookingService {
     @Transactional
     public Booking cancel(Long id, String username, boolean staff) {
         Booking booking = getById(id);
-        if (booking.getStatus() != BookingStatus.PENDING && booking.getStatus() != BookingStatus.APPROVED) {
-            throw new IllegalArgumentException("Only pending or approved bookings can be cancelled");
-        }
+        BookingFlow.of(booking.getStatus()).requireCancel();
         if (!staff && !booking.getCustomer().getUsername().equals(username)) {
             throw new IllegalArgumentException("You can only cancel your own bookings");
         }

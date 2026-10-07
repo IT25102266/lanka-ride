@@ -6,8 +6,8 @@
   --lr-forest: #143028;
   --lr-forest-mid: #1c4336;
   --lr-moss: #2f6a52;
-  --lr-gold: #d39212;
-  --lr-gold-deep: #b67a0c;
+  --lr-gold: #f5c518;
+  --lr-gold-deep: #e0b400;
   --lr-cream: #f6f5f2;
   --lr-ink: #1c2420;
   --lr-muted: #5e6b64;
@@ -15,8 +15,8 @@
   --lr-border: #e4e2dc;
   --lr-shadow: 0 8px 24px rgba(20, 48, 40, 0.06);
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 24px;
+  --radius-sm: 999px;
 }
 
 *,
@@ -114,7 +114,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   background: #f5c518;
   color: #111111;
   border: 1px solid #f5c518;
-  border-radius: 8px;
+  border-radius: 999px;
   height: 44px;
   min-height: 44px;
   padding: 0 16px;
@@ -134,15 +134,32 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 }
 
 /* Nav */
-.nav-marketing,
-.nav-app {
+.nav-marketing {
   background: #111111 !important;
   border-bottom: 3px solid #f5c518 !important;
+}
+
+.nav-app {
+  background: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none;
+  padding-top: 16px;
+}
+
+.nav-app > .container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 6px 6px 20px;
+  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.08);
+}
+
+.nav-marketing,
+.nav-app {
   position: sticky;
   top: 0;
   z-index: 30;
   border-radius: 0;
-  box-shadow: none;
   padding-top: 8px;
   padding-bottom: 8px;
 }
@@ -178,9 +195,15 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   flex: 0 0 auto;
 }
 
-.nav-marketing .brand-mark,
-.nav-app .brand-mark {
+.nav-marketing .brand-mark {
   color: #fff;
+}
+
+.nav-app .brand-mark,
+.nav-app .nav-link,
+.nav-app .navbar-text,
+.nav-app .dropdown-item {
+  color: #111111 !important;
 }
 
 .nav-marketing .nav-link {
@@ -190,18 +213,28 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 }
 
 .nav-marketing .nav-link,
-.nav-app .nav-link,
-.nav-marketing .navbar-text,
-.nav-app .navbar-text {
+.nav-marketing .navbar-text {
   color: rgba(255, 255, 255, 0.88) !important;
   font-weight: 500;
   font-size: 0.9rem;
 }
 
-.nav-marketing .nav-link:hover,
-.nav-app .nav-link:hover {
+.nav-app .nav-link,
+.nav-app .navbar-text {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.nav-marketing .nav-link:hover {
   color: #f5c518 !important;
   background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-app .nav-link:hover,
+.nav-app .dropdown-item:hover,
+.nav-app .dropdown-item:focus {
+  color: #111111 !important;
+  background: #f4f4f2;
 }
 
 .nav-marketing .navbar-toggler {
@@ -214,7 +247,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 
 .nav-marketing .nav-link,
 .nav-app .nav-link {
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 8px 12px;
 }
 
@@ -223,14 +256,13 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   height: 44px;
   min-height: 44px;
   padding: 0 16px;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1;
 }
 
-.nav-marketing .btn-outline-secondary,
-.nav-app .btn-outline-secondary {
+.nav-marketing .btn-outline-secondary {
   --bs-btn-color: #fff;
   --bs-btn-border-color: rgba(255, 255, 255, 0.35);
   --bs-btn-hover-bg: #ffffff;
@@ -238,6 +270,46 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   --bs-btn-hover-border-color: #ffffff;
   background: transparent;
   color: #ffffff;
+}
+
+.nav-app .btn-outline-secondary {
+  --bs-btn-color: #111111;
+  --bs-btn-border-color: #e5e7eb;
+  --bs-btn-hover-bg: #111111;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-border-color: #111111;
+  background: #ffffff;
+  color: #111111;
+}
+
+.nav-app .dropdown-menu {
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
+  padding: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 991.98px) {
+  .nav-app .dropdown-menu {
+    position: static;
+    float: none;
+    border: none;
+    box-shadow: none;
+    background: #f4f4f2;
+    margin: 4px 0 8px;
+  }
+}
+
+.nav-app .dropdown-item {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.nav-app .navbar-toggler {
+  border-color: #e5e7eb;
 }
 
 /* Hero */
@@ -251,7 +323,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   margin-top: -92px;
   padding-top: 92px;
   background:
-    linear-gradient(180deg, rgba(17, 17, 17, 0.72) 0%, rgba(17, 17, 17, 0.48) 42%, rgba(17, 17, 17, 0.7) 100%),
+    linear-gradient(180deg, rgba(17, 17, 17, 0.62) 0%, rgba(17, 17, 17, 0.38) 46%, rgba(17, 17, 17, 0.68) 100%),
     url("../images/backgrounds/bg-hero.jpg") center / cover no-repeat;
 }
 
@@ -286,7 +358,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   min-width: 1.7rem;
   height: 1.35rem;
   padding: 0 0.35rem;
-  border-radius: 4px;
+  border-radius: 999px;
   font-size: 0.72rem;
   letter-spacing: 0;
 }
@@ -321,8 +393,8 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   background: #ffffff;
   color: #111111;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 24px;
+  padding: 20px;
   box-shadow: 0 18px 44px rgba(17, 17, 17, 0.28);
   max-width: 420px;
   margin: 16px auto 0;
@@ -346,7 +418,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   height: 44px;
   min-height: 44px;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 999px;
   background: #ffffff;
   color: #111111;
   box-shadow: none;
@@ -371,7 +443,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   color: #111111;
   font-weight: 700;
   font-size: 0.9375rem;
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 0 16px;
   display: inline-flex;
   align-items: center;
@@ -387,7 +459,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 
 /* Below-fold */
 .section-quiet {
-  background: #f3f4f6;
+  background: #f4f4f2;
   padding: 32px 0;
 }
 
@@ -423,9 +495,9 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 .step-item {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: none;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
 }
 
 .branch-item h3,
@@ -672,7 +744,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   --auth-action: #f5c518;
   --auth-action-hover: #e0b400;
   --auth-control: 44px;
-  --auth-radius: 8px;
+  --auth-radius: 999px;
   --auth-space: 16px;
   min-height: calc(100vh - 180px);
   display: flex;
@@ -689,7 +761,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   background: var(--auth-surface);
   border: 1px solid var(--auth-line);
-  border-radius: 16px;
+  border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(17, 17, 17, 0.08);
 }
@@ -847,7 +919,7 @@ h1, h2, h3, h4, .display-heading, .page-title, .item-title {
 
 .auth-panel .alert {
   margin: 0 0 var(--auth-space);
-  border-radius: var(--auth-radius);
+  border-radius: 20px;
   border: 1px solid var(--auth-line);
   padding: 12px 16px;
 }
@@ -1303,7 +1375,7 @@ a.item-card:hover,
 
 /* Booking pages use the same canvas, card, control, and action rules as the account pages. */
 body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-page, .vehicle-page) {
-  background: #f3f4f6;
+  background: #f4f4f2;
 }
 
 .booking-page,
@@ -1320,7 +1392,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
   --bk-action: #f5c518;
   --bk-action-hover: #e0b400;
   --bk-control: 44px;
-  --bk-radius: 8px;
+  --bk-radius: 999px;
   --bk-space: 16px;
   color: var(--bk-ink);
 }
@@ -1433,7 +1505,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .detail-hero {
   background: var(--bk-night);
   color: #ffffff;
-  border-radius: 16px;
+  border-radius: 24px;
   padding: 32px;
   margin-bottom: var(--bk-space);
 }
@@ -1484,7 +1556,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .history-rail .rail-item {
   background: var(--bk-surface);
   border: 1px solid var(--bk-line);
-  border-radius: 16px;
+  border-radius: 24px;
   padding: var(--bk-space);
   box-shadow: none;
 }
@@ -1782,16 +1854,16 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .btn-outline-dark {
   --bs-btn-color: #111111;
   --bs-btn-bg: #ffffff;
-  --bs-btn-border-color: #e5e7eb;
+  --bs-btn-border-color: #d0d5dd;
   --bs-btn-hover-color: #ffffff;
   --bs-btn-hover-bg: #111111;
   --bs-btn-hover-border-color: #111111;
-  --bs-btn-active-color: #ffffff;
-  --bs-btn-active-bg: #111111;
-  --bs-btn-active-border-color: #111111;
+  --bs-btn-active-color: #111111;
+  --bs-btn-active-bg: #f5c518;
+  --bs-btn-active-border-color: #f5c518;
   background: #ffffff;
   color: var(--bk-ink);
-  border-color: var(--bk-line);
+  border-color: #d0d5dd;
 }
 
 .booking-page .btn-outline-primary:hover,
@@ -1811,16 +1883,24 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .fleet-page .btn-outline-dark:hover,
 .payment-page .btn-outline-dark:hover,
 .support-page .btn-outline-dark:hover,
-.vehicle-page .btn-outline-dark:hover,
+.vehicle-page .btn-outline-dark:hover {
+  background: var(--bk-night);
+  border-color: var(--bk-night);
+  color: #ffffff;
+}
+
 .booking-page .btn.active,
 .dashboard-page .btn.active,
 .fleet-page .btn.active,
 .payment-page .btn.active,
 .support-page .btn.active,
 .vehicle-page .btn.active {
-  background: var(--bk-night);
-  border-color: var(--bk-night);
-  color: #ffffff;
+  --bs-btn-active-bg: #f5c518;
+  --bs-btn-active-border-color: #f5c518;
+  --bs-btn-active-color: #111111;
+  background: #f5c518;
+  border-color: #f5c518;
+  color: #111111;
 }
 
 .booking-page .btn-outline-danger,
@@ -1908,7 +1988,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .support-page .table-responsive.panel,
 .vehicle-page .table-responsive.panel {
   padding: 0;
-  border-radius: 16px;
+  border-radius: 24px;
 }
 
 .dashboard-page .stat-mini,
@@ -1923,7 +2003,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .filter-bar {
   background: var(--bk-surface);
   border: 1px solid var(--bk-line);
-  border-radius: 16px;
+  border-radius: 24px;
   padding: var(--bk-space);
   box-shadow: none;
 }
@@ -1993,7 +2073,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .rail-item {
   background: var(--bk-surface);
   border: 1px solid var(--bk-line);
-  border-radius: 16px;
+  border-radius: 24px;
   padding: var(--bk-space);
   box-shadow: none;
   color: var(--bk-ink);
@@ -2015,7 +2095,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
   height: 44px;
   min-height: 44px;
   border: 1px solid var(--bk-line);
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 0 16px;
   background: #ffffff;
   display: inline-flex;
@@ -2044,7 +2124,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .notif-card {
   background: var(--bk-surface);
   border: 1px solid var(--bk-line);
-  border-radius: 16px;
+  border-radius: 24px;
   padding: var(--bk-space);
   box-shadow: none;
   color: var(--bk-ink);
@@ -2060,7 +2140,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 .vehicle-page .vehicle-card {
   background: #ffffff;
   border: 1px solid var(--bk-line);
-  border-radius: 16px;
+  border-radius: 24px;
   box-shadow: none;
   color: var(--bk-ink);
 }
@@ -2093,7 +2173,7 @@ body:has(.booking-page, .dashboard-page, .fleet-page, .payment-page, .support-pa
 }
 
 .vehicle-page .vehicle-photo {
-  border-radius: 16px;
+  border-radius: 24px;
   border: 1px solid var(--bk-line);
   background: #f3f4f6;
 }
@@ -2153,9 +2233,9 @@ code {
   border-radius: 4px;
 }
 
-/* Full-viewport scenes. Photos are local royalty-free copies (Pexels).
-   Forms, metrics, and module cards stay solid white over a darkened photo. */
-body:has(.hero-full) .nav-marketing {
+/* Home bar floats on the hero. Account pages keep a photo behind the card. */
+body:has(.hero-full) .nav-marketing,
+body:has(.auth-wrap) .nav-app {
   position: sticky;
   top: 0;
   z-index: 40;
@@ -2166,13 +2246,54 @@ body:has(.hero-full) .nav-marketing {
 }
 
 body:has(.hero-full) .nav-marketing > .container,
-body:has(.auth-wrap) .nav-app > .container,
-body:has(.scene-fleet) .nav-app > .container,
-body:has(.scene-garage) .nav-app > .container {
+body:has(.auth-wrap) .nav-app > .container {
   background: #ffffff;
   border-radius: 999px;
-  padding: 6px 16px 6px 20px;
+  padding: 6px 6px 6px 20px;
   box-shadow: 0 14px 36px rgba(17, 17, 17, 0.18);
+}
+
+@media (min-width: 992px) {
+  body:has(.hero-full) .nav-marketing > .container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  body:has(.hero-full) .nav-marketing .navbar-collapse {
+    display: contents !important;
+  }
+
+  body:has(.hero-full) .nav-marketing .nav-center {
+    grid-column: 2;
+    justify-content: center;
+  }
+
+  body:has(.hero-full) .nav-marketing .navbar-nav.ms-auto {
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  body:has(.auth-wrap) .nav-app > .container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  body:has(.auth-wrap) .nav-app .navbar-collapse {
+    display: contents !important;
+  }
+
+  body:has(.auth-wrap) .nav-app .nav-center {
+    grid-column: 2;
+    justify-content: center;
+    margin: 0;
+  }
+
+  body:has(.auth-wrap) .nav-app .navbar-nav.ms-auto {
+    grid-column: 3;
+    justify-self: end;
+  }
 }
 
 body:has(.hero-full) .nav-marketing .brand-mark,
@@ -2180,28 +2301,18 @@ body:has(.hero-full) .nav-marketing .nav-link,
 body:has(.hero-full) .nav-marketing .navbar-text,
 body:has(.auth-wrap) .nav-app .brand-mark,
 body:has(.auth-wrap) .nav-app .nav-link,
-body:has(.auth-wrap) .nav-app .navbar-text,
-body:has(.scene-fleet) .nav-app .brand-mark,
-body:has(.scene-fleet) .nav-app .nav-link,
-body:has(.scene-fleet) .nav-app .navbar-text,
-body:has(.scene-garage) .nav-app .brand-mark,
-body:has(.scene-garage) .nav-app .nav-link,
-body:has(.scene-garage) .nav-app .navbar-text {
+body:has(.auth-wrap) .nav-app .navbar-text {
   color: #111111 !important;
 }
 
 body:has(.hero-full) .nav-marketing .nav-link:hover,
-body:has(.auth-wrap) .nav-app .nav-link:hover,
-body:has(.scene-fleet) .nav-app .nav-link:hover,
-body:has(.scene-garage) .nav-app .nav-link:hover {
+body:has(.auth-wrap) .nav-app .nav-link:hover {
   color: #111111 !important;
-  background: #f3f4f6;
+  background: #f4f4f2;
 }
 
 body:has(.hero-full) .nav-marketing .navbar-toggler,
-body:has(.auth-wrap) .nav-app .navbar-toggler,
-body:has(.scene-fleet) .nav-app .navbar-toggler,
-body:has(.scene-garage) .nav-app .navbar-toggler {
+body:has(.auth-wrap) .nav-app .navbar-toggler {
   border-color: #e5e7eb;
 }
 
@@ -2209,78 +2320,33 @@ body:has(.hero-full) .nav-marketing .navbar-toggler-icon {
   filter: none;
 }
 
-body:has(.auth-wrap) .nav-app .navbar-toggler-icon,
-body:has(.scene-fleet) .nav-app .navbar-toggler-icon,
-body:has(.scene-garage) .nav-app .navbar-toggler-icon {
-  filter: invert(1);
-}
-
-body:has(.hero-full) .nav-marketing .btn-outline-secondary,
-body:has(.auth-wrap) .nav-app .btn-outline-secondary,
-body:has(.scene-fleet) .nav-app .btn-outline-secondary,
-body:has(.scene-garage) .nav-app .btn-outline-secondary {
-  --bs-btn-color: #111111;
-  --bs-btn-border-color: #e5e7eb;
-  --bs-btn-hover-bg: #111111;
-  --bs-btn-hover-color: #ffffff;
-  --bs-btn-hover-border-color: #111111;
-  background: #ffffff;
-  color: #111111;
-}
-
-body:has(.auth-wrap),
-body:has(.scene-fleet),
-body:has(.scene-garage) {
-  background-color: #111111;
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: cover;
-  background-attachment: fixed;
-}
-
 body:has(.auth-wrap) {
-  background-image:
+  background:
     linear-gradient(105deg, rgba(17, 17, 17, 0.72) 0%, rgba(17, 17, 17, 0.42) 48%, rgba(17, 17, 17, 0.62) 100%),
-    url("../images/backgrounds/bg-auth.jpg");
+    url("../images/backgrounds/bg-auth.jpg") center / cover no-repeat fixed;
 }
 
-body:has(.scene-fleet) {
-  background-image:
-    linear-gradient(180deg, rgba(17, 17, 17, 0.78) 0%, rgba(17, 17, 17, 0.55) 180px, rgba(243, 244, 246, 0.97) 340px, #f3f4f6 420px),
-    url("../images/backgrounds/bg-fleet.jpg");
+.scene-fleet {
+  --band: url("../images/backgrounds/bg-fleet.jpg");
 }
 
-body:has(.scene-garage) {
-  background-image:
-    linear-gradient(180deg, rgba(17, 17, 17, 0.8) 0%, rgba(17, 17, 17, 0.58) 180px, rgba(243, 244, 246, 0.97) 340px, #f3f4f6 420px),
-    url("../images/backgrounds/bg-garage.jpg");
+.scene-garage {
+  --band: url("../images/backgrounds/bg-garage.jpg");
 }
 
-body:has(.auth-wrap) .nav-app,
-body:has(.scene-fleet) .nav-app,
-body:has(.scene-garage) .nav-app {
-  background: transparent !important;
-  border-bottom: none !important;
-  box-shadow: none;
-  padding-top: 16px;
-  padding-bottom: 0;
-}
-
-body:has(.scene-fleet) .nav-app > .container,
-body:has(.scene-garage) .nav-app > .container {
-  width: calc(100% - 32px);
-  max-width: none;
-  border-radius: 20px;
-}
-
-body:has(.scene-fleet) .nav-app .nav-link,
-body:has(.scene-garage) .nav-app .nav-link,
-body:has(.scene-fleet) .nav-app .navbar-text,
-body:has(.scene-garage) .nav-app .navbar-text {
-  white-space: nowrap;
-  font-size: 0.875rem;
-  padding-left: 10px;
-  padding-right: 10px;
+.scene-fleet .page-head,
+.scene-garage .page-head {
+  min-height: 200px;
+  margin: 0 0 24px;
+  padding: 28px 24px;
+  border-radius: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 17, 0.35), rgba(17, 17, 17, 0.72)),
+    var(--band) center / cover no-repeat;
 }
 
 body:has(.auth-wrap) .auth-wrap {
@@ -2301,21 +2367,13 @@ body:has(.auth-wrap) .auth-aside {
   background: rgba(17, 17, 17, 0.38);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 16px;
+  border-radius: 24px;
 }
 
 body:has(.auth-wrap) .auth-panel {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 24px;
   box-shadow: 0 24px 60px rgba(17, 17, 17, 0.28);
-}
-
-.scene-fleet .page-head > div:first-child,
-.scene-garage .page-head > div:first-child {
-  background: rgba(17, 17, 17, 0.55);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 16px;
 }
 
 .scene-fleet .page-head .page-title,
@@ -2323,18 +2381,25 @@ body:has(.auth-wrap) .auth-panel {
 .scene-fleet .page-head h1,
 .scene-garage .page-head h1 {
   color: #ffffff;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  margin-bottom: 6px;
 }
 
 .scene-fleet .page-head .page-lead,
 .scene-garage .page-head .page-lead {
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.88) !important;
+  margin-bottom: 0;
 }
 
-.scene-fleet .back-link,
-.scene-garage .back-link {
+.scene-fleet .page-head .back-link,
+.scene-garage .page-head .back-link {
   color: #ffffff;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.scene-fleet .page-head .back-link:hover,
+.scene-garage .page-head .back-link:hover {
+  color: #f5c518;
 }
 
 .scene-fleet .stat-mini,
@@ -2346,16 +2411,34 @@ body:has(.auth-wrap) .auth-panel {
 .scene-fleet .panel,
 .scene-garage .panel,
 .scene-fleet .filter-bar,
-.scene-garage .filter-bar,
-.scene-garage .detail-hero {
-  box-shadow: 0 16px 40px rgba(17, 17, 17, 0.16);
+.scene-garage .filter-bar {
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
 }
 
 @media (max-width: 991px) {
   body:has(.hero-full) .nav-marketing > .container,
-  body:has(.auth-wrap) .nav-app > .container,
-  body:has(.scene-fleet) .nav-app > .container,
-  body:has(.scene-garage) .nav-app > .container {
-    border-radius: 20px;
+  body:has(.auth-wrap) .nav-app > .container {
+    border-radius: 24px;
   }
+
+  .scene-fleet .page-head,
+  .scene-garage .page-head {
+    align-items: flex-start;
+  }
+
+  .nav-app > .container {
+    border-radius: 24px;
+  }
+}
+
+textarea.form-control {
+  height: auto !important;
+  min-height: 112px;
+  border-radius: 20px !important;
+  padding: 12px 16px !important;
+  line-height: 1.45 !important;
+}
+
+.alert {
+  border-radius: 20px;
 }

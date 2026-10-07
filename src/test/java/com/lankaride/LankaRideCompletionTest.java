@@ -10,6 +10,7 @@ import com.lankaride.common.GearboxType;
 import com.lankaride.dashboard.DefaultKind;
 import com.lankaride.dashboard.FleetDefaultService;
 import com.lankaride.payment.DummyGateway;
+import com.lankaride.payment.PaymentGateway;
 import com.lankaride.payment.PaymentService;
 import com.lankaride.payment.PaymentTransaction;
 import com.lankaride.support.NotificationLog;
@@ -203,12 +204,12 @@ class LankaRideCompletionTest {
 
     @Test
     void lankaPayAcceptsAVisaCardAndDeclinesTheSandboxCard() throws Exception {
-        DummyGateway.GatewayDecision approved = dummyGateway.charge(
+        PaymentGateway.GatewayDecision approved = dummyGateway.charge(
                 "VISA", "4242 4242 4242 4242", "Demo Customer", "12/30", "123");
         assertFalse(approved.declined());
         assertEquals("4242", approved.last4());
 
-        DummyGateway.GatewayDecision declined = dummyGateway.charge(
+        PaymentGateway.GatewayDecision declined = dummyGateway.charge(
                 "VISA", "4000000000000002", "Demo Customer", "12/30", "123");
         assertTrue(declined.declined());
         assertThrows(IllegalArgumentException.class, () ->
