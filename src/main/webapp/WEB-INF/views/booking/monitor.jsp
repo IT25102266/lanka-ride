@@ -3,7 +3,8 @@
 <c:set var="pageTitle" value="Operations monitor" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="booking-page">
+<div class="page-head">
     <div>
         <h1 class="page-title">Operations monitor</h1>
         <p class="page-lead">Read-only booking board. ${flagged} return discrepancy flag(s).</p>
@@ -59,5 +60,6 @@
         </div>
     </c:otherwise>
 </c:choose>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
