@@ -4,7 +4,8 @@
 <c:set var="pageTitle" value="Find a ride" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+<div class="vehicle-page">
+<div class="page-head">
     <div>
         <h1 class="page-title">Find your perfect ride</h1>
         <p class="text-muted mb-0">
@@ -129,6 +130,7 @@
             </div>
         </div>
     </c:if>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

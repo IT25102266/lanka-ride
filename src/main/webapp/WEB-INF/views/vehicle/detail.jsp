@@ -5,6 +5,7 @@
 <c:set var="pageTitle" value="${vehicle.brand} ${vehicle.model}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="vehicle-page">
 <a class="back-link" href="<c:url value='/vehicles'/>">&larr; Back to search</a>
 
 <div class="vehicle-layout">
@@ -126,6 +127,7 @@
             </ul>
         </c:otherwise>
     </c:choose>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

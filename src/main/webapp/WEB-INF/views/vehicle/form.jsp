@@ -4,15 +4,15 @@
 <c:set var="pageTitle" value="${vehicle.id == null ? 'Add vehicle' : 'Edit vehicle'}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="vehicle-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/vehicles'/>">&larr; Back to vehicles</a>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-3">${vehicle.id == null ? 'Add vehicle' : 'Edit vehicle'}</h1>
+        <div class="detail-block">
+                <h1 class="page-title mb-1">${vehicle.id == null ? 'Add vehicle' : 'Edit vehicle'}</h1>
 
                 <form:form method="post" modelAttribute="vehicle" action="${formAction}">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -128,9 +128,9 @@
                         <a class="btn btn-outline-secondary" href="<c:url value='/vehicles'/>">Cancel</a>
                     </div>
                 </form:form>
-            </div>
         </div>
     </div>
+</div>
 </div>
 <script>
     (function () {
