@@ -39,28 +39,11 @@ public class ReportService {
 
     public Map<String, Object> buildReport(String period, Long branchId, LocalDate refDate) {
         LocalDate day = refDate == null ? LocalDate.now() : refDate;
-        LocalDateTime from;
-        LocalDateTime to;
-        String label;
-
-        switch (period == null ? "daily" : period) {
-            case "monthly" -> {
-                from = day.withDayOfMonth(1).atStartOfDay();
-                to = day.withDayOfMonth(1).plusMonths(1).atStartOfDay();
-                label = "Monthly — " + day.getMonth() + " " + day.getYear();
-            }
-            case "annual" -> {
-                from = LocalDate.of(day.getYear(), 1, 1).atStartOfDay();
-                to = LocalDate.of(day.getYear() + 1, 1, 1).atStartOfDay();
-                label = "Annual — " + day.getYear();
-            }
-            default -> {
-                from = day.atStartOfDay();
-                to = day.plusDays(1).atStartOfDay();
-                label = "Daily — " + day;
-                period = "daily";
-            }
-        }
+        ReportWindow.Span span = ReportWindow.of(period).resolve(day);
+        period = span.period();
+        LocalDateTime from = span.from();
+        LocalDateTime to = span.to();
+        String label = span.label();
 
         BigDecimal collected = branchId == null
                 ? paymentTransactionRepository.sumCollectedBetween(from, to)

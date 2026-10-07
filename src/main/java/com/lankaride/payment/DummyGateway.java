@@ -10,12 +10,13 @@ import java.util.regex.Pattern;
  * A Visa number ending in 0002 is declined so the failure path can be demonstrated.
  */
 @Component
-public class DummyGateway {
+public class DummyGateway implements PaymentGateway {
 
     private static final Pattern EXPIRY = Pattern.compile("^(0[1-9]|1[0-2])\\s*/\\s*(\\d{2}|\\d{4})$");
     private static final Pattern HOLDER = Pattern.compile("^[A-Za-z][A-Za-z .'\\-]{1,39}$");
 
-    public GatewayDecision charge(String method, String cardNumber, String holder, String expiry, String cvv) {
+    @Override
+    public PaymentGateway.GatewayDecision charge(String method, String cardNumber, String holder, String expiry, String cvv) {
         String brand = normalizeMethod(method);
         String digits = digitsOnly(cardNumber);
         if (digits.length() < 13 || digits.length() > 19 || !luhn(digits)) {
@@ -35,7 +36,7 @@ public class DummyGateway {
         }
         String last4 = digits.substring(digits.length() - 4);
         boolean declined = digits.endsWith("0002") || digits.endsWith("0000");
-        return new GatewayDecision(declined, displayBrand(brand), last4);
+        return new PaymentGateway.GatewayDecision(declined, displayBrand(brand), last4);
     }
 
     private static String normalizeMethod(String method) {
@@ -107,8 +108,5 @@ public class DummyGateway {
             alternate = !alternate;
         }
         return sum % 10 == 0;
-    }
-
-    public record GatewayDecision(boolean declined, String brand, String last4) {
     }
 }

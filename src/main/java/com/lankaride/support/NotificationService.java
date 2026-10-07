@@ -12,9 +12,12 @@ public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationLogRepository notificationLogRepository;
+    private final List<NotificationObserver> observers;
 
-    public NotificationService(NotificationLogRepository notificationLogRepository) {
+    public NotificationService(NotificationLogRepository notificationLogRepository,
+                               List<NotificationObserver> observers) {
         this.notificationLogRepository = notificationLogRepository;
+        this.observers = observers;
     }
 
     @Transactional
@@ -27,8 +30,9 @@ public class NotificationService {
         boolean deliverable = recipient != null && !recipient.isBlank();
         entry.setDeliveryStatus(deliverable ? "SENT" : "FAILED");
         notificationLogRepository.save(entry);
-        log.info("NOTIFY [{}] status={} to={} | {} | {}",
-                channel, entry.getDeliveryStatus(), recipient, subject, body);
+        for (NotificationObserver observer : observers) {
+            observer.onNotified(entry);
+        }
     }
 
     @Transactional

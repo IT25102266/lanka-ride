@@ -19,13 +19,13 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final BookingService bookingService;
-    private final DummyGateway dummyGateway;
+    private final PaymentGateway paymentGateway;
 
     public PaymentController(PaymentService paymentService, BookingService bookingService,
-                             DummyGateway dummyGateway) {
+                             PaymentGateway paymentGateway) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
-        this.dummyGateway = dummyGateway;
+        this.paymentGateway = paymentGateway;
     }
 
     @GetMapping
@@ -81,7 +81,7 @@ public class PaymentController {
             return "redirect:/bookings";
         }
         try {
-            DummyGateway.GatewayDecision decision = dummyGateway.charge(method, cardNumber, holder, expiry, cvv);
+            PaymentGateway.GatewayDecision decision = paymentGateway.charge(method, cardNumber, holder, expiry, cvv);
             paymentService.payApprovedBooking(bookingId, auth.getName(), decision.declined(),
                     decision.brand(), decision.last4());
             redirectAttributes.addFlashAttribute("paidBrand", decision.brand());

@@ -124,19 +124,7 @@ public class VehicleService {
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new IllegalArgumentException("Branch not found"));
 
-        existing.setRegistrationNumber(incoming.getRegistrationNumber());
-        existing.setCategory(incoming.getCategory());
-        existing.setBrand(incoming.getBrand());
-        existing.setModel(incoming.getModel());
-        existing.setSeats(incoming.getSeats());
-        existing.setGearbox(incoming.getGearbox());
-        existing.setFuelType(incoming.getFuelType());
-        existing.setFeatures(incoming.getFeatures());
-        existing.setPhotoUrl(incoming.getPhotoUrl());
-        existing.setPricePerDay(incoming.getPricePerDay());
-        existing.setDepositAmount(incoming.getDepositAmount());
-        existing.setStatus(incoming.getStatus());
-        existing.setCurrentLocation(incoming.getCurrentLocation());
+        VehicleBuilder.from(incoming).applyTo(existing);
         existing.setBranch(branch);
         return vehicleRepository.save(existing);
     }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Lanka Ride — Design Patterns</title>
+  <style>
+    @page { margin: 18mm 16mm; }
+    body { font-family: "Segoe UI", Calibri, sans-serif; color: #1c2420; line-height: 1.45; font-size: 11.5pt; margin: 0; }
+    h1 { font-size: 22pt; margin: 0 0 4px; }
+    h2 { font-size: 14.5pt; margin: 22px 0 6px; border-bottom: 2px solid #f5c518; padding-bottom: 4px; }
+    h3 { font-size: 12pt; margin: 12px 0 4px; }
+    p { margin: 0 0 8px; }
+    code { font-family: Consolas, monospace; font-size: 0.92em; background: #f4f4f2; padding: 0 4px; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; }
+    th, td { border: 1px solid #e5e7eb; text-align: left; padding: 6px 8px; vertical-align: top; }
+    th { background: #111; color: #fff; font-weight: 600; }
+    .kicker { color: #6b7280; margin-bottom: 14px; }
+    .note { background: #f4f4f2; border-left: 4px solid #f5c518; padding: 8px 12px; margin: 10px 0 14px; }
+  </style>
+</head>
+<body>
+  <h1>Lanka Ride — one design pattern per member</h1>
+  <p class="kicker">Group 2026-Y2-S1-MLB-B13G2-05. Each person owns one pattern inside the code they already own. Screens, security rules, and the saved data stay the same.</p>
+
+  <p>A design pattern is a named way to arrange a small piece of code so the next change has one obvious place to go. The patterns below were chosen because the existing behaviour already had that shape. They were not added as empty classes.</p>
+
+  <div class="note">Spring already keeps each <code>@Service</code> as one shared object. That is why the Singleton in this project is not a second copy of a service. It is the maintenance rule book, which really is one stateless object. The Multiton is the three report periods, which really are three shared objects.</div>
+
+  <table>
+    <tr><th>Member</th><th>ID</th><th>Owns</th><th>Pattern</th></tr>
+    <tr><td>Sakalasooriya S.A.A.A.</td><td>IT25102266</td><td>Vehicle management</td><td>Builder</td></tr>
+    <tr><td>De Silva D.L.K.C.</td><td>IT25102264</td><td>Fleet maintenance</td><td>Singleton</td></tr>
+    <tr><td>Samaranayake P.I.S.</td><td>IT24101349</td><td>Booking</td><td>State</td></tr>
+    <tr><td>Kavindi P.D.N.</td><td>IT25102265</td><td>Payment</td><td>Strategy</td></tr>
+    <tr><td>Wickramasinghe R.D.W.K.G.S.</td><td>IT24101008</td><td>Dashboard and reports</td><td>Multiton</td></tr>
+    <tr><td>Pahasara Y.A.P.</td><td>IT24102871</td><td>Support and notifications</td><td>Observer</td></tr>
+  </table>
+
+  <h2>1. Sakalasooriya S.A.A.A. — Builder</h2>
+  <p><b>Code:</b> <code>vehicle/VehicleBuilder.java</code>, used by <code>VehicleService.update</code>.</p>
+  <p><b>Why this pattern.</b> A vehicle has registration, category, brand, model, seats, gearbox, fuel, features, photo, price, deposit, status, and location. Writing that list of setters in the service hides the idea “copy the checked form onto the saved car.” A builder names that copy. A Singleton would not help, because each car is a different row. A Factory would only help if there were several kinds of vehicle class. There is one <code>Vehicle</code> entity.</p>
+  <p><b>How it works.</b> <code>VehicleBuilder.from(incoming)</code> reads the form vehicle one field at a time and returns the builder. <code>applyTo(existing)</code> writes those fields onto the row that is already in the database. The branch is still set by the service after it has loaded the branch, so the builder does not guess a branch. Validation in <code>normalize</code> still runs first.</p>
+  <p><b>What a viva answer should say.</b> “I used a Builder because a car has many fields and the update should copy them in one place. The screens and the database columns did not change.”</p>
+
+  <h2>2. De Silva D.L.K.C. — Singleton</h2>
+  <p><b>Code:</b> <code>fleet/MaintenanceRules.java</code>, used by <code>MaintenanceService.update</code> and <code>MaintenanceService.close</code>.</p>
+  <p><b>Why this pattern.</b> The rules are the same for every maintenance job: a closed record cannot be edited, closing an already closed record does nothing, and the edit form cannot mark a job closed (closing has its own action). Those rules have no fields that change per request, so one object is enough. The constructor is private. Every caller uses <code>MaintenanceRules.getInstance()</code>. A Multiton would fit if each status needed its own object with different data. Here the rules are one book, so a Singleton is the smaller pattern.</p>
+  <p><b>How it works.</b> The single instance is created when the class loads (<code>private static final</code>). <code>requireEditable</code> throws if the status is CLOSED. <code>isClosed</code> lets <code>close</code> return the same record when it is already closed. <code>statusAfterEdit</code> turns a CLOSED choice on the edit form into IN_PROGRESS, which is what the service did before.</p>
+  <p><b>What a viva answer should say.</b> “I used a Singleton because the maintenance rules are one shared policy, not one policy per record. Spring services are also singletons, but this class is the explicit rule book.”</p>
+
+  <h2>3. Samaranayake P.I.S. — State</h2>
+  <p><b>Code:</b> <code>booking/BookingFlow.java</code>, used by <code>BookingService.approve</code>, <code>deny</code>, and <code>cancel</code>.</p>
+  <p><b>Why this pattern.</b> A booking moves through PENDING, APPROVED, DENIED, ONGOING, COMPLETED, and CANCELLED. Approve and deny are legal only from PENDING. Cancel is legal from PENDING or APPROVED. Putting those answers on the status itself is the State pattern: the current state decides what is allowed. A chain of <code>if</code> statements in the service hides which status owns which action.</p>
+  <p><b>How it works.</b> <code>BookingFlow</code> is an enum with one constant per <code>BookingStatus</code>. Each constant stores whether approve, deny, and cancel are allowed. <code>BookingFlow.of(booking.getStatus())</code> picks the state. <code>requireApprove</code>, <code>requireDeny</code>, and <code>requireCancel</code> throw the same messages as before when the move is illegal. The service still checks the vehicle, the date overlap, and who is allowed to cancel.</p>
+  <p><b>What a viva answer should say.</b> “I used State because a booking’s status decides which buttons are legal. The date checks stay in the service. Payment still moves an approved booking to ONGOING after a successful charge.”</p>
+
+  <h2>4. Kavindi P.D.N. — Strategy</h2>
+  <p><b>Code:</b> <code>payment/PaymentGateway.java</code> and <code>payment/DummyGateway.java</code>. <code>PaymentController</code> depends on the interface.</p>
+  <p><b>Why this pattern.</b> Checkout needs “charge this card and tell me if it was declined.” That job can be done by the sandbox gateway today and by a bank gateway later. The controller should not name <code>DummyGateway</code>. Strategy means the caller holds an interface, and one class supplies the real steps. A Singleton gateway would not leave room for a second gateway.</p>
+  <p><b>How it works.</b> <code>PaymentGateway.charge</code> returns a small decision: declined or not, card brand, and the last four digits. <code>DummyGateway</code> implements that interface and still checks the Luhn number, the brand, the expiry, the name, and the security code. A Visa ending in 0002 or 0000 is still declined. Full card numbers are still not stored.</p>
+  <p><b>What a viva answer should say.</b> “I used Strategy so the payment screen talks to a gateway interface. DummyGateway is the strategy we run in the project. Swapping the class does not change the booking or the invoice.”</p>
+
+  <h2>5. Wickramasinghe R.D.W.K.G.S. — Multiton</h2>
+  <p><b>Code:</b> <code>dashboard/ReportWindow.java</code>, used by <code>ReportService.buildReport</code>.</p>
+  <p><b>Why this pattern.</b> Reports are daily, monthly, or annual. Those three windows do not change, and every request for “monthly” needs the same rule. A Multiton keeps one shared object per name. <code>ReportWindow.of("monthly")</code> always returns the same monthly object. Unknown or missing names return the daily object, which is what the old switch did. A Singleton would be wrong because there are three periods, not one. A new object on every request would also work, but it would throw away the fact that the set is fixed.</p>
+  <p><b>How it works.</b> The three objects are created once, and the constructor is private. <code>resolve</code> turns a reference date into a start, an end, a label, and the period name. Daily is that calendar day. Monthly is the first of the month up to the first of the next month. Annual is 1 January up to the next 1 January. Totals, branch rows, and the CSV still come from <code>ReportService</code>.</p>
+  <p><b>What a viva answer should say.</b> “I used a Multiton because there are exactly three report periods and each name should return the same window object. The money is still read from the payment rows. The report does not store a second copy of the totals.”</p>
+
+  <h2>6. Pahasara Y.A.P. — Observer</h2>
+  <p><b>Code:</b> <code>support/NotificationObserver.java</code>, <code>support/LoggingNotificationObserver.java</code>, and <code>support/NotificationService.java</code>.</p>
+  <p><b>Why this pattern.</b> Saving a notification and reacting to it are different jobs. The service writes the log row. Observers hear that the row was saved. The logger is the observer in this project. A later mail sender or SMS sender can implement <code>NotificationObserver</code> and be registered by Spring, without a change to the save method. Strategy would fit if the service picked one channel algorithm. Here more than one reaction can listen, so Observer is the better fit.</p>
+  <p><b>How it works.</b> <code>send</code> still builds a <code>NotificationLog</code>, marks it SENT when the recipient is present and FAILED when it is blank, and saves it. It then calls <code>onNotified</code> on every observer. <code>LoggingNotificationObserver</code> writes the same NOTIFY line as before. <code>email</code> still calls <code>send</code> with the EMAIL channel. Retry of failed rows is unchanged.</p>
+  <p><b>What a viva answer should say.</b> “I used Observer so the notification log does not know who wants to hear about a new row. The logger is one observer. Ticket create and ticket reply still call the notification service after they save.”</p>
+
+  <h2>What was left alone</h2>
+  <p>No table, screen, or security rule was added for these patterns. Vehicle search, transfer, retire, and delete stay in <code>VehicleService</code>. Maintenance dates still cannot be in the past. Booking approval still checks the vehicle and overlapping dates. Payment is still an append-only ledger. Report numbers are still calculated from the payment and booking rows when the page opens.</p>
+</body>
+</html>
