@@ -24,7 +24,7 @@
 </nav>
 </c:when>
 <c:otherwise>
-<nav class="navbar navbar-expand-lg <c:choose><c:when test='${isMarketing}'>nav-marketing</c:when><c:otherwise>navbar-dark nav-app</c:otherwise></c:choose>">
+<nav class="navbar navbar-expand-lg <c:choose><c:when test='${isMarketing}'>nav-marketing</c:when><c:otherwise>nav-app</c:otherwise></c:choose>">
     <div class="container">
         <a class="navbar-brand brand-mark" href="<c:url value='/'/>">Lanka Ride</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
@@ -32,7 +32,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
+            <ul class="navbar-nav nav-center mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value='/'/>">Home</a>
                 </li>
@@ -51,54 +51,52 @@
                     </li>
                 </sec:authorize>
                 <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','FLEET_COORDINATOR','FINANCE_MANAGER','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/dashboard'/>">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/bookings'/>">Bookings</a>
-                    </li>
-                    <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
-                        <li class="nav-item">
-                            <a class="nav-link" href="<c:url value='/bookings/monitor'/>">Monitor</a>
-                        </li>
-                    </sec:authorize>
-                </sec:authorize>
-                <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/payments'/>">Payments</a>
-                    </li>
-                </sec:authorize>
-                <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/reports'/>">Reports</a>
-                    </li>
-                </sec:authorize>
-                <sec:authorize access="hasAnyRole('ADMIN','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/dashboard/catalog'/>">Defaults</a>
-                    </li>
-                </sec:authorize>
-                <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/maintenance'/>">Maintenance</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Operations</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<c:url value='/dashboard'/>">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="<c:url value='/bookings'/>">Bookings</a></li>
+                            <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
+                                <li><a class="dropdown-item" href="<c:url value='/bookings/monitor'/>">Monitor</a></li>
+                            </sec:authorize>
+                        </ul>
                     </li>
                 </sec:authorize>
                 <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/vehicles/new'/>">Add vehicle</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Fleet</a>
+                        <ul class="dropdown-menu">
+                            <sec:authorize access="hasAnyRole('ADMIN','FLEET_COORDINATOR')">
+                                <li><a class="dropdown-item" href="<c:url value='/maintenance'/>">Maintenance</a></li>
+                            </sec:authorize>
+                            <li><a class="dropdown-item" href="<c:url value='/vehicles/new'/>">Add vehicle</a></li>
+                            <sec:authorize access="hasAnyRole('ADMIN','OPERATIONS_MANAGER')">
+                                <li><a class="dropdown-item" href="<c:url value='/dashboard/catalog'/>">Defaults</a></li>
+                            </sec:authorize>
+                        </ul>
                     </li>
                 </sec:authorize>
-                <sec:authorize access="hasRole('ADMIN')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/admin'/>">Admin</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/support/notifications'/>">Alerts</a>
+                <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Finance</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<c:url value='/payments'/>">Payments</a></li>
+                            <sec:authorize access="hasAnyRole('ADMIN','FINANCE_MANAGER','OPERATIONS_MANAGER')">
+                                <li><a class="dropdown-item" href="<c:url value='/reports'/>">Reports</a></li>
+                            </sec:authorize>
+                        </ul>
                     </li>
                 </sec:authorize>
                 <sec:authorize access="hasAnyRole('ADMIN','BOOKING_SUPERVISOR','OPERATIONS_MANAGER')">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/support'/>">Support</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<c:url value='/support'/>">Support</a></li>
+                            <sec:authorize access="hasRole('ADMIN')">
+                                <li><a class="dropdown-item" href="<c:url value='/admin'/>">Admin</a></li>
+                                <li><a class="dropdown-item" href="<c:url value='/support/notifications'/>">Alerts</a></li>
+                            </sec:authorize>
+                        </ul>
                     </li>
                 </sec:authorize>
             </ul>
@@ -113,7 +111,7 @@
                     <li class="nav-item">
                         <form method="post" action="<c:url value='/logout'/>" class="d-inline">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                            <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                            <button type="submit" class="btn btn-outline-secondary">Logout</button>
                         </form>
                     </li>
                 </sec:authorize>

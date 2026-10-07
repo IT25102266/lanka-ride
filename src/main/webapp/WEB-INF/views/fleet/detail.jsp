@@ -5,22 +5,17 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="fleet-page scene-garage">
-<div class="mb-3">
-    <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
-</div>
-
 <c:set var="rs" value="${fn:toLowerCase(fn:replace(record.status.name(), '_', '-'))}"/>
 
-<section class="detail-hero">
-    <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start">
-        <div>
-            <p class="muted small mb-1 text-uppercase" style="letter-spacing:.08em;">Maintenance #${record.id}</p>
-            <h1>${record.serviceType}</h1>
-            <p class="muted mb-0">${record.vehicle.registrationNumber} · ${record.vehicle.brand} ${record.vehicle.model}</p>
-        </div>
-        <span class="status-pill status-${rs}">${record.status}</span>
+<div class="page-head">
+    <div>
+        <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
+        <p class="page-lead">Maintenance #${record.id}</p>
+        <h1 class="page-title">${record.serviceType}</h1>
+        <p class="page-lead">${record.vehicle.registrationNumber} · ${record.vehicle.brand} ${record.vehicle.model}</p>
     </div>
-</section>
+    <span class="status-pill status-${rs}">${record.status}</span>
+</div>
 
 <div class="row g-4">
     <div class="col-lg-7">
