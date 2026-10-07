@@ -4,6 +4,7 @@
 <c:set var="layoutMode" value="gateway" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="payment-page">
 <div class="row justify-content-center">
     <div class="col-lg-6">
         <div class="gateway-card text-center">
@@ -16,6 +17,7 @@
             <a class="pay-cta" href="<c:url value='/payments/booking/${booking.id}'/>">View invoice</a>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
