@@ -4,8 +4,20 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="auth-wrap">
-    <div class="auth-panel">
-        <div class="brand-mark mb-3 d-inline-flex">Lanka Ride</div>
+    <div class="auth-shell">
+        <aside class="auth-aside">
+            <div>
+                <p class="auth-kicker">Lanka Ride</p>
+                <h2>Rent a car for every journey</h2>
+                <p>Search a branch, reserve the dates, and pay once the trip is approved.</p>
+            </div>
+            <ol class="auth-steps">
+                <li><span>1</span> Choose a car</li>
+                <li><span>2</span> Book online</li>
+                <li><span>3</span> Pick up and drive</li>
+            </ol>
+        </aside>
+        <div class="auth-panel">
         <h1>Create account</h1>
         <p class="text-muted small mb-3">Public registration creates a <strong>customer</strong> account only.</p>
 
@@ -38,10 +50,10 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Register</button>
         </form>
-        <hr/>
-        <p class="small mb-0">Already registered?
+        <p class="auth-links">
             <a href="<c:url value='/login'/>">Sign in</a>
         </p>
+        </div>
     </div>
 </div>
 
