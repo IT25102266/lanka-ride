@@ -3,7 +3,8 @@
 <c:set var="pageTitle" value="Notifications" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="support-page">
+<div class="page-head">
     <div>
         <h1 class="page-title">Notification log</h1>
         <p class="page-lead">Sandbox email log, including payment hooks and maintenance reminders. Failed rows can be retried.</p>
@@ -34,5 +35,6 @@
         </div>
     </c:otherwise>
 </c:choose>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

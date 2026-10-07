@@ -3,6 +3,7 @@
 <c:set var="pageTitle" value="New support ticket" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="support-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/support'/>">&larr; Back to support centre</a>
 </div>
@@ -31,6 +32,7 @@
             </form>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
