@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lanka Ride — What each member built</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Calibri, sans-serif;
+    color: #1a1a1a;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px; letter-spacing: -0.02em; }
+  h2 { font-size: 14pt; margin: 22px 0 8px; border-bottom: 2px solid #f5c518; padding-bottom: 4px; page-break-after: avoid; }
+  h3 { font-size: 12pt; margin: 14px 0 6px; page-break-after: avoid; }
+  p { margin: 0 0 8px; }
+  .meta { color: #444; font-size: 10.5pt; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #ddd; padding: 5px 7px; vertical-align: top; text-align: left; }
+  th { background: #111; color: #fff; font-weight: 600; }
+  code { font-family: Consolas, monospace; font-size: 0.92em; background: #f4f4f4; padding: 0 3px; }
+  ul { margin: 4px 0 10px; padding-left: 18px; }
+  li { margin: 2px 0; }
+  .note { background: #fff8dc; border-left: 4px solid #f5c518; padding: 8px 10px; margin: 10px 0 14px; }
+  .member { page-break-before: always; }
+  .member:first-of-type { page-break-before: auto; }
+</style>
+</head>
+<body>
+
+<h1>Lanka Ride — what each member built</h1>
+<p class="meta">Group 2026-Y2-S1-MLB-B13G2-05 · SE2030 · Spring Boot 3.3, JSP, Spring Security, MySQL <code>lanka_ride</code></p>
+
+<p>Lanka Ride is a vehicle rental web application. A customer searches a branch, asks to book a car, a supervisor approves or denies the request, finance takes payment, and staff record pickup and return. Fleet staff can take a car offline for maintenance. Support staff answer tickets. Managers read reports.</p>
+
+<div class="note">
+  Every feature uses the same path. The browser shows a JSP page. The form posts to a controller. The controller calls a service. The service checks the rules and asks a repository to read or write MySQL. The controller then redirects, and the next JSP draws the result. A hidden CSRF token sits on every POST form. This guide does not change any of that Java.
+</div>
+
+<h2>Who owns what</h2>
+<table>
+  <tr><th>Member</th><th>ID</th><th>Role</th><th>Use case</th><th>Package</th></tr>
+  <tr><td>Sakalasooriya S.A.A.A.</td><td>IT25102266</td><td>Developer</td><td>UC-02 Vehicle management only: catalogue, create, update, transfer, retire, and delete.</td><td><code>vehicle</code></td></tr>
+  <tr><td>De Silva D.L.K.C.</td><td>IT25102264</td><td>Developer</td><td>UC-01 Fleet maintenance</td><td><code>fleet</code></td></tr>
+  <tr><td>Samaranayake P.I.S.</td><td>IT24101349</td><td>Scrum Master</td><td>UC-03 Booking and reservation</td><td><code>booking</code></td></tr>
+  <tr><td>Kavindi P.D.N.</td><td>IT25102265</td><td>Developer</td><td>UC-04 Payment and billing</td><td><code>payment</code></td></tr>
+  <tr><td>Wickramasinghe R.D.W.K.G.S.</td><td>IT24101008</td><td>Product Owner</td><td>UC-05 Dashboard and reports</td><td><code>dashboard</code></td></tr>
+  <tr><td>Pahasara Y.A.P.</td><td>IT24102871</td><td>Developer</td><td>UC-06 Support, notifications, password reset, role menus, and adding branches and staff.</td><td><code>support</code></td></tr>
+</table>
+
+<h2>How a page is built</h2>
+<p><code>header.jsp</code> and <code>footer.jsp</code> wrap every screen. The header chooses a marketing bar on the home page, a short Lanka Pay bar on the card page, or the signed-in menu everywhere else. <code>sec:authorize</code> hides links the current role must not see. <code>app.css</code> is the only stylesheet. Photos sit behind the home page, login, register, the customer dashboard, and the maintenance and admin screens. The forms and numbers stay in white cards.</p>
+<p><code>HomeController</code> at <code>/</code> loads the branches into <code>home/index.jsp</code>. The search form is a GET to <code>/vehicles</code>. That is Sakalasooriya’s catalogue, reached from the shared home page.</p>
+
+<h2>Demo accounts</h2>
+<table>
+  <tr><th>Username</th><th>Password</th><th>Lands on</th></tr>
+  <tr><td>customer</td><td>customer123</td><td><code>/app</code> My trips</td></tr>
+  <tr><td>admin</td><td>admin123</td><td><code>/dashboard</code></td></tr>
+  <tr><td>fleet</td><td>fleet123</td><td><code>/dashboard</code> and <code>/maintenance</code></td></tr>
+  <tr><td>supervisor</td><td>super123</td><td><code>/dashboard</code> and bookings</td></tr>
+  <tr><td>finance</td><td>finance123</td><td><code>/dashboard</code>, payments, reports</td></tr>
+  <tr><td>operations</td><td>ops123</td><td><code>/dashboard</code>, reports, fleet defaults</td></tr>
+</table>
+<p>Public registration always creates a CUSTOMER. Staff accounts are created only on the admin screen.</p>
+
+<div class="member">
+<h2>1. Sakalasooriya S.A.A.A. — vehicle management only</h2>
+<p>IT25102266 owns vehicle management and nothing else in this guide. That is the car catalogue: search, the detail page, add, edit, transfer between branches, retire, and permanent delete. A visitor can search cars without signing in. Creating, editing, transferring, retiring, or deleting a car needs ADMIN, FLEET_COORDINATOR, or OPERATIONS_MANAGER. Branches, staff accounts, login, and support tickets belong to other members.</p>
+
+<h3>CRUD</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/vehicles</code></td><td>Search by branch, category, dates, and “available only”. Retired cars stay hidden.</td></tr>
+  <tr><td>Read</td><td>GET <code>/vehicles/{id}</code></td><td>One car: price, seats, photo, branch, status, transfer history.</td></tr>
+  <tr><td>Create</td><td>GET/POST <code>/vehicles/new</code> and POST <code>/vehicles</code></td><td>Save a new car on a branch. Registration number must be unique.</td></tr>
+  <tr><td>Update</td><td>GET/POST <code>/vehicles/{id}/edit</code> and POST <code>/vehicles/{id}</code></td><td>Change the same car. The plate check ignores its own row.</td></tr>
+  <tr><td>Update</td><td>POST <code>/vehicles/{id}/transfer</code></td><td>Move the car to another branch and write a <code>branch_transfers</code> row.</td></tr>
+  <tr><td>Update</td><td>POST <code>/vehicles/{id}/retire</code></td><td>Status becomes RETIRED. The row stays in the database.</td></tr>
+  <tr><td>Delete</td><td>POST <code>/vehicles/{id}/delete</code></td><td>Permanent delete. Payments, bookings, maintenance, and transfers for that car are removed first.</td></tr>
+</table>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>vehicle/list.jsp</code> — filter form and a card for each car. Search is a GET, so the address bar holds the filters.</li>
+  <li><code>vehicle/detail.jsp</code> — photo, specs, and the staff buttons for edit, transfer, retire, and delete.</li>
+  <li><code>vehicle/form.jsp</code> — Spring <code>form:form</code> bound to a <code>Vehicle</code>. The same page creates and edits. A small script fills brand and model from the saved fleet defaults. Those defaults are Wickramasinghe’s catalogue, not this module.</li>
+</ul>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>Vehicle</code> is the table <code>vehicles</code>. Status is AVAILABLE, UNAVAILABLE, MAINTENANCE, or RETIRED. A car belongs to one <code>Branch</code>.</li>
+  <li><code>VehicleRepository.search</code> is a JPQL query. Blank filters are ignored. It never returns RETIRED cars.</li>
+  <li><code>VehicleService.search</code> runs that query, then drops cars whose bookings overlap the chosen dates. Pending, approved, and ongoing bookings block the car.</li>
+  <li><code>VehicleService.create</code> and <code>update</code> clean text, check the plate, check seats from 1 to 20, and check money through <code>InputChecks</code>.</li>
+  <li><code>VehicleService.transfer</code> refuses a retired car and a move to the same branch. It saves a <code>BranchTransfer</code> with who did it and when.</li>
+  <li><code>VehicleController</code> is thin. It reads the form, calls the service, and redirects with a flash message. That is the post-redirect-get pattern, so a refresh does not save the car twice.</li>
+  <li>His Java files are <code>Vehicle</code>, <code>VehicleController</code>, <code>VehicleService</code>, <code>VehicleRepository</code>, <code>Branch</code>, <code>BranchRepository</code>, <code>BranchTransfer</code>, and <code>BranchTransferRepository</code>. <code>Branch</code> is the depot a car belongs to. Adding a new depot is not this module.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>2. De Silva D.L.K.C. — fleet maintenance</h2>
+<p>He owns service records. Opening a job sets the car to MAINTENANCE so a new booking is refused. Closing the job sets the car back to AVAILABLE. Only ADMIN and FLEET_COORDINATOR can open <code>/maintenance</code>.</p>
+
+<h3>CRUD</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/maintenance</code></td><td>List every service record.</td></tr>
+  <tr><td>Read</td><td>GET <code>/maintenance/{id}</code></td><td>One record, the car, and the close form.</td></tr>
+  <tr><td>Create</td><td>GET <code>/maintenance/new</code> then POST <code>/maintenance</code></td><td>Open a job. If the car has a future booking, the form asks the user to confirm.</td></tr>
+  <tr><td>Update</td><td>GET <code>/maintenance/{id}/edit</code> then POST <code>/maintenance/{id}</code></td><td>Edit an open job. A closed job cannot be edited.</td></tr>
+  <tr><td>Update</td><td>POST <code>/maintenance/{id}/close</code></td><td>Store the final cost, mark CLOSED, and make the car AVAILABLE again.</td></tr>
+  <tr><td>Delete</td><td>POST <code>/maintenance/{id}/delete</code></td><td>Remove that record.</td></tr>
+  <tr><td>Update</td><td>POST <code>/maintenance/reminders</code></td><td>Send due-service reminders into the notification log.</td></tr>
+</table>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>fleet/list.jsp</code> — cards for each job, plus “Add record” and “Send due reminders”.</li>
+  <li><code>fleet/form.jsp</code> — vehicle, service type, dates, cost, description, and mechanics. The same form edits an existing job.</li>
+  <li><code>fleet/detail.jsp</code> — the job, a close button, and delete. Close posts the final cost.</li>
+</ul>
+<p>These three pages use the garage photo behind the white cards.</p>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>MaintenanceRecord</code> stores the service type, dates, costs, description, mechanics, status (OPEN, IN_PROGRESS, CLOSED), and the vehicle.</li>
+  <li><code>MaintenanceService.create</code> looks for bookings that still need the car. Without the confirm flag it stops and tells the controller to show the warning. With the flag it saves the job and sets the vehicle status to MAINTENANCE.</li>
+  <li><code>MaintenanceService.close</code> writes the final cost, sets CLOSED, and sets the vehicle back to AVAILABLE.</li>
+  <li><code>MaintenanceService.openInspectionFromReturn</code> is called from the payment return path when staff record a mileage or damage discrepancy. The booking stays. A new maintenance row is opened.</li>
+  <li><code>MaintenanceReminderScheduler</code> can call the same reminder method on a timer. The button on the list page calls it immediately.</li>
+  <li><code>MaintenanceController</code> only gathers form fields, calls the service, and redirects. The conflict warning is an exception turned into a message on the form.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>3. Samaranayake P.I.S. — bookings</h2>
+<p>He is Scrum Master and he owns the reservation. A booking is a request, not an instant rental. It starts PENDING and UNPAID. A supervisor approves or denies it. The customer or staff can cancel while it is still pending or approved. The monitor page is read-only.</p>
+
+<h3>CRUD and the status changes</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/bookings</code></td><td>A customer sees only their trips. Staff see every booking.</td></tr>
+  <tr><td>Read</td><td>GET <code>/bookings/pending</code></td><td>Staff queue of PENDING requests.</td></tr>
+  <tr><td>Read</td><td>GET <code>/bookings/monitor</code></td><td>Operations view. No buttons that change data.</td></tr>
+  <tr><td>Read</td><td>GET <code>/bookings/{id}</code></td><td>One booking. Staff see approve and deny. The customer sees pay when it is approved.</td></tr>
+  <tr><td>Create</td><td>GET <code>/bookings/new</code> then POST <code>/bookings</code></td><td>Customer asks for a car, a branch, and two dates. Status becomes PENDING.</td></tr>
+  <tr><td>Update</td><td>POST <code>/bookings/{id}/approve</code></td><td>PENDING becomes APPROVED. Payment status becomes PENDING_PAYMENT.</td></tr>
+  <tr><td>Update</td><td>POST <code>/bookings/{id}/deny</code></td><td>PENDING becomes DENIED, with a reason.</td></tr>
+  <tr><td>Update</td><td>POST <code>/bookings/{id}/cancel</code></td><td>Customer or staff cancel a pending or approved trip.</td></tr>
+  <tr><td>Delete</td><td>POST <code>/bookings/{id}/delete</code></td><td>Permanent delete of that booking when the rules allow it.</td></tr>
+</table>
+<p>Pickup and return mileage are stored on the booking, but the buttons live on Kavindi’s invoice page. The two modules share the <code>Booking</code> row.</p>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>booking/list.jsp</code> — cards, status pills, and filters for pending or all.</li>
+  <li><code>booking/form.jsp</code> — dates and the chosen car. The page script stops a return date that is before pickup.</li>
+  <li><code>booking/detail.jsp</code> — the decision screen. Approve and deny are separate POST forms. The pay link goes to the invoice.</li>
+  <li><code>booking/monitor.jsp</code> — the same trips in a staff board, without edit buttons.</li>
+</ul>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>Booking</code> holds the customer, vehicle, branch, dates, status, payment status, mileage, fuel, late fee, damage charge, and a discrepancy note.</li>
+  <li><code>BookingService.create</code> rejects a car that is in maintenance, unavailable, or retired. It then calls <code>countOverlapping</code>. If another pending, approved, or ongoing booking covers those dates, the save is refused.</li>
+  <li><code>approve</code> only works on PENDING, and it checks the car status again. A car that went into the workshop after the request cannot be approved.</li>
+  <li><code>deny</code> stores the staff reason. <code>cancel</code> checks that the caller is the customer or a staff member.</li>
+  <li><code>BookingRepository.countOverlapping</code> is the date rule: pickup is on or before the end, and return is on or after the start, and the status is in the blocking list.</li>
+  <li><code>BookingController</code> reads the signed-in name and passes it to the service. Customers and staff share the same URLs. The service and <code>@PreAuthorize</code> decide who may approve.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>4. Kavindi P.D.N. — payments</h2>
+<p>She owns the money. Each movement is its own row: rental, deposit, late fee, damage, or refund. The invoice reads those rows. The card number is checked by a sandbox gateway and then thrown away. Only the brand and the last four digits are stored.</p>
+
+<h3>CRUD</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/payments</code></td><td>Staff ledger of every transaction.</td></tr>
+  <tr><td>Read</td><td>GET <code>/payments/booking/{id}</code></td><td>The invoice for one booking.</td></tr>
+  <tr><td>Create</td><td>GET/POST <code>/payments/booking/{id}/checkout</code></td><td>Lanka Pay. Visa, Mastercard, or American Express. A test card ending 4242 is approved. A card ending 0002 is declined.</td></tr>
+  <tr><td>Read</td><td>GET <code>.../checkout/success</code></td><td>Receipt after a successful charge.</td></tr>
+  <tr><td>Update</td><td>POST <code>.../pickup</code></td><td>Staff record pickup mileage and fuel. Booking becomes ONGOING.</td></tr>
+  <tr><td>Update</td><td>POST <code>.../return</code></td><td>Staff record return mileage, fuel, late fee, and damage. Booking becomes COMPLETED. Extra charges become new payment rows.</td></tr>
+  <tr><td>Create</td><td>POST <code>.../refund</code></td><td>Finance or admin refund an allowed booking. A refund row is inserted. The old payment row is not edited.</td></tr>
+</table>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>payment/list.jsp</code> — the ledger cards: type, amount, who recorded it, and success or failure.</li>
+  <li><code>payment/invoice.jsp</code> — amount due, pay button, pickup form, return form, and refund form. Which block shows depends on the booking status.</li>
+  <li><code>payment/gateway.jsp</code> — the card form. It uses the short Lanka Pay header.</li>
+  <li><code>payment/gateway-success.jsp</code> — the approved receipt and the link back to the invoice.</li>
+</ul>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>PaymentTransaction</code> is one line of the ledger: type, amount, gateway reference, brand, last four digits, success flag, and the staff or customer who caused it.</li>
+  <li><code>DummyGateway.charge</code> checks length, the Luhn digit, the brand, the name, the expiry, and the CVV. It returns a decision. It does not save the full card number.</li>
+  <li><code>PaymentService.payApprovedBooking</code> only runs when the booking is APPROVED and waiting for payment. A decline does not mark the booking paid.</li>
+  <li><code>recordPickup</code> stores the mileage and fuel and moves the booking to ONGOING.</li>
+  <li><code>completeReturn</code> stores return readings, optional late fee and damage, inserts those charges, and marks the booking COMPLETED. A discrepancy note can open a maintenance job through De Silva’s service.</li>
+  <li><code>refund</code> inserts a refund row and sets the payment status to REFUNDED when the booking is allowed to be refunded.</li>
+  <li><code>PaymentController</code> passes the signed-in username into the service so the ledger can show who took the payment.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>5. Wickramasinghe R.D.W.K.G.S. — dashboard and reports</h2>
+<p>He is Product Owner and he owns the numbers. The staff dashboard counts cars and pending bookings from the live tables. Reports read payments and vehicles. They do not keep a second copy of the money. Operations can also maintain the fleet defaults that the vehicle form uses.</p>
+
+<h3>CRUD</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/dashboard</code></td><td>Staff home: total cars, available, in maintenance, branches, pending bookings, and links for that role.</td></tr>
+  <tr><td>Read</td><td>GET <code>/app</code></td><td>Customer home: active trips, trips waiting for payment, and the latest bookings. CUSTOMER only.</td></tr>
+  <tr><td>Read</td><td>GET <code>/reports</code></td><td>Daily, monthly, or annual figures, optional branch filter, utilization, and location rows.</td></tr>
+  <tr><td>Read</td><td>GET <code>/reports/export</code></td><td>The same report as a CSV file.</td></tr>
+  <tr><td>Read</td><td>GET <code>/dashboard/catalog</code></td><td>List categories, models, and service types.</td></tr>
+  <tr><td>Create</td><td>POST <code>/dashboard/catalog</code></td><td>Add one default.</td></tr>
+  <tr><td>Update</td><td>POST <code>/dashboard/catalog/{id}</code></td><td>Edit one default.</td></tr>
+  <tr><td>Delete</td><td>POST <code>/dashboard/catalog/{id}/delete</code></td><td>Remove one default. ADMIN and OPERATIONS_MANAGER only.</td></tr>
+</table>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>dashboard/index.jsp</code> — the operations dashboard. Metric cards on top, then a workspace of links. The garage photo sits behind the top of the page.</li>
+  <li><code>dashboard/customer.jsp</code> — “My trips”. Counts and recent booking cards over the fleet photo.</li>
+  <li><code>dashboard/reports.jsp</code> — period buttons, branch filter, totals, and a print-friendly table.</li>
+  <li><code>dashboard/catalog.jsp</code> — three kinds of defaults, with add, edit, and delete.</li>
+</ul>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>DashboardController.dashboard</code> calls <code>count()</code> and <code>countByStatus</code> on the vehicle repository and <code>countPending</code> on the booking service. It puts those numbers on the model. The JSP only prints them.</li>
+  <li><code>customerHome</code> loads that customer’s bookings and counts how many are active and how many are approved but unpaid.</li>
+  <li><code>ReportService.buildReport</code> chooses a date window from “daily”, “monthly”, or “annual”, then sums successful payment rows and counts bookings and vehicles. A branch id narrows the query.</li>
+  <li><code>ReportService.toCsv</code> turns that same map into text. <code>ReportsController</code> returns it with content type <code>text/csv</code>.</li>
+  <li><code>FleetDefault</code> is a small lookup row: kind (category, model, or service type) and a label. <code>FleetDefaultService</code> lists, saves, and deletes them. The vehicle form reads the lists so staff do not invent a new spelling of the same model every time.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>6. Pahasara Y.A.P. — support and notifications</h2>
+<p>He owns tickets, the notification log, password reset, the role menus, and the admin screen that adds a branch or a staff user. Email is not sent to a real inbox. Each attempt is a row in the notification log, and a failed row can be retried. Public registration always creates a customer. Only this admin screen can create a staff account.</p>
+
+<h3>CRUD</h3>
+<table>
+  <tr><th>Action</th><th>URL</th><th>What it does</th></tr>
+  <tr><td>Read</td><td>GET <code>/support</code></td><td>A customer sees their tickets. Staff see the queue.</td></tr>
+  <tr><td>Create</td><td>GET <code>/support/new</code> then POST <code>/support</code></td><td>Open a ticket. Status starts at OPEN. A log row is written.</td></tr>
+  <tr><td>Read</td><td>GET <code>/support/{id}</code></td><td>One ticket. A customer who does not own it is sent back to the list.</td></tr>
+  <tr><td>Update</td><td>POST <code>/support/{id}/respond</code></td><td>Staff save a reply and a status: OPEN, IN_PROGRESS, RESOLVED, or CLOSED.</td></tr>
+  <tr><td>Delete</td><td>POST <code>/support/{id}/delete</code></td><td>The owner or staff can delete that ticket.</td></tr>
+  <tr><td>Read</td><td>GET <code>/support/notifications</code></td><td>The alert log. ADMIN and OPERATIONS_MANAGER.</td></tr>
+  <tr><td>Update</td><td>POST <code>/support/notifications/retry</code></td><td>Retry rows that failed.</td></tr>
+  <tr><td>Create</td><td>POST <code>/forgot-password</code></td><td>If the user exists, save a token and write it into the notification log.</td></tr>
+  <tr><td>Update</td><td>POST <code>/reset-password</code></td><td>If the token is unused and not expired, replace the password.</td></tr>
+  <tr><td>Read</td><td>GET <code>/admin</code></td><td>ADMIN only. Shows current branches and the two create forms.</td></tr>
+  <tr><td>Create</td><td>POST <code>/admin/branches</code></td><td>Add a depot. The row goes in <code>branches</code>.</td></tr>
+  <tr><td>Create</td><td>POST <code>/admin/users</code></td><td>Add a user and a role. Public register cannot create staff.</td></tr>
+</table>
+
+<h3>Screens</h3>
+<ul>
+  <li><code>support/list.jsp</code> — ticket cards and a button to open a new one.</li>
+  <li><code>support/form.jsp</code> — subject and message.</li>
+  <li><code>support/detail.jsp</code> — the customer message, and the staff reply form when the viewer is staff.</li>
+  <li><code>support/notifications.jsp</code> — channel, recipient, subject, delivery status, and the retry button.</li>
+  <li><code>auth/forgot-password.jsp</code> and <code>auth/reset-password.jsp</code> — the recovery forms. They use the same photo layout as login.</li>
+  <li><code>header.jsp</code> — his menu pass. Customer links and staff links are separate <code>sec:authorize</code> blocks.</li>
+  <li><code>support/admin.jsp</code> — two cards: add branch, and add user with a role list.</li>
+  <li><code>auth/login.jsp</code> and <code>auth/register.jsp</code> — sign in and public customer registration. Login posts to Spring Security at <code>/login</code>.</li>
+</ul>
+
+<h3>Java, in plain words</h3>
+<ul>
+  <li><code>SupportTicket</code> stores the customer, subject, message, staff reply, status, and timestamps. There is no separate support service class. <code>SupportController</code> talks to <code>SupportTicketRepository</code> directly, and calls <code>NotificationService</code> after a create or a reply.</li>
+  <li><code>NotificationService.send</code> writes a <code>NotificationLog</code> row. <code>retryFailed</code> walks the failed rows and marks another attempt.</li>
+  <li><code>PasswordResetController</code> looks up the user by username or email, saves a <code>PasswordResetToken</code>, and puts the link text in the log. The reset method checks the token, encodes the new password, and marks the token used.</li>
+  <li><code>AdminController</code> lists branches and users, then <code>addBranch</code> saves a <code>Branch</code> and <code>addUser</code> saves a <code>UserAccount</code> with one role. Both posts are ADMIN only.</li>
+  <li>Booking and payment code also call <code>NotificationService</code> when a trip is approved, paid, or updated. The log is the shared record that those events happened.</li>
+</ul>
+</div>
+
+<div class="member">
+<h2>How to talk about it in the viva</h2>
+<ul>
+  <li>Say which URL you would open, which JSP draws it, which controller method receives the POST, and which service method applies the rule.</li>
+  <li>IT25102266: vehicle management only. Search hides retired cars and cars already booked on those dates. Transfer writes a history row. Delete removes the child rows first. Do not present branches, staff users, or login as this member’s use case.</li>
+  <li>Maintenance: open job means the car cannot be booked. Close job means it can.</li>
+  <li>Booking: pending, then approved or denied. Overlap is checked in the repository.</li>
+  <li>Payment: one row per movement. The gateway keeps the last four digits, not the card.</li>
+  <li>Dashboard: counts come from the same tables the other members write. Reports do not store their own totals.</li>
+  <li>Support: a ticket is saved even when email is only a log row. A failed alert stays visible so it can be retried.</li>
+</ul>
+<p>The design is MVC. The controller is the front door, the service is the rules, and the repository is the database. Status values are enums with if-checks. They are not a separate state-machine class.</p>
+</div>
+
+</body>
+</html>

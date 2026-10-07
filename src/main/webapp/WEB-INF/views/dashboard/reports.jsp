@@ -4,7 +4,8 @@
 <c:set var="pageTitle" value="Reports" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="dashboard-page">
+<div class="page-head">
     <div>
         <h1 class="page-title">Reports</h1>
         <p class="page-lead">${label}</p>
@@ -125,6 +126,7 @@
     <c:if test="${empty locations}">
         <div class="panel"><div class="empty-state">No vehicles to show.</div></div>
     </c:if>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

@@ -5,6 +5,7 @@
 <c:set var="pageTitle" value="Invoice booking #${booking.id}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="payment-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/bookings/${booking.id}'/>">&larr; Back to booking</a>
 </div>
@@ -134,7 +135,7 @@
                             <label class="form-label small">Damage charge (LKR)</label>
                             <input class="form-control form-control-sm" type="number" min="0" step="0.01" name="damageCharge" value="0"/>
                         </div>
-                        <button class="btn btn-success btn-sm" type="submit">Complete return</button>
+                        <button class="btn btn-primary btn-sm" type="submit">Complete return</button>
                     </form>
                 </div>
             </c:if>
@@ -156,6 +157,7 @@
             </c:if>
         </sec:authorize>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

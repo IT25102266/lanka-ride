@@ -4,6 +4,7 @@
 <c:set var="pageTitle" value="Maintenance #${record.id}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="fleet-page scene-garage">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
 </div>
@@ -57,7 +58,7 @@
                             <label class="form-label small mb-1" for="finalCost">Final cost (LKR)</label>
                             <input class="form-control form-control-sm" id="finalCost" name="finalCost" type="number" min="0" step="0.01"/>
                         </div>
-                        <button type="submit" class="btn btn-success btn-sm">Close &amp; make available</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Close &amp; make available</button>
                     </form>
                 </c:if>
                 <form method="post" action="<c:url value='/maintenance/${record.id}/delete'/>"
@@ -86,6 +87,7 @@
             </c:if>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

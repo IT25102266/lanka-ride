@@ -5,6 +5,7 @@
 <c:set var="pageTitle" value="Booking #${booking.id}" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="booking-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/bookings'/>">&larr; Back to bookings</a>
 </div>
@@ -111,7 +112,7 @@
                         <label class="form-label small" for="note">Optional note</label>
                         <input class="form-control form-control-sm" id="note" name="note"/>
                     </div>
-                    <button type="submit" class="btn btn-success">Approve</button>
+                    <button type="submit" class="btn btn-primary">Approve</button>
                 </form>
                 <form method="post" action="<c:url value='/bookings/${booking.id}/deny'/>">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -160,6 +161,7 @@
             </c:if>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

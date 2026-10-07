@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="900" viewBox="0 0 980 900">
+<rect width="980" height="900" fill="white"/>
+<line x1="140.0" y1="107" x2="140.0" y2="280" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="112.0" y="183.5" width="56" height="16" fill="white"/>
+<text x="140.0" y="196.5" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">1 : N</text>
+<line x1="140.0" y1="366" x2="140.0" y2="620" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="112.0" y="483.0" width="56" height="16" fill="white"/>
+<text x="140.0" y="496.0" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">1 : N</text>
+<line x1="240" y1="323.0" x2="320" y2="303.0" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="252.0" y="303.0" width="56" height="16" fill="white"/>
+<text x="280.0" y="316.0" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">1 : N</text>
+<line x1="400.0" y1="122" x2="420.0" y2="260" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="382.0" y="181.0" width="56" height="16" fill="white"/>
+<text x="410.0" y="194.0" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">1 : N</text>
+<line x1="500" y1="79.0" x2="620" y2="64.0" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="532.0" y="61.5" width="56" height="16" fill="white"/>
+<text x="560.0" y="74.5" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">M : N</text>
+<line x1="520" y1="303.0" x2="630" y2="323.0" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="547.0" y="303.0" width="56" height="16" fill="white"/>
+<text x="575.0" y="316.0" text-anchor="middle" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">1 : N</text>
+<rect x="300" y="36" width="200" height="86" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="300" y="36" width="200" height="22" fill="#1b3a4b"/>
+<text x="400.0" y="51" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">users</text>
+<text x="308" y="74" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="308" y="88" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">username, email</text>
+<text x="308" y="102" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">password hash</text>
+<text x="308" y="116" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">full name</text>
+<rect x="620" y="36" width="200" height="56" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="620" y="36" width="200" height="22" fill="#1b3a4b"/>
+<text x="720.0" y="51" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">roles</text>
+<text x="628" y="74" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="628" y="88" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">role name</text>
+<rect x="40" y="36" width="200" height="71" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="40" y="36" width="200" height="22" fill="#1b3a4b"/>
+<text x="140.0" y="51" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">branches</text>
+<text x="48" y="74" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="48" y="88" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">name</text>
+<text x="48" y="102" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">address</text>
+<rect x="40" y="280" width="200" height="86" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="40" y="280" width="200" height="22" fill="#1b3a4b"/>
+<text x="140.0" y="295" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">vehicles</text>
+<text x="48" y="318" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="48" y="332" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">registration number</text>
+<text x="48" y="346" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">rate and deposit</text>
+<text x="48" y="360" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK branch, status</text>
+<rect x="320" y="260" width="200" height="86" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="320" y="260" width="200" height="22" fill="#1b3a4b"/>
+<text x="420.0" y="275" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">bookings</text>
+<text x="328" y="298" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="328" y="312" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK customer</text>
+<text x="328" y="326" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK vehicle</text>
+<text x="328" y="340" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">dates and status</text>
+<rect x="630" y="280" width="200" height="86" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="630" y="280" width="200" height="22" fill="#1b3a4b"/>
+<text x="730.0" y="295" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">payments</text>
+<text x="638" y="318" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="638" y="332" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK booking</text>
+<text x="638" y="346" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">type and amount</text>
+<text x="638" y="360" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">actor, reference</text>
+<rect x="40" y="620" width="200" height="71" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="40" y="620" width="200" height="22" fill="#1b3a4b"/>
+<text x="140.0" y="635" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">maintenance</text>
+<text x="48" y="658" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="48" y="672" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK vehicle</text>
+<text x="48" y="686" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">type, cost, status</text>
+<rect x="270" y="640" width="200" height="71" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="270" y="640" width="200" height="22" fill="#1b3a4b"/>
+<text x="370.0" y="655" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">transfers</text>
+<text x="278" y="678" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="278" y="692" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK vehicle</text>
+<text x="278" y="706" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">from and to branch</text>
+<rect x="520" y="640" width="200" height="71" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="520" y="640" width="200" height="22" fill="#1b3a4b"/>
+<text x="620.0" y="655" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">tickets</text>
+<text x="528" y="678" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="528" y="692" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK customer_id</text>
+<text x="528" y="706" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">subject, status</text>
+<rect x="740" y="640" width="200" height="71" rx="4" fill="#f7f4ee" stroke="#1b3a4b" stroke-width="1.3"/>
+<rect x="740" y="640" width="200" height="22" fill="#1b3a4b"/>
+<text x="840.0" y="655" text-anchor="middle" font-family="Times New Roman, serif" font-size="12" font-weight="bold" fill="white">tokens</text>
+<text x="748" y="678" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">PK id</text>
+<text x="748" y="692" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">FK user_id</text>
+<text x="748" y="706" font-family="Times New Roman, serif" font-size="11" fill="#1b3a4b">token, expiry</text>
+<text x="40" y="860" font-family="Times New Roman, serif" font-size="13" fill="#1b3a4b">Tickets and password-reset tokens belong to a user. Branch transfers belong to a vehicle. user_roles joins users and roles.</text>
+</svg>

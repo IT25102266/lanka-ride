@@ -4,6 +4,7 @@
 <c:set var="layoutMode" value="gateway" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="payment-page">
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="gateway-card">
@@ -76,6 +77,7 @@
             <a class="back-link" href="<c:url value='/payments/booking/${booking.id}'/>">Cancel and return to the invoice</a>
         </p>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

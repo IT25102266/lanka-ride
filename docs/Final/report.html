@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Lanka Ride Final Report</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Times New Roman", Times, serif; color: #111; font-size: 12pt; line-height: 1.28; }
+  .sheet { width: 210mm; height: 297mm; padding: 8mm; page-break-after: always; position: relative; }
+  .frame { border: 1.15px solid #222; height: 100%; padding: 9mm 10mm 12mm; position: relative; overflow: hidden; }
+  .foot { position: absolute; right: 10mm; bottom: 4.5mm; font-size: 11pt; letter-spacing: 0.6px; }
+  h1 { font-size: 18pt; margin: 0 0 8px; text-decoration: underline; font-weight: bold; }
+  h2 { font-size: 14pt; margin: 9px 0 4px; font-weight: bold; }
+  p { margin: 0 0 7px; text-align: justify; }
+  ul { margin: 2px 0 8px; padding-left: 18px; }
+  li { margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; font-size: 11pt; }
+  th, td { border: 1px solid #222; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #d9d9d9; text-align: center; font-weight: bold; }
+  .cover { text-align: center; padding-top: 8mm; }
+  .cover h1 { text-decoration: none; font-size: 16pt; margin: 2px 0; }
+  .crest { width: 34mm; height: 40mm; margin: 0 auto 6mm; }
+  .toc-line { display: flex; align-items: baseline; font-size: 14pt; margin: 7px 0; }
+  .toc-line span.dots { flex: 1; border-bottom: 1px dotted #444; margin: 0 8px 3px; }
+  img.diagram { width: 100%; max-height: 228mm; object-fit: contain; display: block; margin: 0 auto; }
+  img.s2 { width: 100%; height: 92mm; object-fit: cover; object-position: top center; border: 1px solid #ccc; display: block; margin: 1.5mm 0 0; background: #f4f1ea; }
+  img.s3 { width: 100%; height: 68mm; object-fit: cover; object-position: top center; border: 1px solid #ccc; display: block; margin: 1.5mm 0 0; background: #f4f1ea; }
+  img.mid { object-position: center center; }
+  .cap { font-size: 10.5pt; font-style: italic; margin: 0 0 2mm; }
+  .small { font-size: 10.5pt; }
+  .contrib { font-size: 9pt; }
+  .contrib th, .contrib td { padding: 3px 4px; }
+  ol.refs { padding-left: 22px; margin: 4px 0; }
+  ol.refs li { margin-bottom: 6px; text-align: justify; }
+</style>
+</head>
+<body>
+
+<section class="sheet"><div class="frame">
+  <div class="cover">
+    <svg class="crest" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 6 L108 24 V78 C108 108 60 132 60 132 C60 132 12 108 12 78 V24 Z" fill="#1a2744" stroke="#c4a35a" stroke-width="3"/>
+      <text x="60" y="78" text-anchor="middle" font-family="Times New Roman, serif" font-size="18" font-weight="bold" fill="#f2d48a">SLIIT</text>
+    </svg>
+    <h1>SE2030 – Software Engineering</h1>
+    <h1>2026-Y2-S1-MLB-B13G2-05</h1>
+    <h1>Web-based Vehicle Rental System</h1>
+    <h1>2026.10.05</h1>
+    <h1>Final Report</h1>
+    <table style="margin-top: 8mm;">
+      <tr><th>STUDENT ID</th><th>NAME</th></tr>
+      <tr><td>IT25102266</td><td>Sakalasooriya S.A.A.A.</td></tr>
+      <tr><td>IT25102264</td><td>De Silva D.L.K.C.</td></tr>
+      <tr><td>IT24101349</td><td>Samaranayake P.I.S.</td></tr>
+      <tr><td>IT25102265</td><td>Kavindi P.D.N.</td></tr>
+      <tr><td>IT24101008</td><td>Wickramasinghe R.D.W.K.G.S.</td></tr>
+      <tr><td>IT24102871</td><td>Pahasara Y.A.P.</td></tr>
+    </table>
+  </div>
+  <div class="foot">1 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1 style="text-align:center; text-decoration:none;">Table of Contents</h1>
+  <div class="toc-line"><span>Introduction</span><span class="dots"></span><span>3</span></div>
+  <div class="toc-line"><span>Requirements</span><span class="dots"></span><span>5</span></div>
+  <div class="toc-line"><span>Design</span><span class="dots"></span><span>8</span></div>
+  <div class="toc-line"><span>Implementation</span><span class="dots"></span><span>13</span></div>
+  <div class="toc-line"><span>Project Management</span><span class="dots"></span><span>17</span></div>
+  <div class="toc-line"><span>Conclusion &amp; Future Work</span><span class="dots"></span><span>19</span></div>
+  <div class="toc-line"><span>Individual Contribution, Teamwork &amp; Lessons Learned</span><span class="dots"></span><span>21</span></div>
+  <div class="toc-line"><span>References</span><span class="dots"></span><span>23</span></div>
+  <div class="toc-line"><span>Appendix</span><span class="dots"></span><span>24</span></div>
+  <div class="foot">2 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Introduction</h1>
+  <h2>Project Overview</h2>
+  <p>This project presents Lanka Ride, a web-based vehicle rental system for a company that hires cars from branches in Sri Lanka. The application is built with Spring Boot on Java 17. It replaces separate paper records for vehicles, bookings, payments, and workshop jobs with one system that customers and staff share.</p>
+  <p>A guest can search by branch and travel dates and open a vehicle. A customer can request a booking, pay the rental and the deposit, and raise a support ticket. Staff approve or deny requests, record pickup and return, hold a car for maintenance, take payment, and read a daily revenue report. An administrator adds branches and staff accounts. Pages are server-rendered with JSP, Bootstrap 5, and Spring Security tags. MySQL 8 stores the records. Each person sees only the functions of their role.</p>
+  <h2>Objectives</h2>
+  <p>The main objective is a single, role-based system for day-to-day vehicle rental work.</p>
+  <p>The specific objectives are:</p>
+  <ul>
+    <li>To keep an accurate register of vehicles, branches, daily rates, and deposits.</li>
+    <li>To show a customer only the vehicles that are free for the dates they choose.</li>
+    <li>To carry a booking from request, through approval, payment, pickup, and return.</li>
+    <li>To stop a vehicle that is under maintenance from being hired.</li>
+    <li>To record rental payments, deposits, refunds, late fees, and damage charges.</li>
+    <li>To give finance and operations a daily, monthly, and branch view of money collected.</li>
+    <li>To let a customer open a support ticket and to keep a notification log.</li>
+    <li>To protect accounts with hashed passwords and role checks on every staff action.</li>
+  </ul>
+  <div class="foot">3 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Target Users or Stakeholders</h2>
+  <ul>
+    <li><b>Customer.</b> Registers, searches vehicles, requests a booking, pays, views the invoice, and opens a support ticket. After login the customer lands on My trips.</li>
+    <li><b>Booking supervisor.</b> Approves or denies a request with a reason, then records pickup and return mileage and fuel.</li>
+    <li><b>Fleet coordinator.</b> Adds and updates vehicles, records branch transfers, and opens or closes maintenance.</li>
+    <li><b>Finance manager.</b> Records payments and refunds, opens the invoice, and reads revenue reports.</li>
+    <li><b>Operations manager.</b> Monitors the live booking list and reads the same operational reports.</li>
+    <li><b>Administrator.</b> Adds branches and creates staff accounts. Public registration cannot create this role.</li>
+  </ul>
+  <h2>Scope and Limitations</h2>
+  <p><b>Scope:</b></p>
+  <ul>
+    <li>Customer registration, sign-in, sign-out, and password reset.</li>
+    <li>Role-based access for the customer and the five staff roles.</li>
+    <li>Vehicle catalogue with branch, price, deposit, features, and status.</li>
+    <li>Date search that hides cars already booked or under maintenance.</li>
+    <li>Booking request, approval, denial, cancellation, pickup, and return.</li>
+    <li>Maintenance records that change vehicle availability.</li>
+    <li>Mock payment of the rental and the deposit, with an invoice.</li>
+    <li>Daily, monthly, and branch reports, with print and CSV export.</li>
+    <li>Support tickets, a notification log, and administration of users and branches.</li>
+  </ul>
+  <p><b>Limitations:</b></p>
+  <ul>
+    <li>There is no native mobile application.</li>
+    <li>Payment uses a mock gateway, so no real card is charged or stored.</li>
+    <li>Live GPS tracking of a vehicle is outside the current scope.</li>
+    <li>Notification delivery is stored in the application log. A live mail server is not required.</li>
+    <li>The system is aimed at a desktop browser.</li>
+    <li>Reports show only the payment rows that staff have recorded.</li>
+    <li>The Spring Boot process and MySQL must both be running.</li>
+  </ul>
+  <div class="foot">4 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Requirements</h1>
+  <h2>Functional Requirements</h2>
+  <p><b>Vehicle management.</b> The fleet coordinator registers a vehicle with its registration number, category, brand, model, seats, gearbox, fuel type, features, photo, daily rate, deposit, home branch, and status. Records can be updated, and a car can be retired. A branch transfer is stored as its own row, with the vehicle and the branches it left and joined. Guests can filter the catalogue by branch, dates, category, gearbox, fuel, and price. When dates are supplied, a car with an overlapping active booking, or a car that is not available, is left out of the results.</p>
+  <p><b>Booking management.</b> A signed-in customer chooses an available vehicle, a pickup branch, and the pickup and return dates. The service checks availability again when the request is saved. The booking supervisor approves or denies the request and records a reason. Pickup stores mileage and fuel. Return stores the same pair and raises a discrepancy note when they do not match what was expected. A customer can cancel a request that has not started. Status values are pending, approved, denied, ongoing, completed, and cancelled. Payment status is stored separately, so a trip can be approved and still unpaid.</p>
+  <p><b>Fleet maintenance.</b> The fleet coordinator opens a maintenance record with a type, dates, estimated and final cost, the mechanics assigned, and a description. Opening the job sets the vehicle to maintenance, which removes it from customer search. The booking service also refuses dates that overlap an open job. Closing the job returns the vehicle to available when no other job is open. Status values are open, in progress, and closed.</p>
+  <div class="foot">5 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <p><b>Payment and billing.</b> The finance manager records a rental payment and a refundable deposit against a booking. Each movement is its own row: type, amount, success or failure, a mock gateway reference, a note, and the staff username that recorded it. A refund, a late fee, or a damage charge is another row on the same booking, so the history is not overwritten. An invoice page can be printed. Card numbers are not collected. Payment status on the booking is unpaid, pending payment, paid, or refunded.</p>
+  <p><b>Dashboard and reporting.</b> The operations dashboard shows how many vehicles exist, how many are available, how many are in maintenance, how many bookings are waiting, and how many branches are open. The report page totals successful payments for a chosen day, month, or year, compares branches, and lists vehicles by location. The same page can be printed or exported as CSV. Finance and operations both use these figures. The totals are read from the payment and vehicle tables, not from a second copy of the money.</p>
+  <p><b>Support and notifications.</b> A customer opens a ticket with a subject and a message. Staff can record a response and move the ticket through open, in progress, resolved, and closed. The notification log stores the channel, the recipient, and whether delivery succeeded, so a failed alert can be retried from the alerts screen even when email is not configured. Password reset uses a separate token row with an expiry.</p>
+  <h2>Non-Functional Requirements</h2>
+  <ul>
+    <li><b>Security.</b> Passwords are stored with BCrypt. URL rules and method security both apply, so hiding a menu link is not the only control. A customer who opens a staff address receives HTTP 403.</li>
+    <li><b>Usability.</b> Customers land on My trips. Staff land on the operations dashboard. Both shells use the same header, colours, and card layout.</li>
+    <li><b>Reliability.</b> Availability is checked on the search page and again when a booking is saved, so two customers cannot take the same car for the same days.</li>
+    <li><b>Maintainability.</b> Vehicle, booking, payment, fleet, reports, and support each have their own controller, service, and repository.</li>
+    <li><b>Portability.</b> The site runs in current desktop browsers, including Chrome, Edge, and Firefox.</li>
+    <li><b>Data integrity.</b> Required fields are validated, and status is stored as a fixed set of values rather than free text.</li>
+  </ul>
+  <div class="foot">6 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Constraints or Assumptions</h2>
+  <p><b>Technology stack constraints:</b></p>
+  <ul>
+    <li>Java 17 and Spring Boot 3.3 for the application.</li>
+    <li>Spring MVC with JSP and Bootstrap 5 for the pages. The project does not use a separate JavaScript front end.</li>
+    <li>Spring Data JPA and Hibernate 6 for persistence.</li>
+    <li>MySQL 8 as the database. An H2 profile exists for tests and for a machine without MySQL.</li>
+    <li>Maven Wrapper for the same build on every member’s computer.</li>
+  </ul>
+  <p><b>Deployment environment:</b></p>
+  <ul>
+    <li>The application listens on port 8080. MySQL listens on port 3306. The database name is lanka_ride, and it is created if it is missing.</li>
+    <li>A user needs a desktop browser. No separate client install is required.</li>
+  </ul>
+  <p><b>External services:</b></p>
+  <ul>
+    <li>The payment step is a mock gateway inside the application. A bank provider is not integrated.</li>
+    <li>Email delivery is recorded in the notification log. An external mail service is not required for the demonstration.</li>
+  </ul>
+  <p><b>Users and devices:</b></p>
+  <ul>
+    <li>The interface is laid out for a laptop or desktop screen.</li>
+    <li>Each account has one or more roles. Seeded demonstration accounts, listed in the repository README, are used for the viva. Public registration always creates a customer.</li>
+  </ul>
+  <p><b>Ethics.</b> Staff can see bookings they do not personally own, and an administrator can create further staff. The control is least privilege by role, hashed passwords, and a register that cannot mint an administrator. Because the gateway is a mock, the invoice must not be treated as a real card charge. A later production release would send card data only to a certified provider.</p>
+  <div class="foot">7 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Design</h1>
+  <h2>Use Case Diagram</h2>
+  <img class="diagram" src="report-figures/fig-usecase.svg" alt="Use case diagram"/>
+  <p class="cap">The customer owns search, booking, payment, and support. Staff use cases sit on the right. Sign-in is shared. Finance also records the payment the customer starts, and the operations manager can also approve a booking.</p>
+  <div class="foot">8 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Database Design / ER Diagram</h1>
+  <img class="diagram" src="report-figures/fig-er.svg" alt="Entity relationship diagram"/>
+  <p class="cap">A user has many roles through user_roles, many bookings, and many tickets. A branch has many vehicles. A vehicle has many bookings, maintenance rows, and transfers. A booking has many payment rows. PK is the primary key and FK is a foreign key.</p>
+  <div class="foot">9 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>UI Sketches/Screenshots and Descriptions</h1>
+  <img class="s3" src="report-figures/ui-home.png" alt="Home page"/>
+  <p class="cap">Home page. The guest chooses a branch and the pickup and return dates.</p>
+  <img class="s3" src="report-figures/ui-search.png" alt="Search results"/>
+  <p class="cap">Search results for Colombo, 6–8 October 2026. The Toyota Axio at Colombo is offered at the daily rate.</p>
+  <img class="s3" src="report-figures/ui-vehicle.png" alt="Vehicle detail"/>
+  <p class="cap">Vehicle page. Status, features, daily rate, and deposit are shown before a request can be made.</p>
+  <div class="foot">10 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <img class="s3 mid" src="report-figures/ui-register.png" alt="Register"/>
+  <p class="cap">Registration. A public account is always a customer.</p>
+  <img class="s3 mid" src="report-figures/ui-login.png" alt="Login"/>
+  <p class="cap">Sign-in. Customers continue to My trips. Staff continue to the operations dashboard.</p>
+  <img class="s3" src="report-figures/ui-customer.png" alt="My trips"/>
+  <p class="cap">Customer home. My trips shows the active booking, payment state, and the invoice link.</p>
+  <div class="foot">11 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Main Interfaces</h2>
+  <p><b>Home.</b> Full-page search by branch and dates, then a card list of vehicles that are free for that window.</p>
+  <p><b>Register and login.</b> Registration collects name, username, email, and password, and creates a customer only. Login sends each role to its own landing page. Password reset is a separate form.</p>
+  <p><b>My trips.</b> The customer sees active and unpaid bookings, and can open details, the invoice, all bookings, or support.</p>
+  <p><b>Operations dashboard.</b> Staff see fleet size, availability, maintenance count, pending bookings, and branches.</p>
+  <p><b>Bookings.</b> The list shows status and payment status. A supervisor approves, denies, or records pickup and return from this area.</p>
+  <p><b>Payments.</b> The ledger lists each rental, deposit, refund, or charge, with the staff actor and a link to the invoice.</p>
+  <p><b>Maintenance.</b> Open and closed jobs sit with the vehicle. A new job takes the car out of search.</p>
+  <p><b>Reports.</b> Daily, monthly, and branch figures, with CSV and print.</p>
+  <p><b>Support.</b> Ticket list and the form a customer uses to ask for help.</p>
+  <p><b>Admin.</b> Add a branch, list current branches, and create a staff user with one role.</p>
+  <div class="foot">12 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Implementation</h1>
+  <h2>Tools and Technologies Used</h2>
+  <ul>
+    <li><b>Java 17.</b> Language and runtime for the application and the business rules.</li>
+    <li><b>Spring Boot 3.3.5.</b> Packages the web application, starts the embedded server, and loads configuration.</li>
+    <li><b>Spring MVC, JSP, and JSTL.</b> Server-rendered pages under WEB-INF/views.</li>
+    <li><b>Bootstrap 5.3.</b> Shared layout, forms, and cards for the customer shell and the staff shell.</li>
+    <li><b>Spring Security 6.3.</b> Form login, role checks, method security, and BCrypt password hashing.</li>
+    <li><b>Spring Data JPA and Hibernate 6.</b> Repositories and the mapping onto MySQL. The schema updates on startup.</li>
+    <li><b>MySQL 8.</b> Stores users, roles, branches, vehicles, bookings, payments, maintenance, transfers, tickets, notifications, and reset tokens.</li>
+    <li><b>Maven Wrapper 3.9.</b> Dependency management and the build, including the compiler flag that keeps request-parameter names.</li>
+    <li><b>JUnit with H2.</b> Completion checks that do not need the MySQL service.</li>
+    <li><b>IntelliJ IDEA.</b> The IDE used to build and run the application on JDK 17.</li>
+    <li><b>Git and GitHub.</b> One long-lived feature branch per module, integrated on the release line.</li>
+  </ul>
+  <h2>Key Features Developed</h2>
+  <p class="small">User registration and authentication. Password reset. Role-based menus and server-side checks. Vehicle catalogue and date search. Branch transfer log. Booking request, approval, denial, cancellation, pickup, and return. Maintenance that blocks hire. Mock payment, invoice, refund, late fee, and damage charge. Operations dashboard. Daily, monthly, and branch reports with CSV and print. Support tickets and notification log. Administrator creation of branches and staff users.</p>
+  <div class="foot">13 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Screenshots of Core Functions</h2>
+  <img class="s2" src="report-figures/ui-dashboard.png" alt="Operations dashboard"/>
+  <p class="cap">Operations dashboard for an administrator, who also holds the fleet-coordinator role. Counts come from the live database.</p>
+  <img class="s2" src="report-figures/ui-bookings.png" alt="Bookings"/>
+  <p class="cap">Booking list. One trip is ongoing and paid, one is approved and awaiting payment, and one is cancelled.</p>
+  <div class="foot">14 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <img class="s2" src="report-figures/ui-payments.png" alt="Payments"/>
+  <p class="cap">Payment ledger for the Honda CR-V booking: rental LKR 12,000 and deposit LKR 30,000, each marked successful, with the invoice link.</p>
+  <img class="s2" src="report-figures/ui-maintenance.png" alt="Maintenance"/>
+  <p class="cap">Closed repair and damage records on the same vehicle. An open job would set the vehicle to maintenance.</p>
+  <div class="foot">15 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <img class="s3" src="report-figures/ui-reports.png" alt="Daily report"/>
+  <p class="cap">Daily report for 5 October 2026. Collected and net amounts match the two successful payment rows. CSV and print are on the page.</p>
+  <img class="s3" src="report-figures/ui-support.png" alt="Support"/>
+  <p class="cap">Support centre. Ticket 1 is open, raised by the demonstration customer.</p>
+  <img class="s3" src="report-figures/ui-admin.png" alt="Admin"/>
+  <p class="cap">Administration. Current branches are Colombo, Kandy, Galle, Kaduwela, and Matara. New staff are created here, not on the public register.</p>
+  <div class="foot">16 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Project Management</h1>
+  <h2>Agile Approach and Sprint Summary</h2>
+  <p>Lanka Ride was built with Scrum. Samaranayake was Scrum Master and Wickramasinghe was Product Owner. The other four members were developers. Each member owned one use case and one long-lived feature branch. Work was integrated onto the shared release line once that module could be shown against the common database.</p>
+  <p>The order of sprints followed the data dependencies. A payment cannot exist before a booking, and a revenue report cannot exist before payment rows. Authentication was shared in the first sprint because every later screen needs it. GitHub holds the repository, the feature branches, and the integrated release.</p>
+  <table>
+    <tr><th style="width:22%">Sprint</th><th>Main Activities</th></tr>
+    <tr><td>Sprint 1</td><td>Project setup, MySQL, registration, sign-in, password hashing, role-based landing pages, and the vehicle catalogue with search.</td></tr>
+    <tr><td>Sprint 2</td><td>Booking request, approval and denial, cancellation, and maintenance that removes a vehicle from hire.</td></tr>
+    <tr><td>Sprint 3</td><td>Rental and deposit payments, invoice, refunds, late and damage charges, and the pickup and return checklist.</td></tr>
+    <tr><td>Sprint 4</td><td>Operations dashboard, daily and branch reports, CSV and print, support tickets, notification log, and administration of branches and staff.</td></tr>
+  </table>
+  <p>The main integration risk was the shared navigation bar and the security rules, because every module adds a menu entry. Those files were treated as integration points and reviewed when a feature branch was brought across, rather than letting each branch invent its own login.</p>
+  <div class="foot">17 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Task Distribution Among Team Members</h2>
+  <table>
+    <tr><th>Member</th><th>Main Contribution</th></tr>
+    <tr><td>Sakalasooriya S.A.A.A.</td><td>Vehicle management, catalogue search, and system administration. Shared the first-sprint authentication work.</td></tr>
+    <tr><td>De Silva D.L.K.C.</td><td>Fleet maintenance, and the rule that a vehicle under service cannot be booked.</td></tr>
+    <tr><td>Samaranayake P.I.S.</td><td>Scrum Master. Booking and reservation, including approval and the return mileage check.</td></tr>
+    <tr><td>Kavindi P.D.N.</td><td>Payment and billing: ledger rows, invoice, refunds, and late or damage charges.</td></tr>
+    <tr><td>Wickramasinghe R.D.W.K.G.S.</td><td>Product Owner. Operations dashboard and revenue, branch, and location reports.</td></tr>
+    <tr><td>Pahasara Y.A.P.</td><td>Customer support, notification log, and a pass over role menus. Shared the first-sprint authentication work.</td></tr>
+  </table>
+  <h2>Development Phases or Timeline</h2>
+  <table>
+    <tr><th>Phase</th><th>Period</th><th>Key Milestones / Deliverables</th></tr>
+    <tr><td>Project initialisation and planning</td><td>Start of the module</td><td>Group agreement, backlog, stack choice, and the repository.</td></tr>
+    <tr><td>Sprint 1: accounts and vehicles</td><td>About week 6–7</td><td>Authentication, roles, vehicle records, and basic search. About 25 percent of the product.</td></tr>
+    <tr><td>Sprint 2: booking and maintenance</td><td>About week 8–9</td><td>Request and approval, and a maintenance hold that blocks hire. About 50 percent.</td></tr>
+    <tr><td>Sprint 3: payment and return</td><td>About week 10–11</td><td>Payments, invoice, refunds, and return mileage. Dashboards started. About 75 percent.</td></tr>
+    <tr><td>Sprint 4: reports and support</td><td>About week 12–14</td><td>Reports, tickets, notification log, integration, and the final report. 100 percent of the six use cases.</td></tr>
+    <tr><td>Submission</td><td>5 October 2026</td><td>Final report, demonstration build, and evaluation.</td></tr>
+  </table>
+  <div class="foot">18 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Conclusion &amp; Future Work</h1>
+  <h2>Summary of Achievements</h2>
+  <p>Lanka Ride runs as one Spring Boot application on MySQL. The six agreed areas are present: vehicles, maintenance, booking, payment, reporting, and support, together with sign-in, password reset, and administration.</p>
+  <p>A guest can search a branch for a date range. A customer can request a trip, see it under My trips, and open an invoice after payment. A supervisor can approve or deny. Finance can record the rental and the deposit. Fleet can hold a car for maintenance so it leaves the search results. Operations can read a daily report and export it. An administrator can add a branch and a staff user. The screens in this report were captured from that running system on 5 October 2026.</p>
+  <h2>Challenges Faced</h2>
+  <p>The hardest design choice was keeping three statuses apart: whether the vehicle can be hired, how far the booking has progressed, and whether the money has been taken. One combined field would have hidden an approved booking that is still unpaid, or a paid car that later goes to the workshop. Splitting the fields added checks in the service layer and removed false “available” results.</p>
+  <p>A second difficulty was access control. Hiding a link does not stop a customer from typing a staff address. URL rules and method security were both required. A third difficulty was integration. Modules were developed on separate branches, and the shared layout and security configuration produced conflicts when those branches were combined. The group resolved them by reviewing those shared files at integration time and by testing a full journey: search, request, approve, pay, and report.</p>
+  <div class="foot">19 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h2>Suggestions for Improvement or Extension</h2>
+  <p>The system could be extended later by adding:</p>
+  <ul>
+    <li>A certified payment provider in place of the mock gateway, with card data kept at the provider.</li>
+    <li>Live email delivery for tickets, password reset, and maintenance reminders.</li>
+    <li>A layout pass so My trips is comfortable on a phone.</li>
+    <li>A fuller audit of who changed a vehicle’s status.</li>
+    <li>Scheduled backups of the MySQL database.</li>
+    <li>Deployment beyond a single local server, so a branch desk can reach the same data.</li>
+    <li>More automated tests around overlapping dates and role denial.</li>
+  </ul>
+  <p>None of these is required to demonstrate the six use cases. The boundary for any later payment work stays the same: card details must not be stored in Lanka Ride, and a staff account must keep only the role that needs it.</p>
+  <div class="foot">20 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Individual Contribution, Teamwork &amp; Lessons Learned</h1>
+  <table class="contrib">
+    <tr>
+      <th>Name</th><th>Specific Role</th><th>Challenges Faced</th><th>How Challenges Were Overcome</th><th>Key Lessons Learned</th><th>Reflection on the Project</th>
+    </tr>
+    <tr>
+      <td>Sakalasooriya S.A.A.A. IT25102266</td>
+      <td>Developer for vehicle management and system administration (UC-02). Shared sprint-1 authentication.</td>
+      <td>Search had to ignore cars already promised or in the workshop, and the same account model had to serve customers and staff.</td>
+      <td>Availability is applied in the vehicle query and again when a booking is saved. Staff accounts are created only by an administrator.</td>
+      <td>A catalogue is a set of rules about time and status, not only a list of rows.</td>
+      <td>Owning the first sprint meant later members could sign in and attach bookings to real vehicles. I would lock the security rules before each new menu item is added.</td>
+    </tr>
+    <tr>
+      <td>De Silva D.L.K.C. IT25102264</td>
+      <td>Developer for fleet maintenance (UC-01).</td>
+      <td>A car in service could still appear in search if maintenance and booking did not share one status.</td>
+      <td>Opening a job sets the vehicle to maintenance. The booking check refuses dates that overlap an open job. Closing the job restores availability.</td>
+      <td>A rule that crosses modules belongs in the service that writes the booking, not only on the maintenance screen.</td>
+      <td>The useful test was trying to book a car I had just marked as under repair. When that request was refused, the two modules were actually integrated.</td>
+    </tr>
+    <tr>
+      <td>Samaranayake P.I.S. IT24101349</td>
+      <td>Scrum Master and developer for booking and reservation (UC-03), including return mileage.</td>
+      <td>A booking has more states than yes or no, and return mileage must flag a discrepancy without wiping the payment history.</td>
+      <td>Booking status, payment status, and the discrepancy note are separate fields. The sprint order put booking before payment so the foreign key existed first.</td>
+      <td>Scrum works when the sprint goal is something the next person can call.</td>
+      <td>Keeping the sequence honest mattered more than adding screens early. I would keep a written definition of done for “approved but unpaid” so a demo cannot skip it.</td>
+    </tr>
+  </table>
+  <div class="foot">21 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <table class="contrib">
+    <tr>
+      <th>Name</th><th>Specific Role</th><th>Challenges Faced</th><th>How Challenges Were Overcome</th><th>Key Lessons Learned</th><th>Reflection on the Project</th>
+    </tr>
+    <tr>
+      <td>Kavindi P.D.N. IT25102265</td>
+      <td>Developer for payment and billing (UC-04).</td>
+      <td>A single balance column would hide whether money was a rental, a deposit, a refund, or a damage charge, and who recorded it.</td>
+      <td>Each movement is its own payment row with type, actor, mock reference, and outcome. The invoice reads those rows. No card number is stored.</td>
+      <td>A ledger that only inserts is easier to explain, and to report on, than a balance that is edited in place.</td>
+      <td>I treated the mock gateway as a boundary. Replacing it later should not require a new booking model.</td>
+    </tr>
+    <tr>
+      <td>Wickramasinghe R.D.W.K.G.S. IT24101008</td>
+      <td>Product Owner and developer for the dashboard and reports (UC-05).</td>
+      <td>Managers wanted one dashboard, but revenue, fleet location, and booking counts come from three modules finished at different times.</td>
+      <td>Reports read the payment and vehicle rows rather than keeping a second set of totals. Daily, monthly, branch, and CSV views share that query.</td>
+      <td>A report is only as current as the tables it reads. It should not cache a private copy of the money.</td>
+      <td>As product owner I pushed to finish the write-paths before the charts. The daily report is the check that payment and reporting describe the same rupees.</td>
+    </tr>
+    <tr>
+      <td>Pahasara Y.A.P. IT24102871</td>
+      <td>Developer for support and notifications (UC-06), and for checks across role menus. Shared sprint-1 authentication.</td>
+      <td>Support had to exist even when email was not configured, and a failed alert had to stay visible.</td>
+      <td>Tickets are stored regardless of mail. The notification log keeps channel, recipient, and delivery state so a failed send can be retried.</td>
+      <td>A feature that depends on an outside service needs a local record of what was attempted.</td>
+      <td>Walking through every role’s menu caught links that led to a forbidden page. I would repeat that pass at the end of each sprint, not only at the release.</td>
+    </tr>
+  </table>
+  <div class="foot">22 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>References</h1>
+  <ol class="refs">
+    <li>Oracle, “JDK 17 Documentation,” Oracle Java Documentation. [Online]. Available: https://docs.oracle.com/en/java/javase/17/. [Accessed: Oct. 5, 2026].</li>
+    <li>VMware, “Spring Boot Reference Documentation,” version 3.3.5. [Online]. Available: https://docs.spring.io/spring-boot/docs/3.3.5/reference/html/. [Accessed: Oct. 5, 2026].</li>
+    <li>VMware, “Spring Security Reference,” version 6.3. [Online]. Available: https://docs.spring.io/spring-security/reference/6.3/. [Accessed: Oct. 5, 2026].</li>
+    <li>VMware, “Spring Data JPA Reference Documentation.” [Online]. Available: https://docs.spring.io/spring-data/jpa/reference/. [Accessed: Oct. 5, 2026].</li>
+    <li>Red Hat, “Hibernate ORM 6.5 User Guide.” [Online]. Available: https://docs.jboss.org/hibernate/orm/6.5/userguide/html_single/. [Accessed: Oct. 5, 2026].</li>
+    <li>Oracle, “MySQL 8.0 Reference Manual.” [Online]. Available: https://dev.mysql.com/doc/refman/8.0/en/. [Accessed: Oct. 5, 2026].</li>
+    <li>Bootstrap team, “Bootstrap 5.3 documentation.” [Online]. Available: https://getbootstrap.com/docs/5.3/. [Accessed: Oct. 5, 2026].</li>
+    <li>Apache Software Foundation, “Maven Getting Started Guide.” [Online]. Available: https://maven.apache.org/guides/getting-started/. [Accessed: Oct. 5, 2026].</li>
+    <li>Git, “Git User Manual.” [Online]. Available: https://git-scm.com/docs/user-manual.html. [Accessed: Oct. 5, 2026].</li>
+    <li>GitHub, “About branches.” [Online]. Available: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches. [Accessed: Oct. 5, 2026].</li>
+    <li>N. Provos and D. Mazières, “A future-adaptable password scheme,” in <i>Proc. USENIX Annual Technical Conference</i>, 1999, pp. 81–91.</li>
+  </ol>
+  <div class="foot">23 | Page</div>
+</div></section>
+
+<section class="sheet"><div class="frame">
+  <h1>Appendix</h1>
+  <h2>GitHub Repository</h2>
+  <p>Main project repository:</p>
+  <p>https://github.com/IT25102266/lanka-ride</p>
+  <p>The integrated line used for this report is <b>release/100-percent</b>. Feature branches follow the module owners: feat/sakalasooriya-vehicle, feat/desilva-fleet, feat/samaranayake-booking, feat/kavindi-payment, feat/wickramasinghe-dashboard, and feat/pahasara-support.</p>
+  <h2>Meeting Summary</h2>
+  <ul>
+    <li>Sprint planning set one module goal at a time, in the order authentication and vehicles, then booking and maintenance, then payment and return, then reports and support.</li>
+    <li>The Scrum Master kept the sequence tied to dependencies. The Product Owner checked that a report described the same payments the finance module had stored.</li>
+    <li>Each member worked on a feature branch and brought it across only after that module could be demonstrated against the shared MySQL database.</li>
+    <li>Integration meetings were used to resolve conflicts in the shared layout and the security rules, and to walk a booking from search through payment to the daily report.</li>
+    <li>The final check was a role pass: a customer reaches My trips, a staff user reaches the dashboard, and a customer who opens a staff URL is refused.</li>
+  </ul>
+  <h2>How to run the demonstration</h2>
+  <ol>
+    <li>Install JDK 17 and start MySQL 8 with the lanka_ride database.</li>
+    <li>From the project root, run <span class="small">mvn spring-boot:run</span>.</li>
+    <li>Open http://localhost:8080. Seeded demonstration accounts and their roles are listed in the repository README.</li>
+  </ol>
+  <div class="foot">24 | Page</div>
+</div></section>
+
+</body>
+</html>

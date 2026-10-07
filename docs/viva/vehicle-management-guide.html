@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Vehicle Management — simple viva guide</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    font-size: 11.5pt;
+    line-height: 1.45;
+    color: #111;
+  }
+  h1 { font-size: 22pt; margin: 0 0 6px; letter-spacing: -0.02em; }
+  h2 {
+    font-size: 15pt;
+    margin: 22px 0 8px;
+    padding-top: 8px;
+    border-top: 2px solid #111;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px; page-break-after: avoid; }
+  p { margin: 0 0 8px; }
+  .kicker { font-size: 10pt; letter-spacing: 0.08em; text-transform: uppercase; color: #444; margin-bottom: 4px; }
+  .lead { font-size: 12.5pt; }
+  ul, ol { margin: 4px 0 10px; padding-left: 1.2em; }
+  li { margin: 3px 0; }
+  code, .file {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.92em;
+    background: #f3f4f6;
+    padding: 0 3px;
+    border-radius: 3px;
+  }
+  pre {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 10.5pt; }
+  th, td { border: 1px solid #e5e7eb; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #111; color: #fff; font-weight: 600; }
+  .box {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 8px 0 12px;
+    page-break-inside: avoid;
+  }
+  .say { background: #fff8dc; }
+  .step { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<p class="kicker">Lanka Ride · SE2030 viva notes</p>
+<h1>Vehicle management, explained simply</h1>
+<p class="lead">This note explains the vehicle part of the system: the Java classes that do the work, the three JSP pages the user sees, and the design patterns you can name in the viva.</p>
+
+<h2>1. The whole idea in one minute</h2>
+<p>Vehicle management lets a customer <strong>find a car</strong> and lets fleet staff <strong>add, edit, move, retire, or delete</strong> a car.</p>
+<p>A vehicle is one row in the <code>vehicles</code> table. It has a registration number, brand, model, seats, gearbox, fuel, price per day, deposit, a home branch, a current location, and a status. The status is one of <code>AVAILABLE</code>, <code>UNAVAILABLE</code>, <code>MAINTENANCE</code>, or <code>RETIRED</code>.</p>
+<p>The browser never talks to the database. The path is always:</p>
+<pre>JSP page  →  VehicleController  →  VehicleService  →  VehicleRepository  →  MySQL</pre>
+<p>The JSP only displays data and sends a form. The controller reads the HTTP request. The service applies the business rules. The repository runs the query.</p>
+
+<div class="box">
+<p><span class="step">Search.</span> The customer opens Find a ride. The form sends GET <code>/vehicles</code> with optional filters. The service returns cars that match. Retired cars are never shown.</p>
+<p><span class="step">Date search.</span> If both pickup and return dates are filled, the service also hides cars that are under maintenance, unavailable, retired, or already booked for those dates. A booking blocks the car only when its status is <code>PENDING</code>, <code>APPROVED</code>, or <code>ONGOING</code>.</p>
+<p><span class="step">Add.</span> Staff open <code>/vehicles/new</code>, fill the form, and POST <code>/vehicles</code>. The plate is stored in uppercase. A duplicate plate is rejected. If location is blank, it becomes the branch name.</p>
+<p><span class="step">Edit.</span> Staff POST <code>/vehicles/{id}</code>. The existing row is updated. Keeping the same plate is allowed. Using another car’s plate is not.</p>
+<p><span class="step">Transfer.</span> Staff move the car to another branch. The system writes a log row and updates the car’s branch and location. A retired car cannot be moved. A car cannot be moved to the branch it is already at.</p>
+<p><span class="step">Retire.</span> Status becomes <code>RETIRED</code>. The row stays in the database, but public search no longer lists it.</p>
+<p><span class="step">Delete.</span> The car and its bookings, payments, maintenance, and transfer log are removed. Children are deleted before the car, because of foreign keys.</p>
+</div>
+
+<h2>2. Who is allowed to do what</h2>
+<p>Rules live in <span class="file">SecurityConfig.java</span>. Hiding a button in the JSP is not enough. Spring Security blocks the URL.</p>
+<table>
+<tr><th>Request</th><th>Who</th></tr>
+<tr><td>GET <code>/vehicles</code> and GET <code>/vehicles/{id}</code></td><td>Everyone, including a guest</td></tr>
+<tr><td>GET <code>/vehicles/new</code>, GET <code>/vehicles/{id}/edit</code></td><td>ADMIN, FLEET_COORDINATOR, OPERATIONS_MANAGER</td></tr>
+<tr><td>POST create, update, transfer, retire, delete</td><td>Those same three roles</td></tr>
+<tr><td>Maintenance pages</td><td>ADMIN and FLEET_COORDINATOR only</td></tr>
+</table>
+<p>Every staff form also sends a hidden CSRF token. Spring rejects the POST if that token is missing.</p>
+
+<h2>3. Backend, file by file</h2>
+
+<h3>3.1 VehicleController.java — reads the web request</h3>
+<p>File: <span class="file">src/main/java/com/lankaride/vehicle/VehicleController.java</span></p>
+<p>This class does not contain business rules. It translates HTTP into method calls and chooses which JSP to show.</p>
+<ul>
+<li><code>@Controller</code> tells Spring this class handles web pages and returns a JSP name, not JSON.</li>
+<li><code>@RequestMapping("/vehicles")</code> means every method below starts with <code>/vehicles</code>.</li>
+<li>The constructor receives <code>VehicleService</code> and <code>FleetDefaultService</code>. Spring creates those objects and passes them in. This is dependency injection. The controller never writes <code>new VehicleService()</code>.</li>
+<li><code>savedModels()</code> and <code>savedCategories()</code> are marked <code>@ModelAttribute</code>. Before a vehicle page renders, Spring calls them and puts the fleet-default lists on the page. The form uses those lists for the “saved model” dropdown and the category suggestions. They are not separate URLs.</li>
+</ul>
+
+<p><strong>list — GET /vehicles</strong></p>
+<ul>
+<li>Each filter is <code>@RequestParam(required = false)</code>. A missing filter is null, so “show everything” still works.</li>
+<li><code>category</code> is text. <code>gearbox</code>, <code>fuelType</code>, and <code>status</code> are enums. Spring converts the form text <code>AUTOMATIC</code> into <code>GearboxType.AUTOMATIC</code>.</li>
+<li><code>branchId</code> is a number. Prices are <code>BigDecimal</code>. Dates are <code>LocalDate</code>.</li>
+<li><code>availableOnly</code> defaults to false when the checkbox is absent.</li>
+<li>If both dates exist and return is before pickup, the method stores an error and ignores the dates.</li>
+<li>If pickup is before today, it stores “Pickup date cannot be in the past” and ignores the date search.</li>
+<li>It then calls <code>vehicleService.search(...)</code>. The last argument is <code>availableOnly || dateSearch</code>. A date search always asks for cars that are free on those dates.</li>
+<li>It also puts branches, gearbox values, fuel values, and the original filter values back on the <code>Model</code>, so the form can show what the user just typed.</li>
+<li><code>return "vehicle/list"</code> means “render <code>WEB-INF/views/vehicle/list.jsp</code>”. The method does not build HTML.</li>
+</ul>
+
+<p><strong>detail — GET /vehicles/{id}</strong></p>
+<ul>
+<li><code>@PathVariable Long id</code> is the number in the URL, such as <code>/vehicles/1</code>.</li>
+<li>Optional <code>pickupDate</code>, <code>returnDate</code>, and <code>branchId</code> are kept so the Book button can pass the customer’s search dates into the booking form.</li>
+<li>The page receives the vehicle, its transfer history, and all branches (for the transfer dropdown).</li>
+<li>It returns <code>"vehicle/detail"</code>.</li>
+</ul>
+
+<p><strong>createForm — GET /vehicles/new</strong></p>
+<ul>
+<li>Puts a brand-new empty <code>Vehicle</code> on the model.</li>
+<li>Loads branches and the three enums for the dropdowns.</li>
+<li>Sets <code>formAction</code> to <code>/vehicles</code>. The same JSP is used for add and edit. This value tells the form where to POST.</li>
+</ul>
+
+<p><strong>create — POST /vehicles</strong></p>
+<ul>
+<li><code>@Valid @ModelAttribute("vehicle")</code> fills a <code>Vehicle</code> from the form fields and runs the validation annotations on the class.</li>
+<li><code>BindingResult</code> must be the next argument. If it has errors, the method shows the form again. It does not redirect, so the user’s text stays on the page.</li>
+<li><code>branchId</code> is a separate request parameter, because the branch is a related object, not a plain text field.</li>
+<li>On success, <code>vehicleService.create</code> saves the car. A flash message is stored, and the browser is redirected to <code>/vehicles/{newId}</code>.</li>
+<li>A flash message lives for one redirect only. That is why “Vehicle created” appears on the detail page after save.</li>
+<li>If the service throws <code>IllegalArgumentException</code> (duplicate plate, bad branch, bad text), the message is shown on the form.</li>
+</ul>
+
+<p><strong>editForm and update</strong></p>
+<ul>
+<li>GET <code>/vehicles/{id}/edit</code> loads the existing car and sets <code>formAction</code> to <code>/vehicles/{id}</code>.</li>
+<li>POST <code>/vehicles/{id}</code> validates, then calls <code>vehicleService.update</code>. Success redirects to the detail page with “Vehicle updated”.</li>
+</ul>
+
+<p><strong>transfer, retire, delete</strong></p>
+<ul>
+<li>Transfer reads <code>toBranchId</code>, an optional note, and <code>auth.getName()</code> (the logged-in username). Success and failure both redirect back to the detail page. Success uses <code>message</code>. Failure uses <code>error</code>.</li>
+<li>Retire calls <code>vehicleService.retire</code> and redirects to the vehicle list.</li>
+<li>Delete reads the registration number first, so the message can say which car was removed, then calls <code>deletePermanently</code>, then redirects to the list.</li>
+</ul>
+<p><code>populateForm</code> is a private helper. Create and update both need the same dropdowns, so that list is written once.</p>
+
+<h3>3.2 VehicleService.java — the rules</h3>
+<p>File: <span class="file">src/main/java/com/lankaride/vehicle/VehicleService.java</span></p>
+<ul>
+<li><code>@Service</code> marks this as the business-logic bean.</li>
+<li><code>BLOCKING_STATUSES</code> is PENDING, APPROVED, and ONGOING. Those bookings occupy the car. DENIED, COMPLETED, and CANCELLED do not.</li>
+<li>The constructor receives six repositories: vehicles, branches, bookings, transfers, maintenance, and payments. Delete and search need more than the vehicle table.</li>
+</ul>
+
+<p><strong>search</strong></p>
+<ul>
+<li>There are two <code>search</code> methods. The short one calls the long one with no dates and <code>availableOnly = false</code>.</li>
+<li>If <code>availableOnly</code> is true and the user did not pick a status, the service forces status <code>AVAILABLE</code>.</li>
+<li><code>vehicleRepository.search</code> runs the database filter: category, gearbox, fuel, branch, min price, max price, status. Retired cars are already removed inside that query.</li>
+<li>If both dates are valid, a second Java filter runs on that list. A car is kept only when it is not MAINTENANCE, UNAVAILABLE, or RETIRED, and <code>bookingRepository.countOverlapping</code> returns 0.</li>
+<li>Overlap means: same vehicle, status in the blocking list, and the booking’s pickup is on or before the requested return, and the booking’s return is on or after the requested pickup. That is the standard “ranges overlap” test.</li>
+<li>If there are no dates but <code>availableOnly</code> is true, the service keeps only <code>AVAILABLE</code> cars.</li>
+</ul>
+
+<p><strong>getById</strong> loads one car. If the id does not exist, it throws “Vehicle not found”.</p>
+
+<p><strong>create</strong> is <code>@Transactional</code>, so the checks and the insert commit together or not at all.</p>
+<ul>
+<li><code>normalize</code> trims text, uppercases the plate, and checks seats and money.</li>
+<li><code>existsByRegistrationNumber</code> stops a duplicate plate.</li>
+<li>The branch must exist.</li>
+<li>A blank location becomes the branch name.</li>
+<li><code>save</code> inserts the row and returns it with the new id.</li>
+</ul>
+
+<p><strong>update</strong> loads the old row and copies fields onto it. It does not insert a second car.</p>
+<ul>
+<li>The duplicate-plate check uses <code>filter(v -&gt; !v.getId().equals(id))</code>. The car may keep its own plate. It may not take another car’s plate.</li>
+<li>Every editable field is copied, including status and branch, then <code>save</code> updates the same row.</li>
+</ul>
+
+<p><strong>transfer</strong></p>
+<ul>
+<li>A RETIRED car throws “Retired vehicles cannot be transferred”.</li>
+<li>The destination branch must exist.</li>
+<li>If the destination id equals the current branch id, it throws “already at …”.</li>
+<li>A new <code>BranchTransfer</code> stores the vehicle, the old branch, the new branch, the old location, the staff username, the note, and the current time.</li>
+<li>The vehicle’s branch and current location are then changed to the new branch.</li>
+<li>Both saves are one transaction. If the log save failed, the move would roll back too.</li>
+</ul>
+
+<p><strong>retire</strong> sets status to RETIRED and saves. The public list query hides that status, so the car leaves the catalogue without being deleted.</p>
+
+<p><strong>deletePermanently</strong> deletes in this order, then flushes so the database really removes each group before the next:</p>
+<ol>
+<li>Payments of every booking of this vehicle.</li>
+<li>Those bookings.</li>
+<li>Maintenance records of this vehicle.</li>
+<li>Branch-transfer rows of this vehicle.</li>
+<li>The vehicle row.</li>
+</ol>
+<p>The order matters. A booking points at the vehicle, and a payment points at the booking. Deleting the vehicle first would break the foreign keys.</p>
+
+<p><strong>normalize</strong></p>
+<ul>
+<li>Registration: required, 3–20 characters, then uppercased.</li>
+<li>Category, brand, and model: required labels, letters, numbers, spaces, and hyphens.</li>
+<li>Seats: 1 to 20.</li>
+<li>Price and deposit: required money, greater than zero, within the shared cap.</li>
+<li>Features, location, and photo URL: optional, with length and URL checks.</li>
+<li>Gearbox, fuel, and status must not be null.</li>
+</ul>
+<p><code>InputChecks</code> is a small shared helper in <span class="file">com.lankaride.common</span>. Vehicle, booking, and other forms use the same text rules instead of copying them.</p>
+
+<h3>3.3 VehicleRepository.java — the query</h3>
+<p>File: <span class="file">src/main/java/com/lankaride/vehicle/VehicleRepository.java</span></p>
+<ul>
+<li>This is an interface. There is no class body. It extends <code>JpaRepository&lt;Vehicle, Long&gt;</code>, so Spring already provides <code>save</code>, <code>findById</code>, <code>findAll</code>, <code>delete</code>, and <code>flush</code>.</li>
+<li><code>findByRegistrationNumber</code> and <code>existsByRegistrationNumber</code> are understood from the method name. Spring writes the SQL.</li>
+<li><code>countByStatus</code> counts cars in one status. The dashboard uses this style of method.</li>
+<li><code>search</code> is a JPQL query, written in the <code>@Query</code> string. It selects <code>Vehicle</code> objects, not raw table rows.</li>
+<li><code>v.status &lt;&gt; RETIRED</code> always removes retired cars.</li>
+<li>Each filter looks like <code>:category IS NULL OR :category = '' OR LOWER(v.category) = LOWER(:category)</code>. A blank filter matches every car. Category compare ignores capital letters.</li>
+<li><code>v.branch.id = :branchId</code> joins the branch. <code>pricePerDay</code> is compared with min and max.</li>
+<li>Results are ordered by brand, then model.</li>
+<li>This query does not know about bookings. Date overlap is done later in the service.</li>
+</ul>
+
+<h3>3.4 Vehicle.java — the table row as a Java object</h3>
+<p>File: <span class="file">src/main/java/com/lankaride/vehicle/Vehicle.java</span></p>
+<ul>
+<li><code>@Entity</code> and <code>@Table(name = "vehicles")</code> map this class to the MySQL table.</li>
+<li><code>id</code> uses <code>GenerationType.IDENTITY</code>. MySQL assigns the number on insert.</li>
+<li><code>registrationNumber</code> is required, unique, 3–20 letters, numbers, or hyphens.</li>
+<li><code>category</code>, <code>brand</code>, and <code>model</code> are required text with the same character rule.</li>
+<li><code>seats</code> is an int from 1 to 20.</li>
+<li><code>gearbox</code> and <code>fuelType</code> are enums stored as text (<code>EnumType.STRING</code>), so the column contains <code>AUTOMATIC</code>, not a magic number. Defaults are AUTOMATIC and PETROL.</li>
+<li><code>features</code> and <code>photoUrl</code> are optional. A photo must be empty or start with <code>http://</code> or <code>https://</code>.</li>
+<li><code>pricePerDay</code> and <code>depositAmount</code> are <code>BigDecimal</code>, not <code>double</code>, so money does not pick up binary rounding. The column allows 10 digits with 2 decimal places, and the value must be greater than zero.</li>
+<li><code>@ManyToOne</code> on <code>branch</code> means many vehicles belong to one branch. The foreign key column is <code>branch_id</code>. Fetch is EAGER, so loading a vehicle also loads its branch name.</li>
+<li><code>currentLocation</code> is a short text description of where the car is now.</li>
+<li><code>status</code> defaults to <code>AVAILABLE</code>.</li>
+<li>The rest of the file is get and set methods. JSP expressions such as <code>${vehicle.brand}</code> call <code>getBrand()</code>. Spring form tags such as <code>path="brand"</code> call <code>getBrand</code> and <code>setBrand</code>.</li>
+</ul>
+
+<h3>3.5 The small types around a vehicle</h3>
+<ul>
+<li><span class="file">VehicleStatus.java</span> is the enum AVAILABLE, UNAVAILABLE, MAINTENANCE, RETIRED.</li>
+<li><span class="file">Branch.java</span> is the depot: id, unique name, address. Table <code>branches</code>.</li>
+<li><span class="file">BranchTransfer.java</span> is one move: vehicle, from branch, to branch, old location, time, staff username, and note. Table <code>branch_transfers</code>.</li>
+<li><span class="file">BranchRepository</span> and <span class="file">BranchTransferRepository</span> are the same Spring Data style. Transfers are listed with <code>findByVehicleIdOrderByTransferredAtDesc</code>, newest first.</li>
+</ul>
+
+<h2>4. The three JSP pages</h2>
+<p>JSPs live in <span class="file">src/main/webapp/WEB-INF/views/vehicle/</span>. They cannot be opened as files in the browser. Spring forwards to them after the controller runs. <code>${...}</code> prints a value. <code>&lt;c:if&gt;</code> and <code>&lt;c:forEach&gt;</code> are JSTL tags. <code>&lt;sec:authorize&gt;</code> shows or hides HTML by role. It does not replace the security rules in <code>SecurityConfig</code>.</p>
+
+<h3>4.1 list.jsp — Find a ride</h3>
+<ul>
+<li>Sets the browser title to “Find a ride” and includes the shared header.</li>
+<li>The heading and the sentence under it change when dates were searched. If <code>pickupDate</code> and <code>returnDate</code> are present, it says “Available {from} → {to}”. Otherwise it says “Browse the fleet…”.</li>
+<li>The Add vehicle button is wrapped in <code>sec:authorize</code> for ADMIN, FLEET_COORDINATOR, and OPERATIONS_MANAGER. A customer does not see it. A customer who types the URL still gets blocked by Spring Security.</li>
+<li>The filter form is <code>method="get"</code> and <code>action="/vehicles"</code>. GET is correct because search does not change data and the URL can be bookmarked.</li>
+<li>Field names match the controller exactly: <code>branchId</code>, <code>pickupDate</code>, <code>returnDate</code>, <code>category</code>, <code>gearbox</code>, <code>fuelType</code>, <code>minPrice</code>, <code>maxPrice</code>, <code>availableOnly</code>.</li>
+<li>The branch, gearbox, and fuel dropdowns loop over <code>${branches}</code>, <code>${gearboxes}</code>, and <code>${fuelTypes}</code> that the controller placed on the model. The selected option is marked when it equals the value just searched.</li>
+<li>The checkbox sends <code>availableOnly=true</code> only when ticked. When it is unticked, the parameter is absent and the controller’s default false is used.</li>
+<li>Search submits the form. Reset is a link back to <code>/vehicles</code> with no query string.</li>
+<li><code>&lt;c:forEach items="${vehicles}"&gt;</code> prints one card per car. The card link is <code>/vehicles/{id}</code> and, when the user searched with dates or a branch, those values are added as query parameters. That is how the detail page later builds the booking link with the same dates.</li>
+<li>Each card shows the photo, or a fallback icon if <code>photoUrl</code> is empty or the image fails to load.</li>
+<li>The card text uses <code>v.brand</code>, <code>v.model</code>, <code>v.status</code>, registration, branch name, category, seats, gearbox, fuel, and price per day.</li>
+<li>If <code>vehicles</code> is empty, the page says no cars match the filters.</li>
+</ul>
+
+<h3>4.2 detail.jsp — one car</h3>
+<ul>
+<li>The back link returns to <code>/vehicles</code>.</li>
+<li>The photo block shows <code>vehicle.photoUrl</code>, or the “No photo” fallback.</li>
+<li>The heading is brand and model. The line under it is registration and branch name. The status pill uses the status name in lowercase as a CSS class.</li>
+<li>The spec grid prints category, seats, gearbox, fuel, features, location, price per day, and deposit. An empty features field prints a dash.</li>
+<li>If the visitor is logged in and the car is AVAILABLE, <strong>Book this vehicle</strong> points at <code>/bookings/new</code> and adds <code>vehicleId</code>, plus pickup date, return date, and branch when those were passed in. If no branch was in the search, it uses the car’s own branch id.</li>
+<li>A guest who is looking at an AVAILABLE car sees <strong>Login to book</strong> and <strong>Register</strong> instead.</li>
+<li>ADMIN and FLEET_COORDINATOR see <strong>Add maintenance</strong>, linking to <code>/maintenance/new?vehicleId=...</code>.</li>
+<li>ADMIN, FLEET_COORDINATOR, and OPERATIONS_MANAGER see Edit, Retire, and Delete. Edit is a GET link. Retire and Delete are POST forms. Each form includes the CSRF hidden input and a <code>confirm(...)</code> so a mis-click does not destroy data. The confirm dialog is only a browser warning. The server still checks the role.</li>
+<li>The transfer panel is shown to those same three roles. The form POSTs to <code>/vehicles/{id}/transfer</code>. The current branch’s option is <code>disabled</code>, so it cannot be chosen. Note is optional.</li>
+<li>The transfer log loops over <code>${transfers}</code> and prints time, from branch, to branch, the username, and the note. If the list is empty, it says no transfers were recorded.</li>
+</ul>
+
+<h3>4.3 form.jsp — add and edit share one page</h3>
+<ul>
+<li>The title is “Add vehicle” when <code>vehicle.id</code> is null, and “Edit vehicle” when an id exists.</li>
+<li>The form POSTs to <code>${formAction}</code>. For a new car that is <code>/vehicles</code>. For an edit it is <code>/vehicles/{id}</code>. The controller set that value.</li>
+<li><code>&lt;form:form modelAttribute="vehicle"&gt;</code> binds the form to the <code>Vehicle</code> object. <code>path="registrationNumber"</code> reads and writes <code>getRegistrationNumber</code> / <code>setRegistrationNumber</code>. The same pattern is used for category, brand, model, seats, gearbox, fuel, features, photo URL, price, deposit, location, and status.</li>
+<li>The CSRF hidden field is added by hand with <code>${_csrf.parameterName}</code> and <code>${_csrf.token}</code>.</li>
+<li>If saved models exist, a dropdown lists them. This dropdown’s name is <code>savedModel</code> and it is <strong>not</strong> posted as a vehicle field. It only helps the browser fill the other boxes.</li>
+<li>The script at the bottom listens for a change on that dropdown. The chosen <code>&lt;option&gt;</code> carries <code>data-brand</code>, <code>data-model</code>, <code>data-category</code>, <code>data-seats</code>, <code>data-gearbox</code>, and <code>data-fuel</code>. The script copies those into the real inputs. Nothing is saved until the user presses Save. The server validates the posted values again.</li>
+<li>Category has a <code>&lt;datalist&gt;</code> of saved category names. The user can still type a new category.</li>
+<li>Gearbox, fuel, and status are <code>&lt;form:select&gt;</code> tags filled from the enum arrays.</li>
+<li>Home branch is a normal <code>&lt;select name="branchId"&gt;</code>, not a <code>form:select path</code>, because the controller reads <code>branchId</code> as its own parameter and then loads the <code>Branch</code>.</li>
+<li>On edit, the option whose id equals <code>vehicle.branch.id</code> is marked selected.</li>
+<li><code>&lt;form:errors path="..."&gt;</code> prints the message from <code>@NotBlank</code>, <code>@Min</code>, and the other annotations when validation fails.</li>
+<li>Save submits the form. Cancel links back to <code>/vehicles</code> and discards the typed changes.</li>
+</ul>
+
+<h2>5. Design patterns in this code</h2>
+<p>Name a pattern only if you can point at a class. These are the ones that are really here.</p>
+
+<h3>Model–View–Controller</h3>
+<p><code>Vehicle</code> is the model. <code>list.jsp</code>, <code>detail.jsp</code>, and <code>form.jsp</code> are the views. <code>VehicleController</code> is the controller. The controller chooses the view. The view does not run the duplicate-plate rule. The model does not know about HTTP.</p>
+
+<h3>Front Controller</h3>
+<p>The application does not have one servlet per page. Spring’s <code>DispatcherServlet</code> receives every request and sends <code>/vehicles</code> to <code>VehicleController</code>. That single entry point is the Front Controller.</p>
+
+<h3>Layered architecture</h3>
+<p>Four layers, top to bottom: JSP, controller, service, repository. Each layer calls only the one below it. The JSP does not call <code>VehicleRepository</code>.</p>
+
+<h3>Dependency injection (Inversion of Control)</h3>
+<p><code>VehicleController</code> and <code>VehicleService</code> ask for their helpers in the constructor. The Spring container creates the objects and wires them. The classes do not construct their own repositories. By default each of these beans is one shared instance for the whole application. Request data stays in method arguments and in the database, not in fields that change per user.</p>
+
+<h3>Repository</h3>
+<p><code>VehicleRepository</code> hides the query. The service says <code>search</code> and <code>save</code>. It does not write JDBC. Spring Data supplies the implementation of the interface.</p>
+
+<h3>Facade</h3>
+<p><code>VehicleService</code> is the one door for vehicle use cases. Deleting a car needs payments, bookings, maintenance, and transfers. The controller calls <code>deletePermanently</code> once and does not know that order. Search also hides two steps: the SQL filter and the booking-overlap filter.</p>
+
+<h3>Template Method</h3>
+<p><code>JpaRepository</code> already implements the fixed steps for save, find-by-id, and delete. <code>VehicleRepository</code> only adds the extra <code>search</code> query. The framework algorithm stays the same. Your query is the varying step.</p>
+
+<h3>Data Mapper</h3>
+<p>JPA and Hibernate map the <code>Vehicle</code> object to the <code>vehicles</code> table using <code>@Entity</code>, <code>@Column</code>, and <code>@JoinColumn</code>. The Java class does not contain the INSERT statement.</p>
+
+<h3>Post–Redirect–Get</h3>
+<p>After create, update, transfer, retire, and delete, the controller sends a redirect and a flash message. Refreshing the next page does not submit the form a second time.</p>
+
+<div class="box say">
+<p><strong>Say this if they ask for a pattern you did not use.</strong> There is no Strategy class for each filter, no Factory that builds vehicles, and no State class for each status. <code>VehicleStatus</code> is an enum. The rules are ordinary <code>if</code> checks inside <code>VehicleService</code>.</p>
+</div>
+
+<h2>6. A short answer you can speak</h2>
+<div class="box">
+<p>Vehicle management is the fleet catalogue. Guests can search and open a car. Fleet staff can add, edit, transfer, retire, and permanently delete.</p>
+<p>The page is a JSP. <code>VehicleController</code> reads the request and picks the page. <code>VehicleService</code> checks the plate, the dates, the branch move, and the delete order. <code>VehicleRepository</code> runs one JPQL search that ignores empty filters and always hides retired cars. If the customer also sent dates, the service removes cars that overlap a pending, approved, or ongoing booking.</p>
+<p>The structure is MVC. Spring injects the service into the controller and the repositories into the service. The service is a facade over several tables. Spring Data’s repository is a template for the common database operations.</p>
+</div>
+
+</body>
+</html>

@@ -3,9 +3,12 @@
 <c:set var="pageTitle" value="Admin" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="mb-4">
-    <h1 class="page-title">System admin</h1>
-    <p class="page-lead">Scale the platform — add branches and staff accounts. Public register remains customer-only.</p>
+<div class="support-page scene-garage">
+<div class="page-head">
+    <div>
+        <h1 class="page-title">System admin</h1>
+        <p class="page-lead">Scale the platform — add branches and staff accounts. Public register remains customer-only.</p>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -72,6 +75,7 @@
             <p class="small text-muted mt-3 mb-0">${users.size()} users in the system</p>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

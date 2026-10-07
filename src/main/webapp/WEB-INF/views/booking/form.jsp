@@ -3,6 +3,7 @@
 <c:set var="pageTitle" value="New booking" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="booking-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/vehicles'/>">&larr; Back to search</a>
 </div>
@@ -77,6 +78,7 @@
             </script>
         </div>
     </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
