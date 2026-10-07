@@ -6,15 +6,17 @@
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
 <div class="fleet-page scene-garage">
-<div class="mb-3">
-    <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
+<div class="page-head">
+    <div>
+        <a class="back-link" href="<c:url value='/maintenance'/>">&larr; Back to maintenance</a>
+        <h1 class="page-title">${editing ? 'Edit maintenance' : 'New maintenance record'}</h1>
+        <p class="page-lead">Opening a record takes the vehicle offline for bookings until you close it.</p>
+    </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="detail-block">
-            <h1 class="page-title mb-1">${editing ? 'Edit maintenance' : 'New maintenance record'}</h1>
-            <p class="page-lead mb-3">Opening a record takes the vehicle offline for bookings until you close it.</p>
 
             <c:if test="${not empty conflicts}">
                 <div class="alert alert-warning">
@@ -73,12 +75,12 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="serviceDate">Service date</label>
-                        <form:input path="serviceDate" id="serviceDate" type="date" cssClass="form-control" required="true"/>
+                        <form:input path="serviceDate" id="serviceDate" type="date" cssClass="form-control" required="true" min="${today}"/>
                         <form:errors path="serviceDate" cssClass="text-danger small d-block"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="estimatedCompletionDate">Est. completion</label>
-                        <form:input path="estimatedCompletionDate" id="estimatedCompletionDate" type="date" cssClass="form-control"/>
+                        <form:input path="estimatedCompletionDate" id="estimatedCompletionDate" type="date" cssClass="form-control" min="${today}"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="estimatedCost">Estimated cost (LKR)</label>
@@ -109,6 +111,21 @@
                     <a class="btn btn-outline-secondary" href="<c:url value='/maintenance'/>">Cancel</a>
                 </div>
             </form:form>
+            <script>
+                (function () {
+                    var service = document.getElementById("serviceDate");
+                    var completion = document.getElementById("estimatedCompletionDate");
+                    if (!service || !completion) return;
+                    function sync() {
+                        completion.min = service.value && service.value > service.min ? service.value : service.min;
+                        if (completion.value && completion.value < completion.min) {
+                            completion.value = completion.min;
+                        }
+                    }
+                    service.addEventListener("change", sync);
+                    sync();
+                })();
+            </script>
         </div>
     </div>
 </div>

@@ -91,9 +91,7 @@ public class MaintenanceService {
     @Transactional
     public MaintenanceRecord update(Long id, MaintenanceRecord incoming) {
         MaintenanceRecord existing = getById(id);
-        if (existing.getStatus() == MaintenanceStatus.CLOSED) {
-            throw new IllegalArgumentException("Closed records cannot be edited");
-        }
+        MaintenanceRules.getInstance().requireEditable(existing.getStatus());
         validate(incoming);
         existing.setServiceType(incoming.getServiceType());
         existing.setServiceDate(incoming.getServiceDate());
@@ -101,16 +99,14 @@ public class MaintenanceService {
         existing.setEstimatedCost(incoming.getEstimatedCost());
         existing.setDescription(incoming.getDescription());
         existing.setMechanicsAssigned(incoming.getMechanicsAssigned());
-        existing.setStatus(incoming.getStatus() == MaintenanceStatus.CLOSED
-                ? MaintenanceStatus.IN_PROGRESS
-                : incoming.getStatus());
+        existing.setStatus(MaintenanceRules.getInstance().statusAfterEdit(incoming.getStatus()));
         return maintenanceRecordRepository.save(existing);
     }
 
     @Transactional
     public MaintenanceRecord close(Long id, java.math.BigDecimal finalCost) {
         MaintenanceRecord existing = getById(id);
-        if (existing.getStatus() == MaintenanceStatus.CLOSED) {
+        if (MaintenanceRules.getInstance().isClosed(existing.getStatus())) {
             return existing;
         }
         existing.setStatus(MaintenanceStatus.CLOSED);
@@ -208,6 +204,13 @@ public class MaintenanceService {
         record.setServiceType(InputChecks.requiredText(record.getServiceType(), "Service type", 3, 50));
         if (record.getServiceDate() == null) {
             throw new IllegalArgumentException("Service date is required");
+        }
+        if (record.getServiceDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Service date cannot be in the past");
+        }
+        if (record.getEstimatedCompletionDate() != null
+                && record.getEstimatedCompletionDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Estimated completion cannot be in the past");
         }
         InputChecks.orderedDates(record.getServiceDate(), record.getEstimatedCompletionDate(),
                 "Estimated completion");
