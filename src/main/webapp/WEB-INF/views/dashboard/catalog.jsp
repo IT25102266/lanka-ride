@@ -3,11 +3,12 @@
 <c:set var="pageTitle" value="Fleet defaults" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
+<div class="dashboard-page">
 <div class="mb-3">
     <a class="back-link" href="<c:url value='/dashboard'/>">&larr; Back to dashboard</a>
 </div>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="page-head">
     <div>
         <h1 class="page-title">Fleet defaults</h1>
         <p class="page-lead">Categories, models, and service types used when staff add vehicles or maintenance. Deleting a default does not delete vehicles already saved.</p>
@@ -156,5 +157,6 @@
         toggle();
     })();
 </script>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

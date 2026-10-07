@@ -4,7 +4,8 @@
 <c:set var="pageTitle" value="Staff dashboard" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="dashboard-page scene-garage">
+<div class="page-head">
     <div>
         <h1 class="page-title">Operations dashboard</h1>
         <p class="page-lead">Welcome, ${username}
@@ -126,6 +127,7 @@
             </a>
         </div>
     </sec:authorize>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

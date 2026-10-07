@@ -4,7 +4,8 @@
 <c:set var="pageTitle" value="My trips" scope="request"/>
 <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+<div class="dashboard-page scene-fleet">
+<div class="page-head">
     <div>
         <h1 class="page-title">My trips</h1>
         <p class="page-lead">Welcome back, ${username}. Your trips hub — track bookings, pay invoices, and get support.</p>
@@ -84,5 +85,6 @@
         </div>
     </c:otherwise>
 </c:choose>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
